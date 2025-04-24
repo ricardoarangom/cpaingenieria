@@ -1,0 +1,79 @@
+/*
+====================
+	Arial nova Cond
+====================
+*/
+
+@font-face {
+    font-family: 'Arial Nova Cond';    
+    src: url('fuentes/arialnova/ArialNovaCond-Italic.woff2') format('woff2');
+        
+/*
+    font-weight: normal;
+    font-style: italic;
+*/
+}
+
+@font-face {
+    font-family: 'Arial Nova Cond';
+    src: url('fuentes/arialnova/ArialNovaCond-LightItalic.woff2') format('woff2');
+	
+/*
+    font-weight: 300;
+    font-style: italic;
+*/
+}
+
+@font-face {
+    font-family: 'Nova-Normal';
+    src: url('fuentes/arialnova/ArialNovaCond.woff2') format('woff2');
+	
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nova-Bold';
+    src: url('fuentes/arialnova/ArialNovaCond-Bold.woff2') format('woff2');
+	
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Arial Nova Cond';
+    src: url('fuentes/arialnova/ArialNovaCond-Light.woff2') format('woff2');
+	
+/*
+    font-weight: 300;
+    font-style: normal;
+*/
+}
+
+@font-face {
+    font-family: 'Arial Nova Cond';
+    src: url('fuentes/arialnova/ArialNovaCond-BoldItalic.woff2') format('woff2');
+	
+/*
+    font-weight: bold;
+    font-style: italic;
+*/
+}
+
+/*
+====================
+	Century Gothic
+====================
+*/
+
+@font-face {
+    font-family: 'Century-G';
+    src: url('fuentes/centurygothic/Century Gothic.ttf') format('truetype');
+	
+
+}
+
+@font-face {
+	font-family: 'Century-G-B';
+	src: url('fuentes/centurygothic/gothicb.ttf') format('truetype');
+}

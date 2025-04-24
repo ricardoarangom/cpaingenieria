@@ -1,0 +1,12 @@
+/Highcharts
+/fpdf
+/excel
+/connections
+/compras/temporal
+/compras/cotizaciones/*
+/compras/facturas/*
+/compras/doctemp/*
+/compras/documentos/*
+/gviaje/certificaciones/*
+/gviaje/soportes/*
+/tiquetes/documentos/*
