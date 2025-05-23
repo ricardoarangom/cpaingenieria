@@ -2,14 +2,14 @@
 <?php 
 include('encabezado.php');
 
-//echo "<pre>";
-//print_r($_POST);
-//echo "</pre>";
+echo "<pre>";
+print_r($_POST);
+echo "</pre>";
 
 if(!$_POST['proyecto'] and !$_POST['solicitante'] and !$_POST['proveedor'] and !$_POST['dsolicitud'] and !$_POST['hsolicitud'] and !$_POST['drecibido'] and !$_POST['hrecibido'] and !$_POST['dcomprado'] and !$_POST['hcomprado']){
 	$buscador1="";
 }else{
-	$buscador1="where ";
+	$buscador1=" where ";
 
 	if($_POST['proyecto']){
 		$buscador.=" ordencompra.IdArea=".$_POST['proyecto']." and ";
@@ -41,6 +41,7 @@ if(!$_POST['proyecto'] and !$_POST['solicitante'] and !$_POST['proveedor'] and !
 
 }
 $buscador=substr($buscador, 0, -4);
+echo $buscador;
 ?>
 <?php
 if (!function_exists("GetSQLValueString")) {
@@ -76,9 +77,12 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 
 mysql_select_db($database_datos, $datos);
 $query_Recordset1 = "SELECT compras.IdCompra, compras.IdOrdencompra, fecha, compras.comprado, compras.recibido, proveedor, fsolicitud, nombre, apellido, area, factura, evaluacion, calpro, compras.precio, condpago, cumplimiento, higsegind, gesamb, rse, total FROM ((((compras inner join proveedores ON compras.IdProveedor=proveedores.IdProveedor) inner join ordencompra On compras.IdOrdencompra=ordencompra.IdOrdencompra) inner join usuarios On ordencompra.IdSolicitante=usuarios.IdUsuario) inner join areas on ordencompra.IdArea=areas.IdArea) left join totcompras on compras.IdCompra=totcompras.IdCompra".$buscador1.$buscador;
+
+echo $query_Recordset1;
 $Recordset1 = mysql_query($query_Recordset1, $datos) or die(mysql_error());
 $row_Recordset1 = mysql_fetch_assoc($Recordset1);
 $totalRows_Recordset1 = mysql_num_rows($Recordset1);
+
 
 mysql_select_db($database_datos, $datos);
 $query_Recordset3 = "SELECT IdArea, area, ccostos from areas order by ccostos";

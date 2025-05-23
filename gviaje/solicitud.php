@@ -358,7 +358,7 @@ $cadenaTablaGastos=json_encode($tablaGastos,JSON_UNESCAPED_UNICODE);
 		var vunitario = document.getElementById('vunitario-'+arregloId[1]).value;
 		var formatter = new Intl.NumberFormat('en-US');
 				
-		vunitario = parseFloat(vunitario.replace(",", ""));		
+		vunitario = parseFloat(vunitario.replace(/,/g, ""));		
 		var vtotal = cantidad*vunitario;		
 		$('#vtotal-'+arregloId[1]).val(formatter.format((vtotal).toFixed(0)));
 		

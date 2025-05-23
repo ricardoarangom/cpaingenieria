@@ -1,18 +1,57 @@
 <?php 
+// echo "<pre>";
+// print_r($_GET);
+// echo "</pre>";
 require_once('../connections/datos.php');
-$buscaCartas = "SELECT 
-                    MAX(IdCarta) as ultimo
+$buscaCarta =  "SELECT 
+                  IdCarta,
+                  destinatario1,
+                  destinatario2,
+                  destinatario3,
+                  destinatario4,
+                  destinatario5,
+                  asunto,
+                  fecha,
+                  firmante,
+                  cartas.IdUsuario,
+                  enviada,
+                  cartas.cargo,
+                  firma,
+                  email,
+                  cartas.IdFirma
                 FROM
-                    cartas;";
-$resultadoCartas = mysql_query($buscaCartas, $datos) or die(mysql_error());
-$filaCartas = mysql_fetch_assoc($resultadoCartas);
-$totalfilas_buscaCartas = mysql_num_rows($resultadoCartas);
+                    (cartas
+                    LEFT JOIN firmas ON cartas.Idfirma = firmas.Idfirma)
+                WHERE IdCarta=".$_GET['carta'];
+$resultadoCarta = mysql_query($buscaCarta, $datos) or die(mysql_error());
+$filaCarta = mysql_fetch_assoc($resultadoCarta);
+$totalfilas_buscaCarta = mysql_num_rows($resultadoCarta);
+
+$buscaParrafos = "SELECT 
+                      IdParrafo, IdCarta, parrafo
+                  FROM
+                      parrafoscartas
+                  WHERE
+                      IdCarta = ".$_GET['carta'];
+$resultadoParrafos = mysql_query($buscaParrafos, $datos) or die(mysql_error());
+$filaParrafos = mysql_fetch_assoc($resultadoParrafos);
+$totalfilas_buscaParrafos = mysql_num_rows($resultadoParrafos);
+
+$buscaAnexos = "SELECT 
+                    nombre,
+                    vinculo
+                FROM
+                    anexoscartas
+                WHERE
+                    IdCarta = ".$_GET['carta']."  ";
+$resultadoAnexos = mysql_query($buscaAnexos, $datos) or die(mysql_error());
+$filaAnexos = mysql_fetch_assoc($resultadoAnexos);
+$totalfilas_buscaAnexos = mysql_num_rows($resultadoAnexos);
 ?>
 <?php 
 include('encabezado.php')
 ?>
 <script>
-
   document.addEventListener('DOMContentLoaded', function() {
     
     cargaFirmas();
@@ -195,7 +234,7 @@ include('encabezado1.php')
 ?>
 <br>
 <div class="contenedor" style="width:800px">
-  <h5 class="Century" align="center">CREACION DE CARTAS</h5>
+  <h5 class="Century" align="center">EDICION DE CARTAS</h5>
   <br>
   <form action="graba.php" method="post" enctype="multipart/form-data" onSubmit="bloquear('boton')">
     <div class="grid columna-2">
@@ -203,18 +242,18 @@ include('encabezado1.php')
         Bogotá D.C., <?php echo fechaactual6(date("Y-m-d")) ?>
       </div>
       <div class="span-1" align="right">
-        <strong>CPA-<?php  echo sprintf("%03d",$filaCartas['ultimo']+1)."-". date("Y") ?></strong>
+        <strong>CPA-<?php  echo sprintf("%03d",$filaCarta['IdCarta'])."-". date("Y") ?></strong>
       </div>
     </div>
     
     <br><br>
     Señor(es)
     <div style="width:350px">
-      <input type="text" name="destinatario1" id="destinatario1" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)" required>
-      <input type="text" name="destinatario2" id="destinatario2" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)">
-      <input type="text" name="destinatario3" id="destinatario3" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)">
-      <input type="text" name="destinatario4" id="destinatario4" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese la ciudad" onBlur="aMayusculas(this.value,this.id)" required>
-      <input type="text" name="email" id="email" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="email de envio">
+      <input type="text" name="destinatario1" id="destinatario1" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['destinatario1'] ?>" required>
+      <input type="text" name="destinatario2" id="destinatario2" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['destinatario2'] ?>">
+      <input type="text" name="destinatario3" id="destinatario3" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['destinatario3'] ?>">
+      <input type="text" name="destinatario4" id="destinatario4" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese la ciudad" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['destinatario4'] ?>" required>
+      <input type="text" name="email" id="email" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="email de envio" value="<?php echo $filaCarta['email'] ?>">
     </div>
     <br><br>
     <div class="grid columna-7">
@@ -222,17 +261,24 @@ include('encabezado1.php')
         <strong>Referencia:</strong>
       </div>
       <div class="span-5">
-        <input type="text" name="asunto" id="asunto"  class="campo-xs Arial14" onBlur="aMayusculas(this.value,this.id)" required>
+        <input type="text" name="asunto" id="asunto"  class="campo-xs Arial14" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['asunto'] ?>" required>
       </div>
       <div class="span-1"></div>
     </div>  
     <br><br>
     <div style="width:300px">
-      <input type="text" name="destinatario5" id="destinatario5" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Respetados Señores" required> 
+      <input type="text" name="destinatario5" id="destinatario5" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Respetados Señores" value="<?php echo $filaCarta['destinatario5'] ?>" required> 
     </div>
-    <span id="nParrafos" style="display:none" >1</span>
+    <span id="nParrafos" style="display:none" ><?php echo $totalfilas_buscaParrafos ?></span>
     <div id="parrafos">
-      <textarea name="parrafo[1]" class="txtarea" placeholder="Ingrese el parrafo 1" style="margin-bottom:3px"></textarea>
+      <?php 
+      do{
+        $altura=ceil(strlen($filaParrafos['parrafo'])/107);
+        ?>
+        <textarea name="parrafog[<?php echo $filaParrafos['IdParrafo']?>]" rows="<?php echo $altura ?>" class="txtarea" style="margin-bottom:3px" ><?php echo $filaParrafos['parrafo'] ?></textarea>
+        <?php
+      } while ($filaParrafos = mysql_fetch_assoc($resultadoParrafos));
+      ?>
     </div>
     <button type="button" class="btn btn-verde btn-xs" onClick="agregaParrafo()" >Agregar parrafo</button>
     <br><br>
@@ -240,33 +286,68 @@ include('encabezado1.php')
     <div>
       <button type="button" class="btn btn-verde btn-xs" onClick="muestraFirmas()">Seleccione la firma</button>
     </div>
-    <div id="firma" style="padding:5px"><br><br><br><br><br></div>    
-    <input type="hidden" name="IdFirma" id="IdFirma">
+    <div id="firma" style="padding:5px">
+      <img src="<?php echo $filaCarta['firma'] ?>" width="220">
+    </div>    
+    <input type="hidden" name="IdFirma" id="IdFirma" value="<?php echo $filaCarta['IdFirma'] ?>">
     Atentamente,    
     <div style="width:350px">
-      <input type="text" name="firmante" id="firmante" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el firmante" onBlur="aMayusculas(this.value,this.id)" required>
-      <input type="text" name="cargo" id="cargo" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el cargo" onBlur="aMayusculas(this.value,this.id)" required>
+      <input type="text" name="firmante" id="firmante" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el firmante" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['firmante'] ?>" required>
+      <input type="text" name="cargo" id="cargo" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el cargo" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['cargo'] ?>" required>
     </div>
     
     CPA INGENIERIA S.A.S.<br>
-    <div class="Arial12">
-      <br>
-      ANEXOS:(Formato PDF max 1MB)<br> 
-    </div>
-    <span id="nAnexos" style="display: none" >1</span>
+    <?php 
+    if($totalfilas_buscaAnexos>0){
+      ?>
+      ANEXOS:(Formato PDF max 1MB)
+      <table class="tablita Arial16" style="width:500px">
+      <?php
+      do{
+        ?>
+        <tr>
+          <td>
+            <?php echo $filaAnexos['nombre'] ?>
+          </td>
+          <td>
+            <a href="<?php echo $filaAnexos['vinculo'] ?>" class="btn btn-rosa btn-xs1 " >Ver anexo</a>
+          </td>
+        </tr>
+        <div class="span-1">
+          
+        </div>
+        <div class="span-1">
+          
+          
+        </div>
+        <?php
+      }while($filaAnexos = mysql_fetch_assoc($resultadoAnexos));
+      ?>
+      </table>
+      <?php
+    }else{
+      ?>
+      <div class="Arial14">
+        <br>
+        ANEXOS:(Formato PDF max 1MB)<br> 
+      </div>
+      <?php
+    }
+    ?>
+    <span id="nAnexos" style="display:none" >1</span>
     <div style="width:700px" class="grid columna-2" id="anexos">
       <div class="span-1">
         <input type="file" name="anexo[1]" id="anexo-1"  class="campo-xs Arial12" onChange="validarArchivo(this.files,this.id)" >
       </div>
       <div class="span-1">
         <input type="text" name="nombre[1]" id="nombre-1" class="campo-xs Arial12" placeholder="Ingrese el nombre de archivo" onBlur="aMayusculas(this.value,this.id)">
-      </div>
-      
+      </div>      
     </div>
     <br>
     <button type="button" class="btn btn-verde btn-xs" onClick="agregaAnexo()" >Agregar anexo</button>
+    <input type="hidden" name="IdCarta"  value="<?php echo $_GET['carta'] ?>">
     <div align="center">
-      <button type="submit" class="btn btn-rosa btn-sm" name="boton1" id="boton" >Gabar</button>
+      <button type="submit" class="btn btn-rosa btn-sm" name="boton2" id="boton" >Gabar</button>
       <div id="espera"></div>
     </div>
   </form>

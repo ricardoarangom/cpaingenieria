@@ -25,12 +25,18 @@ $buscaCarta = "SELECT
                     destinatario1,
                     destinatario2,
                     destinatario3,
+                    destinatario4,
+                    destinatario5,
                     asunto,
                     fecha,
                     IdUsuario,
-                    firmante
+                    firmante,
+                    cargo,
+                    firma,
+                    email,
+                    fenvio
                 FROM
-                    cartas
+                    cartas left join firmas on cartas.IdFirma=firmas.IdFirma
                 WHERE
                     IdCarta = ".$IdCarta."  ";
 $resultadoCarta = mysql_query($buscaCarta, $datos) or die(mysql_error());
@@ -48,7 +54,8 @@ $filaParrafos = mysql_fetch_assoc($resultadoParrafos);
 $totalfilas_buscaParrafos = mysql_num_rows($resultadoParrafos);
 
 $buscaAnexos = "SELECT 
-                    nombre
+                    nombre,
+                    vinculo
                 FROM
                     anexoscartas
                 WHERE
@@ -214,7 +221,7 @@ class PDF extends PDF_WriteTag {
   
     
     $this->Image('../imagenes/logofa.png',23,7,70);
-    $this->ln(2);
+    $this->ln(10);
         
   }
   function Footer()
@@ -239,7 +246,12 @@ $pdf->SetMargins(20,10,20);
 $pdf->AddPage();
 
 $pdf->SetFont('Arial','',10);
-$pdf->Cell(90,4.5,utf8_decode('Bogotá D.C., '.fechaactual6($filaCarta['fecha'])),0,0,'L');
+if($filaCarta['fenvio']){
+  $pdf->Cell(90,4.5,utf8_decode('Bogotá D.C., '.fechaactual6($filaCarta['fenvio'])),0,0,'L');
+}else{
+  $pdf->Cell(90,4.5,utf8_decode('Bogotá D.C., '.fechaactual6($filaCarta['fecha'])),0,0,'L');
+}
+
 $pdf->SetFont('Arial','B',10);
 $pdf->Cell(85,4.5,utf8_decode('CPA-'.sprintf("%03d",$filaCarta['IdCarta']))."-".date("Y",strtotime($filaCarta['fecha'])),0,1,'R');
 
@@ -256,6 +268,9 @@ if($filaCarta['destinatario2']){
 if($filaCarta['destinatario3']){
   $pdf->Cell(90,4.5,utf8_decode($filaCarta['destinatario3']),0,1,'L');
 }
+if($filaCarta['destinatario4']){
+  $pdf->Cell(90,4.5,utf8_decode($filaCarta['destinatario4']),0,1,'L');
+}
 
  
 $pdf->ln(8);
@@ -266,7 +281,7 @@ $pdf->MultiCell(90,5,utf8_decode($filaCarta['asunto']),0,'L');
 
 $pdf->ln(4);
 $pdf->SetFont('Arial','',10);
-$pdf->Cell(23,4.5,utf8_decode('Respetados señores,'),0,1,'L');
+$pdf->Cell(90,4.5,utf8_decode($filaCarta['destinatario5'].","),0,1,'L');
 $pdf->ln(4);
 
 $pdf->SetLeftMargin(21);
@@ -278,33 +293,51 @@ do{
   $pdf->WriteTag(0,4.5,$txt,0,"J",0);
   $pdf->Ln(3);
 } while ($filaParrafos = mysql_fetch_assoc($resultadoParrafos));
+$rows = mysql_num_rows($resultadoParrafos);
+if($rows > 0) {
+    mysql_data_seek($resultadoParrafos, 0);
+  $filaParrafos = mysql_fetch_assoc($resultadoParrafos);
+}
 
 $pdf->SetLeftMargin(20);
 $pdf->Ln(1);
 $pdf->Cell(23,4.5,utf8_decode('Agradecemos su atención.'),0,1,'L');
 $pdf->Ln(5);
 $pdf->Cell(23,4.5,utf8_decode('Atentamente,'),0,1,'L');
-
-$pdf->Ln(13);
+$linea=$pdf->GetY();
+if($filaCarta['firma']){
+  $pdf->Image($filaCarta['firma'],18,$linea,0,25);
+}
+$pdf->Ln(20);
 $pdf->SetFont('Arial','B',10);
 $pdf->Cell(23,4.5,utf8_decode($filaCarta['firmante']),0,1,'L');
-$pdf->SetFont('Arial','',10);
+$pdf->Cell(23,4.5,utf8_decode($filaCarta['cargo']),0,1,'L');
 $pdf->Cell(23,4.5,utf8_decode('CPA INGENIERIA S.A.S.'),0,1,'L');
 $pdf->SetFont('Arial','',8);
-$pdf->Cell(23,3,utf8_decode('Responder:'),0,1,'L');
+$pdf->Cell(23,3,utf8_decode(''),0,1,'L');
 if($totalfilas_buscaAnexos>0){
   $pdf->Cell(15,3,utf8_decode('ANEXOS:'),0,0,'L');
   $anexos='';
   do{
     $anexos.=$filaAnexos['nombre']."\n";
   } while ($filaAnexos = mysql_fetch_assoc($resultadoAnexos));
+  $rows = mysql_num_rows($resultadoAnexos);
+  if($rows > 0) {
+      mysql_data_seek($resultadoAnexos, 0);
+    $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
+  }
 
   $pdf->MultiCell(23,3,utf8_decode($anexos),0,'L');
 }
 
 
+if($envia==1){
+  $documento = 'carta.pdf';
+  $doc = $pdf->Output('S', $documento);
+}else{
+  $pdf->Output();
+}
 
-$pdf->Output();
 
 
 	

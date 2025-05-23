@@ -6,7 +6,7 @@ include('encabezado.php');
 // print_r($_POST);
 // echo "</pre>";
 
-if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST['desde'] and !$_POST['hasta'] and !$_POST['destinatario']){
+if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST['desde'] and !$_POST['hasta'] and !$_POST['destinatario'] and !$_POST['desdeEnv'] and !$_POST['hastaEnv'] and !$_POST['enviadas'] and !$_POST['radicadas']){
 	$buscador1="";
 }else{
 	$buscador1=" WHERE ";
@@ -33,12 +33,63 @@ if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST[
     $buscador.=" fecha<='".$_POST['hasta']."' and ";
   }
 
-}
-$buscador=substr($buscador, 0, -4);
-// echo $buscador;
+	if($_POST['desdeEnv']){
+		$buscador.=" fenvio>='".$_POST['desdeEnv']."' and ";
+	}
+  
+  if($_POST['hastaEnv']){
+    $buscador.=" fenvio<='".$_POST['hastaEnv']."' and ";
+  }
 
-$buscaCartas = "SELECT nombre, apellido, IdCarta, destinatario1, destinatario2, destinatario3, asunto, fecha, firmante, cartas.IdUsuario 
-								FROM (cartas LEFT JOIN usuarios ON cartas.IdUsuario = usuarios.IdUsuario) ".$buscador1." ".$buscador."";
+	if($_POST['enviadas']){
+		if($_POST['enviadas']==1){
+			$buscador.=" enviada=1 and ";
+		}
+		if($_POST['enviadas']==2){
+			$buscador.=" enviada=0 and ";
+		}
+		if($_POST['enviadas']==3){
+			$buscador.=" (enviada=0 or enviada=1) and ";
+		}
+	}
+
+	if($_POST['radicadas']){
+		if($_POST['radicadas']==1){
+			$buscador.=" radicado is not null and ";
+		}
+		if($_POST['radicadas']==2){
+			$buscador.=" radicado is null and ";
+		}
+		if($_POST['radicadas']==3){
+			$buscador.=" (radicado is not null or radicado is null) and ";
+		}
+	}
+}
+echo $buscador;
+$buscador=substr($buscador, 0, -4);
+echo $buscador;
+
+$buscaCartas = "SELECT 
+									nombre,
+									apellido,
+									IdCarta,
+									destinatario1,
+									destinatario2,
+									destinatario3,
+									destinatario4,
+									destinatario5,
+									asunto,
+									fecha,
+									firmante,
+									cartas.IdUsuario,
+									enviada,
+									cartas.cargo,
+									fenvio,
+									email,
+									radicado									
+							FROM
+									(cartas
+									LEFT JOIN usuarios ON cartas.IdUsuario = usuarios.IdUsuario)".$buscador1." ".$buscador."";
 // echo $buscaCartas;
 $resultadoCartas = mysql_query($buscaCartas, $datos) or die(mysql_error());
 
@@ -64,10 +115,14 @@ if($totalfilas_buscaCartas>0){
 	do{
 
 		$tablacartas[$filaCartas['IdCarta']]['creador']=$filaCartas['nombre']." ".$filaCartas['apellido'];
-		$tablacartas[$filaCartas['IdCarta']]['destinatario']=$filaCartas['destinatario1']."<br>".$filaCartas['destinatario2']."<br>".$filaCartas['destinatario3'];
-		$tablacartas[$filaCartas['IdCarta']]['firmante']=$filaCartas['firmante'];
+		$tablacartas[$filaCartas['IdCarta']]['destinatario']=$filaCartas['destinatario1']."<br>".$filaCartas['destinatario2']."<br>".$filaCartas['destinatario3']."<br>".$filaCartas['destinatario4'];
+		$tablacartas[$filaCartas['IdCarta']]['firmante']=$filaCartas['firmante']."<br>".$filaCartas['cargo'];
 		$tablacartas[$filaCartas['IdCarta']]['fecha']=$filaCartas['fecha'];
 		$tablacartas[$filaCartas['IdCarta']]['asunto']=$filaCartas['asunto'];
+		$tablacartas[$filaCartas['IdCarta']]['enviada']=$filaCartas['enviada'];
+		$tablacartas[$filaCartas['IdCarta']]['fenvio']=$filaCartas['fenvio'];
+		$tablacartas[$filaCartas['IdCarta']]['email']=$filaCartas['email'];
+		$tablacartas[$filaCartas['IdCarta']]['radicado']=$filaCartas['radicado'];
 
 
 	} while ($filaCartas = mysql_fetch_assoc($resultadoCartas));
@@ -157,9 +212,167 @@ do{
       echo "";
     }
     ?>"
-    document.getElementById('hasta').value=hasta;   
+    document.getElementById('hasta').value=hasta;
+
+		var desdeEnv="<?php 
+    if($_POST){
+      echo $_POST['desdeEnv'];
+    }else{
+      echo "";
+    }
+    ?>";
+    document.getElementById('desdeEnv').value=desdeEnv;
+    
+    var hastaEnv="<?php 
+    if($_POST){
+      echo $_POST['hastaEnv'];
+    }else{
+      echo "";
+    }
+    ?>"
+    document.getElementById('hastaEnv').value=hastaEnv;
+
+		var enviadas="<?php
+		if($_POST['enviadas']){
+			echo $_POST['enviadas'];
+		}
+		?>";
+		if(enviadas==1){
+			document.getElementById('env-1').checked=true;
+		}
+		if(enviadas==2){
+			document.getElementById('env-2').checked=true;
+		}
+		if(enviadas==3){
+			document.getElementById('env-3').checked=true;
+		}
+
+		var radicadas="<?php
+		if($_POST['radicadas']){
+			echo $_POST['radicadas'];
+		}
+		?>";
+		if(radicadas==1){
+			document.getElementById('rad-1').checked=true;
+		}
+		if(radicadas==2){
+			document.getElementById('rad-2').checked=true;
+		}
+		if(radicadas==3){
+			document.getElementById('rad-3').checked=true;
+		}
+		
   }
   
+	function subeRadicado1(){
+		var radicado = document.getElementById('m-radicado').files[0];
+		var opcion = document.getElementById('m-opcion').value;
+		var id = document.getElementById('m-id').value;
+		var fradicado = document.getElementById('m-fradicado').value;
+
+		if(opcion==2 && !fradicado){
+			document.getElementById('m-fradicado').focus();
+			swal({
+				 html: '¡Debe seleccionar la fecha del radicado!',
+				 type: "error",
+				 showConfirmButton: true,
+				 confirmButtonText: "Cerrar"
+				 }).then(function(result){
+				 if (result.value) {					 
+				 }
+			 });
+			return
+		}
+
+    if(!radicado){
+			document.getElementById('m-radicado').focus();
+			swal({
+				 html: '¡Debe seleccionar el radicado!',
+				 type: "error",
+				 showConfirmButton: true,
+				 confirmButtonText: "Cerrar"
+				 }).then(function(result){
+				 if (result.value) {					 
+				 }
+			 });
+			return
+		}
+
+		var datos = new FormData();
+    datos.append("radicado",radicado);
+		datos.append("opcion",opcion);
+		datos.append("id",id);
+		datos.append("fradicado",fradicado);
+    datos.append("proced",3);
+
+    $.ajax({
+				url:"ajax.php",
+				method: "POST",
+				data: datos,
+				cache: false,
+				contentType: false,
+				processData: false,
+				success: function(respuesta){
+          var res = respuesta.trim();
+          if(res=='ok'){
+						$('#subirRadicado').modal('hide');
+						swal({
+							html: '¡Radicado subido con exito!',
+							type: "success",
+							showConfirmButton: true,
+							confirmButtonText: "Cerrar"
+						}).then(function(result){
+						if (result.value) {	
+							window.location.reload();
+						}
+						});
+            
+          }
+				}
+			});
+	}
+
+	function subeRadicado(opcion,id){
+
+		document.getElementById('m-radicado').value='';
+		document.getElementById('m-fradicado').value='';
+		document.getElementById('m-opcion').value=opcion;
+		document.getElementById('m-id').value=id;
+
+		document.getElementById('div-radicado').classList.remove('span-1', 'span-2');
+
+		if(opcion==1){
+			document.getElementById('div-fecRad').style.display='none'
+			document.getElementById('div-radicado').classList.add('span-2')
+		}
+		if(opcion==2){
+			document.getElementById('div-fecRad').style.display=''
+			document.getElementById('div-radicado').classList.add('span-1')
+
+		}
+
+		
+
+		$('#subirRadicado').modal({backdrop: 'static', keyboard: false});
+
+	}
+
+
+  function validarArchivo1(archivo){
+          
+    if((archivo[0]["size"] > 1100000) || (archivo[0]["type"]!="application/pdf") ){
+          
+      $("#m-radicado").val("");
+      
+      swal({
+          title: "Error al subir el archivo",
+          text: "¡El archivo no debe pesar más de 1000B y ser en formato PDF!",
+          type: "error",
+          confirmButtonText: "¡Cerrar!"
+        });
+    }
+  }
+
 </script>
 <style>
 	.div-form{
@@ -215,23 +428,84 @@ include('encabezado1.php');
 			<div class="span-2">
 				<input type="text" name="asunto" id="asunto" class="campo-xs Arial12">
 			</div>
-			<div class="span-1">
-				Desde:
-			</div>
-			<div class="span-2">
-				<input type="date" name="desde" id="desde" class="campo-xs Arial12">
-			</div>
-			<div class="span-1">
-				Hasta:
-			</div>
-			<div class="span-2">
-				<input type="date" name="hasta" id="hasta" class="campo-xs Arial12">
-			</div>	
-
 		</div>
 		<br>
-		<div class="grid columna-6 Arial14" style="width: 800px">
-			<div class="span-6" align="right">
+		<div class="grid columna-4 Arial14" style="width: 800px">
+			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
+				<div class="grid columna-2" align="left" style="grid-row-gap: 3px">
+					<div class="span-2">
+						Fecha de creación
+					</div>
+					<div class="span-1">
+						Desde:
+						<input type="date" name="desde" id="desde" class="campo-xs Arial12">
+					</div>
+					<div class="span-1">
+						Hasta:
+						<input type="date" name="hasta" id="hasta" class="campo-xs Arial12">
+					</div>
+				</div>
+			</div>
+			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
+				<div  class="grid columna-2" align="left" style="grid-row-gap: 3px">
+					<div class="span-2">
+						Fecha de envio
+					</div>
+					<div class="span-1">
+						Desde
+						<input type="date" name="desdeEnv" id="desdeEnv" class="campo-xs Arial12">
+					</div>
+					<div class="span-1">
+						Hasta
+						<input type="date" name="hastaEnv" id="hastaEnv" class="campo-xs Arial12">
+					</div>							
+				</div>
+			</div>
+			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
+				<div  class="grid columna-4" align="left" style="grid-row-gap: 3px">
+					<div class="span-3">
+						Enviadas
+					</div>
+					<div class="span-1">
+						<input type="radio" name="enviadas" id="env-1" value="1">
+					</div>
+					<div class="span-3">
+						Sin Enviar
+					</div>
+					<div class="span-1">
+						<input type="radio" name="enviadas" id="env-2" value="2" >
+					</div>
+					<div class="span-3">
+						Todas
+					</div>
+					<div class="span-1">
+						<input type="radio" name="enviadas" id="env-3" value="3" >
+					</div>
+				</div>
+			</div>
+			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
+				<div  class="grid columna-4" align="left" style="grid-row-gap: 3px">
+					<div class="span-3">
+						Con Radicado
+					</div>
+					<div class="span-1">
+						<input type="radio" name="radicadas" id="rad-1" value="1" >
+					</div>
+					<div class="span-3">
+						Sin Radicar
+					</div>
+					<div class="span-1">
+						<input type="radio" name="radicadas" id="rad-2" value="2" >
+					</div>
+					<div class="span-3">
+						Todas
+					</div>
+					<div class="span-1">
+						<input type="radio" name="radicadas" id="rad-3" value="3" >
+					</div>
+				</div>
+			</div>
+			<div class="span-4" align="right">
 				<button type="submit" name="boton" class="btn btn-verde btn-xs">Buscar</button>
 				<button type="reset" class="btn btn-rojo btn-xs pull-left">Limpiar Filtro</button>
 			</div>
@@ -255,11 +529,13 @@ if(isset($_POST['boton'])){
 					<td>CREADOR</td>
 					<td>FIRMANTE</td>
 					<td>DESTINATARIO</td>
-					<td>FECHA</td>
+					<td width="100px">FECHA CREACION</td>
+					<td width="100px">FECHA ENVIO</td>
           <td>ASUNTO</td>
-					<td>ANEXOS</td>
-					<td>&nbsp;</td> 
-					</tr>
+					<td width="95px">ANEXOS</td>
+					<td width="95px">ACCIONES</td>
+					<td width="95px">VER</td>
+				</tr>
 				<?php
 					if($tablacartas){
 						foreach($tablacartas as $key=>$j){
@@ -268,7 +544,8 @@ if(isset($_POST['boton'])){
 								<td valign="top"><?php echo $j['creador']; ?></td>
 								<td valign="top"><?php echo $j['firmante']; ?></td>
 								<td valign="top"><?php echo $j['destinatario']; ?></td>								
-								<td valign="top" align="center"><?php echo $j['fecha']; ?></td>
+								<td valign="top" align="center"><?php echo fechaactual3($j['fecha']); ?></td>
+								<td valign="top" align="center"><?php echo $j['fenvio'] ? fechaactual3($j['fenvio']) : "Sin enviar"; ?></td>
                 <td valign="top"><?php echo $j['asunto']; ?></td>
 								<td valign="top">
 									<?php
@@ -276,9 +553,7 @@ if(isset($_POST['boton'])){
 										foreach($tablacartas[$key]['anexos'] as $llave=>$i){
 											echo $i['nombre'];
 											?>
-											<br>
-											<a href="<?php echo $i['vinculo'] ?>" class="btn btn-rosa btn-xs1" target="_blank" >Ver anexo</a>
-											<br>
+											<a href="<?php echo $i['vinculo'] ?>" class="btn btn-rosa btn-xs1 btn-block" target="_blank" style="margin:0">Ver anexo</a>
 											<?php
 										}
 									}else{
@@ -287,7 +562,39 @@ if(isset($_POST['boton'])){
 									?>
 								</td>
 								<td valign="top" align="center">
-									<a href="carta-pdf.php?carta=<?php echo $key?>" class="btn btn-rosa btn-xs1" target="_blank">Ver carta</a>
+									
+									<?php 
+									if($j['enviada']==0){
+										?>
+										<a href="editaCarta.php?carta=<?php echo $key?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Editar carta</a>
+										<?php
+										if($j['email']){
+											?>
+											<a href="enviaCarta.php?carta=<?php echo $key?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Enviar carta</a>
+											<?php
+										}
+									}
+									if($j['enviada']==1 and !$j['radicado']){
+										?>
+										<button type="button" class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(1,<?php echo $key?>)" style="margin-top:2px">Subir Radicado</button>
+										<?php
+									}
+									if(!$j['email'] and !$j['radicado']){
+										?>
+										<button type="button" class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(2,<?php echo $key?>)"style="margin-top:2px">Subir Radicado</button>
+										<?php
+									}
+									?>
+								</td>
+								<td valign="top" align="center">
+									<a href="carta-pdf.php?carta=<?php echo $key?>" class="btn btn-rosa btn-xs1 btn-block" target="_blank" style="margin-top:2px">Ver carta</a>
+									<?php 
+									if($j['radicado']){
+										?>
+										<a href="<?php echo $j['radicado'] ?>" class="btn btn-rosa btn-xs1 btn-block" target="_blank" style="margin-top:2px">Ver radicado</a>
+										<?php
+									}
+									?>
 								</td>   
 							</tr>	
 							<?php
@@ -295,7 +602,7 @@ if(isset($_POST['boton'])){
 					}else{
 						?>
 						<tr>
-							<td colspan="7" align="center">NO HAY SOLICITUDES QUE COINCIDAN CON LOS PARAMETROS DE BUSQUEDA</td>
+							<td colspan="9" align="center">NO HAY SOLICITUDES QUE COINCIDAN CON LOS PARAMETROS DE BUSQUEDA</td>
 						</tr>
 						<?php
 					}
@@ -310,6 +617,42 @@ if(isset($_POST['boton'])){
 <br><br>
   
 </div>
+
+<div id="subirRadicado" class="modal fade" role="dialog" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background:#d8d8d8; color:black">
+          <h5 class="modal-title">SUBIR RADICADO</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+			<div class="modal-body">
+        <div>
+					<input type="hidden" id="m-opcion">
+					<input type="hidden" id="m-id">
+					<div class="grid columna-2">
+						<div class="span-1" id="div-fecRad" style="display:none">
+							Fecha del Radicado
+							<input type="date" class="campo-xs" id="m-fradicado">
+						</div>
+						<div class="span-1" id="div-radicado">
+							Formato PDF max 1000B
+          		<input type="file" name="m-radicado" id="m-radicado"  class="campo-xs Arial12" onChange="validarArchivo1(this.files)" >
+						</div>
+					</div>
+					<br>
+					<div align="center">
+						<button type="button" class="btn btn-rosa btn-sm"  onClick="subeRadicado1()">Subir</button>
+					</div>
+          
+        </div>	
+			</div>
+			<div class="modal-footer">					
+				<button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Cerrar</button>
+			</div>
+    </div>
+  </div>
 
 <?php 
 	mysql_close($datos);
