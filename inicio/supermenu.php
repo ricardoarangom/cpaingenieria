@@ -99,7 +99,7 @@
 					?>
 					<li><a href="#" class="a-ppal" onClick="visibilizarSuperMenu('4')">TIQUETES</a></li>
 					<li><a href="#" class="a-ppal" onClick="visibilizarSuperMenu('6')">CARTAS</a></li>
-					<li><a href="#" class="a-ppal" onClick="visibilizarSuperMenu('7')">CONTRATOS</a></li>	
+					<!-- <li><a href="#" class="a-ppal" onClick="visibilizarSuperMenu('7')">CONTRATOS</a></li>	 -->
 					<?php
 					if(($_SESSION['nivel']==3 and $_SESSION['snivel']==1) or $_SESSION['nivel']==0){
 						?>
