@@ -81,7 +81,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
               <p style="padding:0 20px" class="Arial16">
               <table border="0" width="100%">
               <tr><td>'.('Bogotá D.C., '.fechaactual6(date("Y-m-d"))).'</td>
-              <td align="right">CPA-'.sprintf("%03d",$filaCarta['IdCarta']).'-'.date("Y",strtotime($filaCarta['fecha'])).'</td></tr>
+              <td align="right">CPA-'.sprintf("%03d",$filaCarta['consAno']).'-'.$filaCarta['ano'].'</td></tr>
               </table>
               <br><br><br><br>
               Señores<br>

@@ -34,7 +34,9 @@ $buscaCarta = "SELECT
                     cargo,
                     firma,
                     email,
-                    fenvio
+                    fenvio,
+                    ano,
+                    consAno
                 FROM
                     cartas left join firmas on cartas.IdFirma=firmas.IdFirma
                 WHERE
@@ -253,7 +255,7 @@ if($filaCarta['fenvio']){
 }
 
 $pdf->SetFont('Arial','B',10);
-$pdf->Cell(85,4.5,utf8_decode('CPA-'.sprintf("%03d",$filaCarta['IdCarta']))."-".date("Y",strtotime($filaCarta['fecha'])),0,1,'R');
+$pdf->Cell(85,4.5,utf8_decode('CPA-'.sprintf("%03d",$filaCarta['consAno']))."-".$filaCarta['ano'],0,1,'R');
 
 
 
