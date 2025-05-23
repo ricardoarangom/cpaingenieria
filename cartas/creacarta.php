@@ -1,9 +1,11 @@
 <?php 
 require_once('../connections/datos.php');
+$ano=date("Y");
 $buscaCartas = "SELECT 
-                    MAX(IdCarta) as ultimo
+                    MAX(consAno) as ultimo
                 FROM
-                    cartas;";
+                    cartas
+                where ano=".$ano;
 $resultadoCartas = mysql_query($buscaCartas, $datos) or die(mysql_error());
 $filaCartas = mysql_fetch_assoc($resultadoCartas);
 $totalfilas_buscaCartas = mysql_num_rows($resultadoCartas);

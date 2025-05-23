@@ -65,9 +65,9 @@ if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST[
 		}
 	}
 }
-echo $buscador;
+
 $buscador=substr($buscador, 0, -4);
-echo $buscador;
+
 
 $buscaCartas = "SELECT 
 									nombre,

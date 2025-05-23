@@ -33,11 +33,22 @@ if(isset($_POST['boton1'])){
   // print_r($_FILES);
   // echo "</pre>";
 
+  $ano=date("Y");
+
+  $buscaCartas = "SELECT 
+                    MAX(consAno) as ultimo
+                FROM
+                    cartas
+                where ano=".$ano;
+  $resultadoCartas = mysql_query($buscaCartas, $datos) or die(mysql_error());
+  $filaCartas = mysql_fetch_assoc($resultadoCartas);
+  $totalfilas_buscaCartas = mysql_num_rows($resultadoCartas);
+
   
 
   
-  $insertaCarta="INSERT INTO cartas (destinatario1, destinatario2, destinatario3, destinatario4, destinatario5, asunto, fecha, IdUsuario, firmante, cargo, IdFirma,      email) 
-                 VALUES('".$_POST['destinatario1']."','".$_POST['destinatario2']."','".$_POST['destinatario3']."','".$_POST['destinatario4']."','".$_POST['destinatario5']."','".$_POST['asunto']."','".date("Y-m-d")."',".$usuario.",'".$_POST['firmante']."','".$_POST['cargo']."', ".$_POST['IdFirma'].", '".$_POST['email']."')";
+  $insertaCarta="INSERT INTO cartas (destinatario1, destinatario2, destinatario3, destinatario4, destinatario5, asunto, fecha, IdUsuario, firmante, cargo, IdFirma, email, ano, consAno) 
+                 VALUES('".$_POST['destinatario1']."','".$_POST['destinatario2']."','".$_POST['destinatario3']."','".$_POST['destinatario4']."','".$_POST['destinatario5']."','".$_POST['asunto']."','".date("Y-m-d")."',".$usuario.",'".$_POST['firmante']."','".$_POST['cargo']."', ".$_POST['IdFirma'].", '".$_POST['email']."', ".$ano.", ".($filaCartas['ultimo']+1).")";
   // echo $insertaCarta."<br>";
 
   // exit();

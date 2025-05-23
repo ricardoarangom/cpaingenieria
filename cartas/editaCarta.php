@@ -18,7 +18,9 @@ $buscaCarta =  "SELECT
                   cartas.cargo,
                   firma,
                   email,
-                  cartas.IdFirma
+                  cartas.IdFirma,
+                  ano,
+                  consAno
                 FROM
                     (cartas
                     LEFT JOIN firmas ON cartas.Idfirma = firmas.Idfirma)
@@ -242,7 +244,7 @@ include('encabezado1.php')
         Bogotá D.C., <?php echo fechaactual6(date("Y-m-d")) ?>
       </div>
       <div class="span-1" align="right">
-        <strong>CPA-<?php  echo sprintf("%03d",$filaCarta['IdCarta'])."-". date("Y") ?></strong>
+        <strong>CPA-<?php  echo sprintf("%03d",$filaCarta['consAno'])."-". $filaCarta['ano'] ?></strong>
       </div>
     </div>
     
