@@ -20,7 +20,8 @@ $buscaCarta =  "SELECT
                   email,
                   cartas.IdFirma,
                   ano,
-                  consAno
+                  consAno,
+                  consello
                 FROM
                     (cartas
                     LEFT JOIN firmas ON cartas.Idfirma = firmas.Idfirma)
@@ -40,6 +41,7 @@ $filaParrafos = mysql_fetch_assoc($resultadoParrafos);
 $totalfilas_buscaParrafos = mysql_num_rows($resultadoParrafos);
 
 $buscaAnexos = "SELECT 
+                    IdAnexo,
                     nombre,
                     vinculo
                 FROM
@@ -57,6 +59,7 @@ include('encabezado.php')
   document.addEventListener('DOMContentLoaded', function() {
     
     cargaFirmas();
+    consello();
 
   });
 
@@ -152,7 +155,9 @@ include('encabezado.php')
   }
 
   function cargaFirmas(){
+    var usuario = <?php echo $usuario ?>;
     var datos = new FormData();
+    datos.append("usuario",usuario);
 		datos.append("proced",1);
 
     $.ajax({
@@ -172,6 +177,7 @@ include('encabezado.php')
 
   function subeFirma(){
     var firma = document.getElementById('m-firma').files[0];
+    var usuario = <?php echo $usuario ?>;
 
     if(!firma){
 			document.getElementById('m-firma').focus();
@@ -188,6 +194,7 @@ include('encabezado.php')
 		}
 
     var datos = new FormData();
+    datos.append("usuario",usuario);
     datos.append("firma",firma);
     datos.append("proced",2);
 
@@ -230,7 +237,83 @@ include('encabezado.php')
     $('#IdFirma').val(valor);
 
   }
+
+  function consello(){
+    var consello = <?php echo $filaCarta['consello'] ?>;
+
+    if(consello==1){
+      document.getElementById('consello-si').checked=1;
+    }
+    if(consello==0){
+      document.getElementById('consello-no').checked=1;
+    }
+  }
+
+  function eliminaAnexo(id){
+    
+    var anexosEliminados = document.getElementById('anexosEliminados').value;
+    if(anexosEliminados){
+      anexosEliminados=anexosEliminados+','+id
+    }else{
+      anexosEliminados=anexosEliminados+id
+    }
+    document.getElementById('anexosEliminados').value=anexosEliminados
+    document.getElementById('filaAnexo-'+id).style.display='none';
+    
+  }
 </script>
+<style>
+  .div-radio input[type="radio"]{
+    display: none
+  }
+
+  .div-radio label {
+    font-family: Arial;
+    font-size: 14px;
+    margin: 0;
+    width: 100%;
+    /* background: rgba(0,0,0,.1); */
+    /* padding: 0 10px 0 24px;
+    display: inline-block; */
+    position: relative;
+    border-radius: 3px;
+    cursor: pointer;
+		padding: 0 0; 
+    display: flex;
+    justify-content: center;
+    -webkit-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+		
+  }
+
+	.div-radio label:before{
+    /* content: "";
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    background: none;
+    border: 1px solid #000;
+    border-radius: 50%;
+    position: absolute;
+    left: 5px;
+    top: 3px; */
+  }
+  
+  .div-radio input[type="radio"]:checked + label{
+    background: #FF9E7E;
+    padding: 0 0; 
+    display: flex;
+    justify-content: center;
+    
+  }
+  
+  .div-radio input[type="radio"]:checked + label:before{
+    /*background: #007bff;
+    border: 1px solid #007bff;*/
+    display: none;
+  }
+</style>
 <?php 
 include('encabezado1.php')
 ?>
@@ -299,6 +382,17 @@ include('encabezado1.php')
     </div>
     
     CPA INGENIERIA S.A.S.<br>
+    Con sello:
+    <div class="grid columna-2" style="max-width:300px">
+      <div class="span-1 div-radio">
+        <input type="radio" name="consello" id="consello-si" value="1" >
+        <label for="consello-si">Sí</label>
+      </div>
+      <div class="span-1 div-radio">
+        <input type="radio" name="consello" id="consello-no" value="0" >
+        <label for="consello-no">No</label>
+      </div>
+    </div>
     <?php 
     if($totalfilas_buscaAnexos>0){
       ?>
@@ -307,25 +401,22 @@ include('encabezado1.php')
       <?php
       do{
         ?>
-        <tr>
+        <tr id="filaAnexo-<?php echo $filaAnexos['IdAnexo'] ?>">
           <td>
             <?php echo $filaAnexos['nombre'] ?>
           </td>
           <td>
-            <a href="<?php echo $filaAnexos['vinculo'] ?>" class="btn btn-rosa btn-xs1 " >Ver anexo</a>
+            <a href="<?php echo $filaAnexos['vinculo'] ?>" class="btn btn-rosa btn-xs1 " target="_blanck" >Ver anexo</a>
+          </td>
+          <td>
+            <button type="button" class="btn btn-rojo btn-xs1 " onClick="eliminaAnexo(<?php echo $filaAnexos['IdAnexo'] ?>)">Eliminar anexo</button>
           </td>
         </tr>
-        <div class="span-1">
-          
-        </div>
-        <div class="span-1">
-          
-          
-        </div>
         <?php
       }while($filaAnexos = mysql_fetch_assoc($resultadoAnexos));
       ?>
       </table>
+      <input type="hidden" id="anexosEliminados" name="anexosEliminados" >
       <?php
     }else{
       ?>

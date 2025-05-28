@@ -113,7 +113,10 @@ include('encabezado.php')
   }
 
   function cargaFirmas(){
+    var usuario = <?php echo $usuario ?>;
+    
     var datos = new FormData();
+    datos.append("usuario",usuario);
 		datos.append("proced",1);
 
     $.ajax({
@@ -133,6 +136,7 @@ include('encabezado.php')
 
   function subeFirma(){
     var firma = document.getElementById('m-firma').files[0];
+    var usuario = <?php echo $usuario ?>;
 
     if(!firma){
 			document.getElementById('m-firma').focus();
@@ -149,6 +153,7 @@ include('encabezado.php')
 		}
 
     var datos = new FormData();
+    datos.append("usuario",usuario);
     datos.append("firma",firma);
     datos.append("proced",2);
 
@@ -192,6 +197,58 @@ include('encabezado.php')
 
   }
 </script>
+<style>
+  .div-radio input[type="radio"]{
+    display: none
+  }
+
+  .div-radio label {
+    font-family: Arial;
+    font-size: 14px;
+    margin: 0;
+    width: 100%;
+    /* background: rgba(0,0,0,.1); */
+    /* padding: 0 10px 0 24px;
+    display: inline-block; */
+    position: relative;
+    border-radius: 3px;
+    cursor: pointer;
+		padding: 0 0; 
+    display: flex;
+    justify-content: center;
+    -webkit-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+		
+  }
+
+	.div-radio label:before{
+    /* content: "";
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    background: none;
+    border: 1px solid #000;
+    border-radius: 50%;
+    position: absolute;
+    left: 5px;
+    top: 3px; */
+  }
+  
+  .div-radio input[type="radio"]:checked + label{
+    background: #FF9E7E;
+    padding: 0 0; 
+    display: flex;
+    justify-content: center;
+    
+  }
+  
+  .div-radio input[type="radio"]:checked + label:before{
+    /*background: #007bff;
+    border: 1px solid #007bff;*/
+    display: none;
+  }
+</style>
 <?php 
 include('encabezado1.php')
 ?>
@@ -212,9 +269,9 @@ include('encabezado1.php')
     <br><br>
     Señor(es)
     <div style="width:350px">
-      <input type="text" name="destinatario1" id="destinatario1" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)" required>
-      <input type="text" name="destinatario2" id="destinatario2" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)">
-      <input type="text" name="destinatario3" id="destinatario3" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el destinatario" onBlur="aMayusculas(this.value,this.id)">
+      <input type="text" name="destinatario1" id="destinatario1" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese la empresa o persona" onBlur="aMayusculas(this.value,this.id)" required>
+      <input type="text" name="destinatario2" id="destinatario2" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese la persona" onBlur="aMayusculas(this.value,this.id)">
+      <input type="text" name="destinatario3" id="destinatario3" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el cargo" onBlur="aMayusculas(this.value,this.id)">
       <input type="text" name="destinatario4" id="destinatario4" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese la ciudad" onBlur="aMayusculas(this.value,this.id)" required>
       <input type="text" name="email" id="email" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="email de envio">
     </div>
@@ -251,6 +308,17 @@ include('encabezado1.php')
     </div>
     
     CPA INGENIERIA S.A.S.<br>
+    Con sello:
+    <div class="grid columna-2" style="max-width:300px">
+      <div class="span-1 div-radio">
+        <input type="radio" name="consello" id="consello-si" value="1" >
+        <label for="consello-si">Sí</label>
+      </div>
+      <div class="span-1 div-radio">
+        <input type="radio" name="consello" id="consello-no" value="0" checked >
+        <label for="consello-no">No</label>
+      </div>
+    </div>
     <div class="Arial12">
       <br>
       ANEXOS:(Formato PDF max 1MB)<br> 

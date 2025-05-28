@@ -29,6 +29,8 @@ if(isset($_POST['boton1'])){
   // print_r($_POST);
   // echo "</pre>";
 
+  // exit();
+
   // echo "<pre>";
   // print_r($_FILES);
   // echo "</pre>";
@@ -44,11 +46,15 @@ if(isset($_POST['boton1'])){
   $filaCartas = mysql_fetch_assoc($resultadoCartas);
   $totalfilas_buscaCartas = mysql_num_rows($resultadoCartas);
 
-  
+  if($_POST['IdFirma']){
+    $IdFirma=$_POST['IdFirma'];
+  }else{
+    $IdFirma=0;
+  }
 
   
-  $insertaCarta="INSERT INTO cartas (destinatario1, destinatario2, destinatario3, destinatario4, destinatario5, asunto, fecha, IdUsuario, firmante, cargo, IdFirma, email, ano, consAno) 
-                 VALUES('".$_POST['destinatario1']."','".$_POST['destinatario2']."','".$_POST['destinatario3']."','".$_POST['destinatario4']."','".$_POST['destinatario5']."','".$_POST['asunto']."','".date("Y-m-d")."',".$usuario.",'".$_POST['firmante']."','".$_POST['cargo']."', ".$_POST['IdFirma'].", '".$_POST['email']."', ".$ano.", ".($filaCartas['ultimo']+1).")";
+  $insertaCarta="INSERT INTO cartas (destinatario1, destinatario2, destinatario3, destinatario4, destinatario5, asunto, fecha, IdUsuario, firmante, cargo, IdFirma, email, ano, consAno, consello) 
+                 VALUES('".$_POST['destinatario1']."','".$_POST['destinatario2']."','".$_POST['destinatario3']."','".$_POST['destinatario4']."','".$_POST['destinatario5']."','".$_POST['asunto']."','".date("Y-m-d")."',".$usuario.",'".$_POST['firmante']."','".$_POST['cargo']."', ".$IdFirma.", '".$_POST['email']."', ".$ano.", ".($filaCartas['ultimo']+1).", ".$_POST['consello'].")";
   // echo $insertaCarta."<br>";
 
   // exit();
@@ -116,12 +122,33 @@ if(isset($_POST['boton2'])){
   // print_r($_POST);
   // echo "</pre>";
 
+  if($_POST['anexosEliminados']){
+    $anexosEliminados=explode(",",$_POST['anexosEliminados']);
+    
+    foreach($anexosEliminados as $key=>$j){
+      $buscaAmexos = "SELECT 
+                          IdAnexo, vinculo
+                      FROM
+                          anexoscartas
+                      WHERE
+                          IdAnexo = ".$j;
+      $resultadoAmexos = mysql_query($buscaAmexos, $datos) or die(mysql_error());
+      $filaAmexos = mysql_fetch_assoc($resultadoAmexos);
+      $totalfilas_buscaAmexos = mysql_num_rows($resultadoAmexos);
+      unlink($filaAmexos['vinculo']);
+
+      $borrarAnexo="DELETE FROM anexoscartas WHERE IdAnexo = ".$j;
+      if ($results=@mysql_query($borrarAnexo)){
+      }
+    }
+  }
+
   // echo "<pre>";
   // print_r($_FILES);
   // echo "</pre>";
 
   $grabado=0;
-  $actualiza="UPDATE cartas set destinatario1='" . $_POST['destinatario1'] . "', destinatario2='" . $_POST['destinatario2'] . "', destinatario3='" . $_POST['destinatario3'] . "', destinatario4='" . $_POST['destinatario4'] . "', destinatario5='" . $_POST['destinatario5'] . "', asunto='" . $_POST['asunto'] . "', firmante='" . $_POST['firmante'] . "', cargo='" . $_POST['cargo'] . "', IdFirma=" . $_POST['IdFirma'] . ", email='" . $_POST['email'] . "' where IdCarta=" . $_POST['IdCarta'];
+  $actualiza="UPDATE cartas set destinatario1='" . $_POST['destinatario1'] . "', destinatario2='" . $_POST['destinatario2'] . "', destinatario3='" . $_POST['destinatario3'] . "', destinatario4='" . $_POST['destinatario4'] . "', destinatario5='" . $_POST['destinatario5'] . "', asunto='" . $_POST['asunto'] . "', firmante='" . $_POST['firmante'] . "', cargo='" . $_POST['cargo'] . "', IdFirma=" . $_POST['IdFirma'] . ", email='" . $_POST['email'] . "', consello=".$_POST['consello']." where IdCarta=" . $_POST['IdCarta'];
   if ($results=@mysql_query($actualiza)){
     $grabado=1;
   }
@@ -167,6 +194,8 @@ if(isset($_POST['boton2'])){
       }
     }
   }
+
+  
   if($grabado==1){
     $mensaje='<div>LA CARTA FUE ACTUALIZADA CON EXITO</div><div></div>';
     ?>

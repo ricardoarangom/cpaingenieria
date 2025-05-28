@@ -4,7 +4,7 @@ require_once('../funciones.php');
 
 if(($_POST['proced']==1)){
 
-  $buscaFirmas  = "SELECT * FROM firmas";
+  $buscaFirmas  = "SELECT * FROM firmas where IdUsuario=".$_POST['usuario'];
   $resultadoFirmas = mysql_query($buscaFirmas, $datos) or die(mysql_error());
   $filaFirmas = mysql_fetch_assoc($resultadoFirmas);
   $totalfilas_buscaFirmas = mysql_num_rows($resultadoFirmas);
@@ -48,7 +48,7 @@ if(($_POST['proced']==2)){
   $ruta="../firmas/firma-".$ultimo.".png";
   move_uploaded_file($_FILES['firma']['tmp_name'],$ruta);
 
-  $inserta = "INSERT INTO firmas (firma) values ('".$ruta."')";
+  $inserta = "INSERT INTO firmas (firma, IdUsuario) values ('".$ruta."', ".$_POST['usuario'].")";
 
   if ($results=@mysql_query($inserta)){
 		echo "ok";
@@ -82,4 +82,16 @@ if(($_POST['proced']==3)){
 
 }
 
+if(($_POST['proced']==4)){
+
+  // echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
+
+  $actualiza="UPDATE cartas set anulada=1  where IdCarta=" . $_POST['IdCarta'];
+
+  if ($results=@mysql_query($actualiza)){
+		echo "ok";
+	}
+}
 ?>

@@ -6,7 +6,7 @@ include('encabezado.php');
 // print_r($_POST);
 // echo "</pre>";
 
-if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST['desde'] and !$_POST['hasta'] and !$_POST['destinatario'] and !$_POST['desdeEnv'] and !$_POST['hastaEnv'] and !$_POST['enviadas'] and !$_POST['radicadas']){
+if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST['desde'] and !$_POST['hasta'] and !$_POST['destinatario'] and !$_POST['desdeEnv'] and !$_POST['hastaEnv'] and !$_POST['enviadas'] and !$_POST['radicadas'] and !$_POST['anuladas'] and !$_POST['ano'] and !$_POST['consAno']){
 	$buscador1="";
 }else{
 	$buscador1=" WHERE ";
@@ -64,10 +64,30 @@ if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST[
 			$buscador.=" (radicado is not null or radicado is null) and ";
 		}
 	}
+
+	if($_POST['anuladas']){
+		if($_POST['anuladas']==1){
+			$buscador.=" anulada=0 and ";
+		}
+		if($_POST['anuladas']==2){
+			$buscador.=" anulada=1 and ";
+		}
+		if($_POST['anuladas']==3){
+			$buscador.=" (anulada=0 or anulada=1) and ";
+		}
+	}
+
+	if($_POST['ano']){
+    $buscador.=" ano='".$_POST['ano']."' and ";
+  }
+
+	if($_POST['consAno']){
+    $buscador.=" consAno=".$_POST['consAno']." and ";
+  }
 }
 
 $buscador=substr($buscador, 0, -4);
-
+echo $buscador;
 
 $buscaCartas = "SELECT 
 									nombre,
@@ -86,7 +106,10 @@ $buscaCartas = "SELECT
 									cartas.cargo,
 									fenvio,
 									email,
-									radicado									
+									radicado,
+									ano,
+									consAno,
+									anulada								
 							FROM
 									(cartas
 									LEFT JOIN usuarios ON cartas.IdUsuario = usuarios.IdUsuario)".$buscador1." ".$buscador."";
@@ -103,6 +126,15 @@ $buscaAnexos = "SELECT
 $resultadoAnexos = mysql_query($buscaAnexos, $datos) or die(mysql_error());
 $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
 $totalfilas_buscaAnexos = mysql_num_rows($resultadoAnexos);
+
+$buscaAnos = "SELECT 
+									ano
+							FROM
+									cartas
+							GROUP BY ano";
+$resultadoAnos = mysql_query($buscaAnos, $datos) or die(mysql_error());
+$filaAnos = mysql_fetch_assoc($resultadoAnos);
+$totalfilas_buscaAnos = mysql_num_rows($resultadoAnos);
 ?>
 <?php
 mysql_select_db($database_datos, $datos);
@@ -123,7 +155,8 @@ if($totalfilas_buscaCartas>0){
 		$tablacartas[$filaCartas['IdCarta']]['fenvio']=$filaCartas['fenvio'];
 		$tablacartas[$filaCartas['IdCarta']]['email']=$filaCartas['email'];
 		$tablacartas[$filaCartas['IdCarta']]['radicado']=$filaCartas['radicado'];
-
+		$tablacartas[$filaCartas['IdCarta']]['consecutivo']="CPA-".sprintf("%03d",$filaCartas['consAno'])."-".$filaCartas['ano'];
+		$tablacartas[$filaCartas['IdCarta']]['anulada']=$filaCartas['anulada'];
 
 	} while ($filaCartas = mysql_fetch_assoc($resultadoCartas));
 }
@@ -261,6 +294,39 @@ do{
 		if(radicadas==3){
 			document.getElementById('rad-3').checked=true;
 		}
+
+		var anuladas="<?php
+		if($_POST['anuladas']){
+			echo $_POST['anuladas'];
+		}
+		?>";
+		if(anuladas==1){
+			document.getElementById('anu-1').checked=true;
+		}
+		if(anuladas==2){
+			document.getElementById('anu-2').checked=true;
+		}
+		if(anuladas==3){
+			document.getElementById('anu-3').checked=true;
+		}
+
+		var ano="<?php 
+    if($_POST){
+      echo $_POST['ano'];
+    }else{
+      echo "";
+    }
+    ?>"
+    document.getElementById('ano').value=ano;
+
+		var consAno="<?php 
+    if($_POST){
+      echo $_POST['consAno'];
+    }else{
+      echo "";
+    }
+    ?>"
+    document.getElementById('consAno').value=consAno;
 		
   }
   
@@ -373,6 +439,47 @@ do{
     }
   }
 
+	function eliminar(cons,id){
+		$('#m-consec').html(cons)
+		$('#m-id2').val(id)
+		$('#confEliminacion').modal({backdrop: 'static', keyboard: false});		
+	}
+
+	function eliminar2(){
+		var IdCarta = document.getElementById('m-id2').value;
+
+		var datos = new FormData();
+    datos.append("IdCarta",IdCarta);
+    datos.append("proced",4);
+
+		$.ajax({
+			url:"ajax.php",
+			method: "POST",
+			data: datos,
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: function(respuesta){
+				var res = respuesta.trim();
+				// console.log(res)
+				if(res=='ok'){
+					$('#confEliminacion').modal('hide');
+					swal({
+						html: '¡La carta ha sido eliminada!',
+						type: "success",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					}).then(function(result){
+					if (result.value) {	
+						window.location.reload();
+					}
+					});
+					
+				}
+			}
+		});
+	}
+
 </script>
 <style>
 	.div-form{
@@ -430,7 +537,7 @@ include('encabezado1.php');
 			</div>
 		</div>
 		<br>
-		<div class="grid columna-4 Arial14" style="width: 800px">
+		<div class="grid columna-6 Arial14" style="width: 800px">
 			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
 				<div class="grid columna-2" align="left" style="grid-row-gap: 3px">
 					<div class="span-2">
@@ -458,6 +565,30 @@ include('encabezado1.php');
 					<div class="span-1">
 						Hasta
 						<input type="date" name="hastaEnv" id="hastaEnv" class="campo-xs Arial12">
+					</div>							
+				</div>
+			</div>
+			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
+				<div  class="grid columna-2" align="left" style="grid-row-gap: 3px">
+					<div class="span-2">
+						Consecutivo
+					</div>
+					<div class="span-1">
+						Año
+						<select name="ano" id="ano" class="campo-xs Arial12">
+							<option value="">Seleccione</option>
+							<?php 
+							do{
+								?>
+								<option value="<?php echo $filaAnos['ano'] ?>"><?php echo $filaAnos['ano'] ?></option>
+								<?php
+							} while ($filaAnos = mysql_fetch_assoc($resultadoAnos));
+							?>
+						</select>
+					</div>
+					<div class="span-1">
+						Numero
+						<input type="number" name="consAno" id="consAno" class="campo-xs Arial12">
 					</div>							
 				</div>
 			</div>
@@ -505,7 +636,29 @@ include('encabezado1.php');
 					</div>
 				</div>
 			</div>
-			<div class="span-4" align="right">
+			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
+				<div  class="grid columna-4" align="left" style="grid-row-gap: 3px">
+					<div class="span-3">
+						Sin eliminar
+					</div>
+					<div class="span-1">
+						<input type="radio" name="anuladas" id="anu-1" value="1" checked>
+					</div>
+					<div class="span-3">
+						Eliminadas
+					</div>
+					<div class="span-1">
+						<input type="radio" name="anuladas" id="anu-2" value="2" >
+					</div>
+					<div class="span-3">
+						Todas
+					</div>
+					<div class="span-1">
+						<input type="radio" name="anuladas" id="anu-3" value="3" >
+					</div>
+				</div>
+			</div>
+			<div class="span-6" align="right">
 				<button type="submit" name="boton" class="btn btn-verde btn-xs">Buscar</button>
 				<button type="reset" class="btn btn-rojo btn-xs pull-left">Limpiar Filtro</button>
 			</div>
@@ -526,6 +679,7 @@ if(isset($_POST['boton'])){
 			<col width="70px"> -->
 			<tbody>
 				<tr class="Arial14 titulos">
+					<td>CONSECUTIVO</td>
 					<td>CREADOR</td>
 					<td>FIRMANTE</td>
 					<td>DESTINATARIO</td>
@@ -541,6 +695,7 @@ if(isset($_POST['boton'])){
 						foreach($tablacartas as $key=>$j){
 							?>
 							<tr class="Arial12">
+								<td valign="top"><?php echo $j['consecutivo']; ?></td>
 								<td valign="top"><?php echo $j['creador']; ?></td>
 								<td valign="top"><?php echo $j['firmante']; ?></td>
 								<td valign="top"><?php echo $j['destinatario']; ?></td>								
@@ -564,7 +719,7 @@ if(isset($_POST['boton'])){
 								<td valign="top" align="center">
 									
 									<?php 
-									if($j['enviada']==0){
+									if($j['enviada']==0 and $j['anulada']==0){
 										?>
 										<a href="editaCarta.php?carta=<?php echo $key?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Editar carta</a>
 										<?php
@@ -574,14 +729,19 @@ if(isset($_POST['boton'])){
 											<?php
 										}
 									}
-									if($j['enviada']==1 and !$j['radicado']){
+									if($j['enviada']==1 and !$j['radicado'] and $j['anulada']==0){
 										?>
 										<button type="button" class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(1,<?php echo $key?>)" style="margin-top:2px">Subir Radicado</button>
 										<?php
 									}
-									if(!$j['email'] and !$j['radicado']){
+									if(!$j['email'] and !$j['radicado'] and $j['anulada']==0){
 										?>
 										<button type="button" class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(2,<?php echo $key?>)"style="margin-top:2px">Subir Radicado</button>
+										<?php
+									}
+									if($j['anulada']==0 and $j['enviada']==0){
+										?>
+										<button type="button" class="btn btn-rojo btn-xs1 btn-block" onClick="eliminar('<?php echo $j['consecutivo']?>',<?php echo $key?>)"style="margin-top:2px">Eliminar</button>
 										<?php
 									}
 									?>
@@ -653,6 +813,36 @@ if(isset($_POST['boton'])){
 			</div>
     </div>
   </div>
+</div>
+
+<div id="confEliminacion" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" style="width: 500px">
+		<div class="modal-content">
+			<!-- <div class="modal-header" style="background:#d8d8d8; color:black;padding: 10px">
+				<h5 class="modal-title Century">Cambiar Entidad</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div> -->
+			<div class="modal-body" align="center">
+        <img src="../imagenes/Icono-Alerta.png" width="100px">
+        <br><br>
+        <h5 align="center">¡VA A ELIMINAR LA CARTA CON CONSECUTIVO!</h5>
+				<h5 align="center" id="m-consec" class="rojo" ></h5>
+				<input type="hidden" id="m-id2">
+        <br>
+        <div class="grid columna-2" style="width: 300px" id="seleccion">
+          <div class="span-1">
+            <button type="button" class="btn btn-azul btn-sm btn-block" data-dismiss="modal" >NO</button>
+          </div>
+          <div class="span-1">
+            <button type="button" class="btn btn-rojo btn-sm btn-block" onClick="eliminar2()" >SI</button>
+          </div>
+        </div>
+			</div>
+		</div>
+	</div>
+</div>
 
 <?php 
 	mysql_close($datos);

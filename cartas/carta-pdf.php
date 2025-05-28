@@ -29,14 +29,16 @@ $buscaCarta = "SELECT
                     destinatario5,
                     asunto,
                     fecha,
-                    IdUsuario,
+                    cartas.IdUsuario,
                     firmante,
                     cargo,
                     firma,
                     email,
                     fenvio,
                     ano,
-                    consAno
+                    consAno,
+                    consello,
+                    anulada
                 FROM
                     cartas left join firmas on cartas.IdFirma=firmas.IdFirma
                 WHERE
@@ -196,6 +198,7 @@ class PDF extends PDF_WriteTag {
     // global $subtitulo;
     global $ancho;
     // global $subtitulo1;
+    global $anulada;
     
     
     $this->SetFont('Arial','',8);
@@ -225,6 +228,13 @@ class PDF extends PDF_WriteTag {
     $this->Image('../imagenes/logofa.png',23,7,70);
     $this->ln(10);
         
+    $this->SetFont('Arial','B',60);
+    $this->SetTextColor(255,220,220);
+    if($anulada==1){
+      $this->TextWithRotation(45,260,'C A R T A    A N U L A D A',60,0);
+    }
+    
+    $this->SetTextColor(0,0,0);
   }
   function Footer()
   {
@@ -234,12 +244,47 @@ class PDF extends PDF_WriteTag {
     
     
   }
+
+  function TextWithDirection($x, $y, $txt, $direction='R')
+  {
+    if ($direction=='R')
+        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',1,0,0,1,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
+    elseif ($direction=='L')
+        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',-1,0,0,-1,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
+    elseif ($direction=='U')
+        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',0,1,-1,0,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
+    elseif ($direction=='D')
+        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',0,-1,1,0,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
+    else
+        $s=sprintf('BT %.2F %.2F Td (%s) Tj ET',$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
+    if ($this->ColorFlag)
+        $s='q '.$this->TextColor.' '.$s.' Q';
+    $this->_out($s);
+  }
+
+  function TextWithRotation($x, $y, $txt, $txt_angle, $font_angle=0)
+  {
+    $font_angle+=90+$txt_angle;
+    $txt_angle*=M_PI/180;
+    $font_angle*=M_PI/180;
+
+    $txt_dx=cos($txt_angle);
+    $txt_dy=sin($txt_angle);
+    $font_dx=cos($font_angle);
+    $font_dy=sin($font_angle);
+
+    $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',$txt_dx,$txt_dy,$font_dx,$font_dy,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
+    if ($this->ColorFlag)
+        $s='q '.$this->TextColor.' '.$s.' Q';
+    $this->_out($s);
+  }
 }
 
 ?>
 <?php
 
 $ancho=210;
+$anulada=$filaCarta['anulada'];
 
 $pdf = new PDF('P','mm',Letter);
 
@@ -250,6 +295,8 @@ $pdf->AddPage();
 $pdf->SetFont('Arial','',10);
 if($filaCarta['fenvio']){
   $pdf->Cell(90,4.5,utf8_decode('Bogotá D.C., '.fechaactual6($filaCarta['fenvio'])),0,0,'L');
+}else if($filaCarta['anulada']==0){
+  $pdf->Cell(90,4.5,utf8_decode('Bogotá D.C., '.fechaactual6(date("Y-m-d"))),0,0,'L');
 }else{
   $pdf->Cell(90,4.5,utf8_decode('Bogotá D.C., '.fechaactual6($filaCarta['fecha'])),0,0,'L');
 }
@@ -310,6 +357,9 @@ $linea=$pdf->GetY();
 if($filaCarta['firma']){
   $pdf->Image($filaCarta['firma'],18,$linea,0,25);
 }
+if($filaCarta['consello']==1){
+  $pdf->Image('../imagenes/sello.png',80,$linea,0,25);
+}
 $pdf->Ln(20);
 $pdf->SetFont('Arial','B',10);
 $pdf->Cell(23,4.5,utf8_decode($filaCarta['firmante']),0,1,'L');
@@ -329,7 +379,7 @@ if($totalfilas_buscaAnexos>0){
     $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
   }
 
-  $pdf->MultiCell(23,3,utf8_decode($anexos),0,'L');
+  $pdf->MultiCell(50,3,utf8_decode($anexos),0,'L');
 }
 
 
