@@ -25,20 +25,51 @@ include('encabezado.php')
     var nparrafos = document.getElementById('nParrafos').innerHTML;
     nparrafos++;
 
-    const br = document.createElement("br");
-    const txtarea = document.createElement("textarea");
-    txtarea.setAttribute("name", "parrafo["+nparrafos+"]");
-    txtarea.setAttribute("style", "margin-bottom:3px");
-    txtarea.classList.add("txtarea");
-    txtarea.setAttribute("placeholder", "Ingrese el parrafo "+nparrafos+"");
+    var fila='<td><div class="grid columna-3"><div class="span-1"></div>'+
+              '<div class="span-1">'+
+                '<input type="text" class="campo-xs Arial14 tituloParrafo" name="tituloParrafo['+nparrafos+']" id="tituloParrafo-'+nparrafos+'" placeholder="Titulo del parrafo '+nparrafos+'" style="text-align:center;font-weight;bold;margin-bottom:2px" onBlur="aMayusculas(this.value,this.id)">'+
+              '</div>'+
+              '<div class="span-1"></div></div>'+     
+              '<textarea name="parrafo['+nparrafos+']" class="txtarea parrafo" placeholder="Ingrese el parrafo '+nparrafos+'" style="margin-bottom:3px"></textarea></td>'+
+              '<td align="center"><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteRow(this)"></td>';
     
-    var padre = document.getElementById('parrafos');
-
-    // padre.appendChild(br)
-    padre.appendChild(txtarea)
-    
+            
     document.getElementById('nParrafos').innerHTML=nparrafos;
+    document.getElementById("parrafos").insertRow(-1).innerHTML = fila;
     
+  }
+
+  function deleteRow(btn) { 
+    var row = btn.parentNode.parentNode; 
+    row.parentNode.removeChild(row);
+
+    var a=parseFloat(document.getElementById('nParrafos').innerHTML);
+    a=a-1;
+    document.getElementById('nParrafos').innerHTML=a;
+
+    recuento()
+  }
+
+  function recuento(){
+
+    var nparrafos = document.getElementById('nParrafos').innerHTML;
+
+    var tituloParrafo = document.querySelectorAll('.tituloParrafo');
+    var parrafo = document.querySelectorAll('.parrafo');
+    
+
+    for(var i=0;i<nparrafos;i++){
+      tituloParrafo[i].setAttribute("name", 'tituloParrafo['+(i+1)+"]");
+      parrafo[i].setAttribute("name", 'parrafo['+(i+1)+"]");
+
+      tituloParrafo[i].setAttribute("id", 'tituloParrafo-'+(i+1));
+      parrafo[i].setAttribute("id", 'parrafo-'+(i+1));
+
+      tituloParrafo[i].setAttribute("placeholder", 'Titulo del parrafo '+(i+1));
+      parrafo[i].setAttribute("placeholder", 'ngrese el parrafo '+(i+1));
+            
+    }
+
   }
 
   function agregaAnexo(){
@@ -281,19 +312,10 @@ include('encabezado1.php')
         <strong>Referencia:</strong>
       </div>
       <div class="span-5">
-        <input type="text" name="asunto" id="asunto"  class="campo-xs Arial14" onBlur="aMayusculas(this.value,this.id)" required>
+        <textarea name="asunto" id="asunto" class="txtarea" onBlur="aMayusculas(this.value,this.id)" required></textarea>
       </div>
       <div class="span-1"></div>
     </div>  
-    <br><br>
-    <div style="width:300px">
-      <input type="text" name="destinatario5" id="destinatario5" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Respetados Señores" required> 
-    </div>
-    <span id="nParrafos" style="display:none" >1</span>
-    <div id="parrafos">
-      <textarea name="parrafo[1]" class="txtarea" placeholder="Ingrese el parrafo 1" style="margin-bottom:3px"></textarea>
-    </div>
-    <button type="button" class="btn btn-verde btn-xs" onClick="agregaParrafo()" >Agregar parrafo</button>
     <br><br>
     Agradecemos su atención.
     <div>
@@ -333,10 +355,9 @@ include('encabezado1.php')
       </div>
       
     </div>
-    <br>
     <button type="button" class="btn btn-verde btn-xs" onClick="agregaAnexo()" >Agregar anexo</button>
     <div align="center">
-      <button type="submit" class="btn btn-rosa btn-sm" name="boton1" id="boton" >Gabar</button>
+      <button type="submit" class="btn btn-rosa btn-sm" name="boton1" id="boton" >Descarga Plantilla</button>
       <div id="espera"></div>
     </div>
   </form>

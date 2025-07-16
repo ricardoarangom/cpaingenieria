@@ -7,12 +7,53 @@ include('encabezado.php');
 // print_r($_GET);
 // echo "</pre>";
 
+$IdCarta=$_GET['carta'];
+
+$buscaCarta = "SELECT 
+                    IdCarta,
+                    destinatario1,
+                    destinatario2,
+                    destinatario3,
+                    destinatario4,
+                    destinatario5,
+                    asunto,
+                    fecha,
+                    cartas.IdUsuario,
+                    firmante,
+                    cargo,
+                    firma,
+                    email,
+                    fenvio,
+                    ano,
+                    consAno,
+                    consello,
+                    anulada,
+                    carta
+                FROM
+                    cartas left join firmas on cartas.IdFirma=firmas.IdFirma
+                WHERE
+                    IdCarta = ".$IdCarta."  ";
+$resultadoCarta = mysql_query($buscaCarta, $datos) or die(mysql_error());
+$filaCarta = mysql_fetch_assoc($resultadoCarta);
+$totalfilas_buscaCarta = mysql_num_rows($resultadoCarta);
+
+$buscaAnexos = "SELECT 
+                    nombre,
+                    vinculo
+                FROM
+                    anexoscartas
+                WHERE
+                    IdCarta = ".$IdCarta."  ";
+$resultadoAnexos = mysql_query($buscaAnexos, $datos) or die(mysql_error());
+$filaAnexos = mysql_fetch_assoc($resultadoAnexos);
+$totalfilas_buscaAnexos = mysql_num_rows($resultadoAnexos);
+
 $actualiza="UPDATE cartas set enviada=1, fenvio='".date("Y-m-d")."' where IdCarta=".$_GET['carta'];
 if ($results=@mysql_query($actualiza)){
 }
 $envia=1;
 
-include('carta-pdf.php');
+// include('carta-pdf.php');
 
 $busca5="SELECT nombre, apellido, correo FROM usuarios WHERE IdUsuario=".$usuario."";
 $resultado5 = mysql_query($busca5, $datos) or die(mysql_error());
@@ -34,9 +75,7 @@ if($filaCarta['destinatario4']){
   $destinatario4="";
 }
 $varParrafos="";
-do{
-  $varParrafos.=$filaParrafos['parrafo'].'<br><br>';
-} while ($filaParrafos = mysql_fetch_assoc($resultadoParrafos));
+
 
 if($totalfilas_buscaAnexos>0){
   $varAnexos="ANEXOS:<br>";
@@ -67,7 +106,7 @@ $mail->AddAddress($filaCarta['email']);
 $mail->AddAddress($fila5['correo']);
 $mail->ConfirmReadingTo = $fila5['correo'];
   
-$mail->Subject = utf8_decode($filaCarta['asunto']);
+$mail->Subject = utf8_decode('CPA-'.$filaCarta['asunto']);
 
 $body='<div style="width:100%; background:#eee; position:relative; font-family:sans-serif; padding-bottom:40px">
 							<br>
@@ -90,7 +129,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
               Referencia: '.$filaCarta['asunto'].'<br>
               <br>
               '.$filaCarta['destinatario5'].'<br><br>
-              '.$varParrafos.'
+              
               Agradecemos su atención.<br><br>
               Atentamente,<br><br>
               <img src="'. $filaCarta['firma'].'" width="220"><br>
@@ -108,12 +147,16 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
 					</div>';  
   
 //$mail->Body =$body;
-// echo $body;
+echo $body;
 $mail->msgHTML(utf8_decode($body));
 $mail->WordWrap = 500;
 $mail->IsHTML(true);
 
-$mail->AddStringAttachment($doc, $documento);
+$documento='CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'].'.pdf';
+
+$ruta=$filaCarta['carta'];
+$mail->AddAttachment($ruta, $documento);
+
 if($totalfilas_buscaAnexos>0){
   do{
     $ruta1 = $filaAnexos['vinculo'];
@@ -122,7 +165,7 @@ if($totalfilas_buscaAnexos>0){
   } while ($filaAnexos = mysql_fetch_assoc($resultadoAnexos));
   
 }
-
+// exit();
 if (!$mail->Send()) {
   echo "Mailer Error: " . $mail->ErrorInfo;
   echo "<br><BR>* Please double check the user name and password to confirm that both of them are correct. <br>";

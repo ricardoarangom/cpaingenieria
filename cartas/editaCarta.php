@@ -31,7 +31,7 @@ $filaCarta = mysql_fetch_assoc($resultadoCarta);
 $totalfilas_buscaCarta = mysql_num_rows($resultadoCarta);
 
 $buscaParrafos = "SELECT 
-                      IdParrafo, IdCarta, parrafo
+                      IdParrafo, IdCarta, parrafo, titulo
                   FROM
                       parrafoscartas
                   WHERE
@@ -64,24 +64,77 @@ include('encabezado.php')
   });
 
   function agregaParrafo(){
-    var nparrafos = document.getElementById('nParrafos').innerHTML;
+    var parrafosExistentes = parseInt(<?php echo $totalfilas_buscaParrafos ?>);
+    var nparrafos = parseInt(document.getElementById('nParrafos').innerHTML);
     nparrafos++;
 
-    const br = document.createElement("br");
-    const txtarea = document.createElement("textarea");
-    txtarea.setAttribute("name", "parrafo["+nparrafos+"]");
-    txtarea.setAttribute("style", "margin-bottom:3px");
-    txtarea.classList.add("txtarea");
-    txtarea.setAttribute("placeholder", "Ingrese el parrafo "+nparrafos+"");
+    var fila='<td><div class="grid columna-3"><div class="span-1"></div>'+
+              '<div class="span-1">'+
+                '<input type="text" class="campo-xs Arial14 tituloParrafo" name="tituloParrafo['+nparrafos+']" id="tituloParrafo-'+nparrafos+'" placeholder="Titulo del parrafo '+nparrafos+'" style="text-align:center;font-weight;bold;margin-bottom:2px" onBlur="aMayusculas(this.value,this.id)">'+
+              '</div>'+
+              '<div class="span-1"></div></div>'+     
+              '<textarea name="parrafo['+nparrafos+']" class="txtarea parrafo" placeholder="Ingrese el parrafo '+nparrafos+'" style="margin-bottom:3px"></textarea></td>'+
+              '<td align="center"><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteRow(this)"></td>';
     
-    var padre = document.getElementById('parrafos');
-
-    // padre.appendChild(br)
-    padre.appendChild(txtarea)
-    
+            
     document.getElementById('nParrafos').innerHTML=nparrafos;
+    document.getElementById("parrafos").insertRow(-1).innerHTML = fila;
     
   }
+
+  function deleteRow1(btn,Id) { 
+    var row = btn.parentNode.parentNode; 
+    row.parentNode.removeChild(row);
+
+    var borrados = document.getElementById('borrados').value;
+
+    if(borrados==""){
+      borrados = Id;
+    }else{
+      borrados += ","+Id
+    }
+
+    document.getElementById('borrados').value=borrados;
+    // recuento()
+  }
+
+  function deleteRow(btn) { 
+    var row = btn.parentNode.parentNode; 
+    row.parentNode.removeChild(row);
+
+    var a=parseFloat(document.getElementById('nParrafos').innerHTML);
+    a=a-1;
+    document.getElementById('nParrafos').innerHTML=a;
+
+    recuento()
+  }
+
+  function recuento(){
+
+    var parrafosAnteriores = <?php echo $totalfilas_buscaParrafos ?>;
+    var nparrafos = document.getElementById('nParrafos').innerHTML;
+
+    var tituloParrafo = document.querySelectorAll('.tituloParrafo');
+    var parrafo = document.querySelectorAll('.parrafo');
+
+    for(var i=0;i<parrafo.length;i++){
+
+      var y =i+parrafosAnteriores+1;
+
+      tituloParrafo[i].setAttribute("name", 'tituloParrafo['+(y)+"]");
+      parrafo[i].setAttribute("name", 'parrafo['+(y)+"]");
+
+      tituloParrafo[i].setAttribute("id", 'tituloParrafo-'+(y));
+      parrafo[i].setAttribute("id", 'parrafo-'+(y));
+
+      tituloParrafo[i].setAttribute("placeholder", 'Titulo del parrafo '+(y));
+      parrafo[i].setAttribute("placeholder", 'Ingrese el parrafo '+(y));
+            
+    }
+
+  }
+
+  <?php echo $totalfilas_buscaParrafos ?>
 
   function agregaAnexo(){
     var nanexos = document.getElementById('nAnexos').innerHTML;
@@ -346,26 +399,10 @@ include('encabezado1.php')
         <strong>Referencia:</strong>
       </div>
       <div class="span-5">
-        <input type="text" name="asunto" id="asunto"  class="campo-xs Arial14" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['asunto'] ?>" required>
+        <textarea name="asunto" id="asunto" class="txtarea" onBlur="aMayusculas(this.value,this.id)" required><?php echo $filaCarta['asunto'] ?></textarea>
       </div>
       <div class="span-1"></div>
     </div>  
-    <br><br>
-    <div style="width:300px">
-      <input type="text" name="destinatario5" id="destinatario5" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Respetados Señores" value="<?php echo $filaCarta['destinatario5'] ?>" required> 
-    </div>
-    <span id="nParrafos" style="display:none" ><?php echo $totalfilas_buscaParrafos ?></span>
-    <div id="parrafos">
-      <?php 
-      do{
-        $altura=ceil(strlen($filaParrafos['parrafo'])/107);
-        ?>
-        <textarea name="parrafog[<?php echo $filaParrafos['IdParrafo']?>]" rows="<?php echo $altura ?>" class="txtarea" style="margin-bottom:3px" ><?php echo $filaParrafos['parrafo'] ?></textarea>
-        <?php
-      } while ($filaParrafos = mysql_fetch_assoc($resultadoParrafos));
-      ?>
-    </div>
-    <button type="button" class="btn btn-verde btn-xs" onClick="agregaParrafo()" >Agregar parrafo</button>
     <br><br>
     Agradecemos su atención.
     <div>
@@ -436,9 +473,14 @@ include('encabezado1.php')
         <input type="text" name="nombre[1]" id="nombre-1" class="campo-xs Arial12" placeholder="Ingrese el nombre de archivo" onBlur="aMayusculas(this.value,this.id)">
       </div>      
     </div>
-    <br>
     <button type="button" class="btn btn-verde btn-xs" onClick="agregaAnexo()" >Agregar anexo</button>
     <input type="hidden" name="IdCarta"  value="<?php echo $_GET['carta'] ?>">
+    <br>
+    <br>
+    <div style="width:300px">
+      Subir carta:
+      <input type="file" name="carta"  id="carta" class="campo-xs Arial12" onChange="validarArchivo(this.files,this.id)">
+    </div>
     <div align="center">
       <button type="submit" class="btn btn-rosa btn-sm" name="boton2" id="boton" >Gabar</button>
       <div id="espera"></div>

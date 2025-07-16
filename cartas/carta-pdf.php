@@ -48,7 +48,7 @@ $filaCarta = mysql_fetch_assoc($resultadoCarta);
 $totalfilas_buscaCarta = mysql_num_rows($resultadoCarta);
 
 $buscaParrafos = "SELECT 
-                      IdParrafo, IdCarta, parrafo
+                      IdParrafo, IdCarta, parrafo, titulo
                   FROM
                       parrafoscartas
                   WHERE
@@ -326,20 +326,22 @@ $pdf->ln(8);
 $pdf->SetFont('Arial','B',10);
 $pdf->Cell(23,4.5,utf8_decode('Referencia: '),0,0,'L');
 
-$pdf->MultiCell(90,5,utf8_decode($filaCarta['asunto']),0,'L');
+$pdf->MultiCell(152,4.5,utf8_decode($filaCarta['asunto']),0,'J');
 
 $pdf->ln(4);
 $pdf->SetFont('Arial','',10);
 $pdf->Cell(90,4.5,utf8_decode($filaCarta['destinatario5'].","),0,1,'L');
 $pdf->ln(4);
 
-$pdf->SetLeftMargin(21);
+$pdf->SetLeftMargin(20);
 do{
-  $txt=utf8_decode('
-  <p>'.$filaParrafos['parrafo'].'
-  </p>');
-
-  $pdf->WriteTag(0,4.5,$txt,0,"J",0);
+  if($filaParrafos['titulo']){
+    $pdf->SetFont('Arial','B',11);
+    $pdf->MultiCell(175,4.5,utf8_decode($filaParrafos['titulo']),0,'C');
+  }  
+  $pdf->SetFont('Arial','',10);
+  $pdf->MultiCell(175,4.5,utf8_decode($filaParrafos['parrafo']),0,'J');
+  
   $pdf->Ln(3);
 } while ($filaParrafos = mysql_fetch_assoc($resultadoParrafos));
 $rows = mysql_num_rows($resultadoParrafos);
@@ -352,6 +354,10 @@ $pdf->SetLeftMargin(20);
 $pdf->Ln(1);
 $pdf->Cell(23,4.5,utf8_decode('Agradecemos su atención.'),0,1,'L');
 $pdf->Ln(5);
+$linea=$pdf->GetY();
+if($linea>238){
+  $pdf->AddPage();
+}
 $pdf->Cell(23,4.5,utf8_decode('Atentamente,'),0,1,'L');
 $linea=$pdf->GetY();
 if($filaCarta['firma']){
@@ -389,7 +395,6 @@ if($envia==1){
 }else{
   $pdf->Output();
 }
-
 
 
 	

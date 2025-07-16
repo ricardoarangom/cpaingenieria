@@ -62,17 +62,7 @@ if(isset($_POST['boton1'])){
   if ($results=@mysql_query($insertaCarta)){
     $last_id = mysql_insert_id($datos);
     $nparrafos = 0;
-    foreach($_POST['parrafo'] as $key=>$j){
-      if($j){
-        $insertaParrafos="INSERT INTO parrafoscartas (IdCarta, parrafo) VALUES(".$last_id.",'".$j."')";
-        // echo $insertaParrafos."<br>";
-        if ($results=@mysql_query($insertaParrafos)){
-          $nparrafos++;
-        }
-      }
-      
-    }
-    
+        
     $ndocumentos=0;
     foreach($_FILES['anexo']['tmp_name'] as $key=>$j){
       if($j){
@@ -93,21 +83,13 @@ if(isset($_POST['boton1'])){
         }
       }
     }
-
-    $mensaje='<div>LA CARTA FUE GRABADA CON EXITO</div><div>SE GRABARON '.$nparrafos.' PARRAFOS</div><div>SE SUBIERON '.$ndocumentos.' ARCHIVOS</div>';
     ?>
     <script>
-        swal({
-            html: "<?php echo $mensaje ?>",
-            type: "success",
-            showConfirmButton: true,
-            confirmButtonText: "Cerrar"
-            }).then(function(result){
-            if (result.value) {              
-              window.open("carta-pdf.php?carta=<?php echo $last_id ?>", "_blank");
-              window.location = "inicio.php";
-            }
-          });
+                    
+      // window.open("carta-pdf.php?carta=<?php echo $last_id ?>", "_blank");
+      window.open("carta-word.php?carta=<?php echo $last_id ?>", "_blank");
+      window.location = "editaCarta.php?carta=<?php echo $last_id?>";
+           
     </script>
     <?php
 
@@ -121,6 +103,25 @@ if(isset($_POST['boton2'])){
   // echo "<pre>";
   // print_r($_POST);
   // echo "</pre>";
+
+  // echo "<pre>";
+  // print_r($_FILES);
+  // echo "</pre>";
+
+  
+
+  $buscaCarta = " SELECT 
+                      ano, consAno
+                  FROM
+                      cartas
+                  WHERE
+                      IdCarta = ".$_POST['IdCarta'];
+  $resultadoCarta = mysql_query($buscaCarta, $datos) or die(mysql_error());
+  $filaCarta = mysql_fetch_assoc($resultadoCarta);
+  
+  $cartaName='cartas/CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'].".pdf";
+
+  move_uploaded_file($_FILES['carta']['tmp_name'],$cartaName);
 
   if($_POST['anexosEliminados']){
     $anexosEliminados=explode(",",$_POST['anexosEliminados']);
@@ -143,37 +144,14 @@ if(isset($_POST['boton2'])){
     }
   }
 
-  // echo "<pre>";
-  // print_r($_FILES);
-  // echo "</pre>";
 
   $grabado=0;
-  $actualiza="UPDATE cartas set destinatario1='" . $_POST['destinatario1'] . "', destinatario2='" . $_POST['destinatario2'] . "', destinatario3='" . $_POST['destinatario3'] . "', destinatario4='" . $_POST['destinatario4'] . "', destinatario5='" . $_POST['destinatario5'] . "', asunto='" . $_POST['asunto'] . "', firmante='" . $_POST['firmante'] . "', cargo='" . $_POST['cargo'] . "', IdFirma=" . $_POST['IdFirma'] . ", email='" . $_POST['email'] . "', consello=".$_POST['consello']." where IdCarta=" . $_POST['IdCarta'];
+  $actualiza="UPDATE cartas set destinatario1='" . $_POST['destinatario1'] . "', destinatario2='" . $_POST['destinatario2'] . "', destinatario3='" . $_POST['destinatario3'] . "', destinatario4='" . $_POST['destinatario4'] . "', destinatario5='" . $_POST['destinatario5'] . "', asunto='" . $_POST['asunto'] . "', firmante='" . $_POST['firmante'] . "', cargo='" . $_POST['cargo'] . "', IdFirma=" . $_POST['IdFirma'] . ", email='" . $_POST['email'] . "', consello=".$_POST['consello'].", carta='".$cartaName."' where IdCarta=" . $_POST['IdCarta'];
   if ($results=@mysql_query($actualiza)){
     $grabado=1;
   }
 
   // echo $actualiza."<br>";
-
-  foreach($_POST['parrafog'] as $key=>$j){
-    $actualizaPar="UPDATE parrafoscartas set parrafo='" . $j . "' where IdParrafo=".$key;
-    if ($results=@mysql_query($actualizaPar)){
-    }
-
-  }
-
-  if($_POST['parrafo']){
-    foreach($_POST['parrafo'] as $key=>$j){
-      if($j){
-        $insertaParrafos="INSERT INTO parrafoscartas (IdCarta, parrafo) VALUES(".$_POST['IdCarta'].",'".$j."')";
-        echo $insertaParrafos."<br>";
-        if ($results=@mysql_query($insertaParrafos)){
-          $nparrafos++;
-        }
-      }
-      
-    }
-  }
 
   foreach($_FILES['anexo']['tmp_name'] as $key=>$j){
     if($j){
@@ -197,7 +175,7 @@ if(isset($_POST['boton2'])){
 
   
   if($grabado==1){
-    $mensaje='<div>LA CARTA FUE ACTUALIZADA CON EXITO</div><div></div>';
+    $mensaje='<div>LA CARTA FUE GRABADA CON EXITO</div><div></div>';
     ?>
     <script>
         swal({
@@ -207,7 +185,8 @@ if(isset($_POST['boton2'])){
             confirmButtonText: "Cerrar"
             }).then(function(result){
             if (result.value) {              
-              window.open("carta-pdf.php?carta=<?php echo $_POST['IdCarta'] ?>", "_blank");
+              // window.open("carta-pdf.php?carta=<?php echo $_POST['IdCarta'] ?>", "_blank");
+              window.open("carta-word.php?carta=<?php echo $_POST['IdCarta'] ?>", "_blank");
               window.close()
             }
           });

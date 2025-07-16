@@ -87,7 +87,6 @@ if(!$_POST['creador'] and !$_POST['firmante'] and !$_POST['asunto'] and !$_POST[
 }
 
 $buscador=substr($buscador, 0, -4);
-echo $buscador;
 
 $buscaCartas = "SELECT 
 									nombre,
@@ -109,7 +108,8 @@ $buscaCartas = "SELECT
 									radicado,
 									ano,
 									consAno,
-									anulada								
+									anulada,
+									carta				
 							FROM
 									(cartas
 									LEFT JOIN usuarios ON cartas.IdUsuario = usuarios.IdUsuario)".$buscador1." ".$buscador."";
@@ -157,6 +157,7 @@ if($totalfilas_buscaCartas>0){
 		$tablacartas[$filaCartas['IdCarta']]['radicado']=$filaCartas['radicado'];
 		$tablacartas[$filaCartas['IdCarta']]['consecutivo']="CPA-".sprintf("%03d",$filaCartas['consAno'])."-".$filaCartas['ano'];
 		$tablacartas[$filaCartas['IdCarta']]['anulada']=$filaCartas['anulada'];
+		$tablacartas[$filaCartas['IdCarta']]['carta']=$filaCartas['carta'];
 
 	} while ($filaCartas = mysql_fetch_assoc($resultadoCartas));
 }
@@ -747,8 +748,12 @@ if(isset($_POST['boton'])){
 									?>
 								</td>
 								<td valign="top" align="center">
-									<a href="carta-pdf.php?carta=<?php echo $key?>" class="btn btn-rosa btn-xs1 btn-block" target="_blank" style="margin-top:2px">Ver carta</a>
 									<?php 
+									if($j['carta']){
+										?>
+										<a href="<?php echo $j['carta']?>" class="btn btn-rosa btn-xs1 btn-block" target="_blank" style="margin-top:2px">Ver carta</a>
+										<?php
+									} 
 									if($j['radicado']){
 										?>
 										<a href="<?php echo $j['radicado'] ?>" class="btn btn-rosa btn-xs1 btn-block" target="_blank" style="margin-top:2px">Ver radicado</a>
