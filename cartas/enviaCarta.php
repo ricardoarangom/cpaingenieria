@@ -100,13 +100,13 @@ $mail->SMTPAuth = true;
 
 $mail->isHTML(true);
 include('../includes/infcorreo.php');
-$mail->FromName = $filaCarta['firmante'];
+$mail->FromName = utf8_decode('CPA '.$filaCarta['firmante']);
 
 $mail->AddAddress($filaCarta['email']);
 $mail->AddAddress($fila5['correo']);
 $mail->ConfirmReadingTo = $fila5['correo'];
   
-$mail->Subject = utf8_decode('CPA-'.$filaCarta['asunto']);
+$mail->Subject = utf8_decode($filaCarta['asunto']);
 
 $body='<div style="width:100%; background:#eee; position:relative; font-family:sans-serif; padding-bottom:40px">
 							<br>
@@ -147,7 +147,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
 					</div>';  
   
 //$mail->Body =$body;
-echo $body;
+// echo $body;
 $mail->msgHTML(utf8_decode($body));
 $mail->WordWrap = 500;
 $mail->IsHTML(true);

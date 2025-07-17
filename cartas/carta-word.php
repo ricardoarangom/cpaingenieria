@@ -71,6 +71,8 @@ use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpWord\Shared\Converter;
+use PhpOffice\PhpWord\Style\Tab;
+use PhpOffice\PhpWord\Settings;
 
 $documento = new PhpWord();
 
@@ -96,6 +98,39 @@ $fuente->setBold(true);
 $fuente->setName('Arial');
 $fuente->setSize(10);
 
+$documento->addFontStyle(
+    'rojoStyle', // Nombre del estilo de fuente
+    ['color' => 'FF0000', 'bold' => true, 'size' => 12] // Propiedades: color rojo (hex), negrita, tamaño
+);
+
+$documento->addParagraphStyle('MiEstiloConTabulacionesAntiguo', [
+    'tabs' => [
+        // Tabulación izquierda a 2 cm
+        ['position' => Converter::cmToTwip(2), 'type' => 'left'], // O quizás 0 para LEFT
+        // Tabulación central a 8 cm
+        ['position' => Converter::cmToTwip(10), 'type' => 'center'], // O quizás 1 para CENTER
+        // Tabulación derecha a 14 cm
+        ['position' => Converter::cmToTwip(14), 'type' => 'right'] // O quizás 2 para RIGHT
+    ]
+]);
+
+$documento->addParagraphStyle('tabSecillo', [
+    'tabs' => [
+        // Tabulación izquierda a 1550 twips (aprox. 2.7 cm)
+        new Tab(Tab::TAB_STOP_LEFT, 7600)
+        // Tabulación centrada a 3200 twips (aprox. 5.6 cm)
+        // new Tab(Tab::TAB_STOP_CENTER, 3200),
+        // Tabulación derecha a 5300 twips (aprox. 9.3 cm) con relleno de puntos
+        // new Tab(Tab::TAB_STOP_RIGHT, 5300, Tab::TAB_LEADER_DOT),
+    ]
+]);
+
+$documento->addParagraphStyle('indentado', [
+    'indentation' => [
+        'left' => 1200,  
+        'firstLine' => -1200,
+    ]
+]);
 $documento->addParagraphStyle('NoSpaceAfter', [
     'spaceAfter' => 0,          // Espaciado posterior a 0 twips
     'spaceBefore' => 0,         // Opcional: también puedes poner el espacio anterior a 0
@@ -113,39 +148,13 @@ $documento->addParagraphStyle('medioEspacio', [
 
 $seccion->addTextBreak(0.5);
 
-$tabla = $seccion->addTable();
-$tabla->addRow();
+$textRun1 = $seccion->addTextRun('tabSecillo');
+$textRun1->addText('Bogotá D.C., '.fechaactual6($filaCarta['fecha']));
+$textRun1->addText("\t");
+$textRun1->addText('CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'], ['bold' => true,]);
 
-if($filaCarta['fenvio']){
-  $tabla->addCell(8500)->addText(
-    htmlspecialchars(
-        ('Bogotá D.C., '.fechaactual6($filaCarta['fenvio']))
-    )
-  );
-}else if($filaCarta['anulada']==0){
-  $tabla->addCell(8500)->addText(
-    htmlspecialchars(
-        ('Bogotá D.C., '.fechaactual6(date("Y-m-d")))
-    )
-  );
-}else{
-  $tabla->addCell(8500)->addText(
-    htmlspecialchars(
-        ('Bogotá D.C., '.fechaactual6($filaCarta['fecha']))
-    )
-  );
-}
-
-
-$texto = $tabla->addCell(1500)->addText(
-  htmlspecialchars(
-    'CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano']
-  )
-);
-$texto->setFontStyle($fuente);
 
 $seccion->addTextBreak(1);
-
 
 $seccion->addText( 
  		'Señores',
@@ -181,21 +190,17 @@ if($filaCarta['destinatario4']){
 
 $seccion->addTextBreak(1);
 
-$tabla = $seccion->addTable();
-$tabla->addRow();
-$tabla->addCell(1300)->addText(
-  htmlspecialchars(
-      'Referencia: '
-  )
-);
-$texto = $tabla->addCell(8700)->addText(
-  htmlspecialchars(
-    $filaCarta['asunto']
-  )
-);
-$texto->setFontStyle($fuente);
+$textRun2 = $seccion->addTextRun('indentado');
+$textRun2->addText('Referencia:   ');
+$textRun2->addText($filaCarta['asunto'], ['bold' => true]);
 
 
+$seccion->addTextBreak(1);
+$seccion->addText( 
+  'PEQUE ACA EL CONTENIDO DEL COMUNICADO',
+  'rojoStyle'
+);
+$seccion->addTextBreak(1);
 
 $seccion->addText( 
   'Agradecemos su atención.'

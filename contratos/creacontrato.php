@@ -41,6 +41,11 @@ $resultadoCargo = mysql_query($buscaCargo, $datos) or die(mysql_error());
 $filaCargo = mysql_fetch_assoc($resultadoCargo);
 $totalfilas_buscaCargo = mysql_num_rows($resultadoCargo);
 
+$buscaClau = "SELECT * FROM borrclausulas";
+$resultadoClau = mysql_query($buscaClau, $datos) or die(mysql_error());
+$filaClau = mysql_fetch_assoc($resultadoClau);
+$totalfilas_buscaClau = mysql_num_rows($resultadoClau);
+
 ?>
 <?php 
 include('encabezado.php');
@@ -528,7 +533,7 @@ include('encabezado1.php');
 consec, contrato, formaPago, anticipo, panticipo, anticipop, terminado
 <div class="contenedor" style="width:1000px">
   <h5 class="Century" align="center" >CREACION DE CONTRATOS</h5>
-  <form action="graba.php">
+  <form action="graba.php" method="post">
     <div class="grid columna-8 Arial14">
 			<div class="span-4">
 				Proyecto / Area:
@@ -660,7 +665,8 @@ consec, contrato, formaPago, anticipo, panticipo, anticipop, terminado
 				</div>
 			</div>
     </div>
-    
+    <textarea class="txtarea"  name="texto" id="" ><?php echo $filaClau['clausula'] ?>a</textarea>
+		<button name="boton1" >graba</button>
   </form>
 </div>
 
