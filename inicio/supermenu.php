@@ -262,7 +262,7 @@
 	</nav>
 
 	<div class="sm-menu_bar navegadores"  id="bt-7" onClick="main(this.id)" style="display: none">
-		<a href="#" class="sm-bt-menu"><span class="icon icono-bars"></span>CARTAS</a>
+		<a href="#" class="sm-bt-menu"><span class="icon icono-bars"></span>CONTRATOS</a>
 	</div>
 	<nav  class="nv-sm-menu-se navegadores" id="nv-7" style="display: none">
 	  <ul class="nv-ul-sc">
@@ -272,6 +272,23 @@
     <li class="submenu" id="sm-7-2">
 		  <a class="a-sec" href="../contratos/reporte.php">REPORTE</a>
 		</li>
+		<li class="submenu" id="sm-7-3" onClick="drsmenu(this.id)">
+				<a href="#" class="a-sec">CONTRATISTAS</a>
+				<ul  class="children" id="7-3" valor="0">					
+					<?php 
+					if(($_SESSION['nivel']==3 and $_SESSION['snivel']==1) or $_SESSION['nivel']==0){
+						?>
+						<li><a class="a-sec-ch" href="../contratos/regcontratista.php">Agregar contratista</a></li>
+						<li><a class="a-sec-ch" href="../contratos/buscacontrati.php">Consultar/Editar contratista</a></li>
+						<?php
+					}else{
+						?>
+						<li><a class="a-sec-ch" href="../contratos/buscacontrati1.php">Consultar</a></li>	
+						<?php
+					}
+					?>
+				</ul>
+			</li>	
 	  </ul>
 	</nav>
 	
