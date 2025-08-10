@@ -86,6 +86,11 @@ include('encabezado1.php')
             <option value="<?php echo $filaCDoc['IdClasedoc'] ?>"><?php echo $filaCDoc['nombre'] ?></option>
             <?php
           } while ($filaCDoc = mysql_fetch_assoc($resultadoCDoc));
+          $rows = mysql_num_rows($resultadoCDoc);
+          if ($rows > 0) {
+            mysql_data_seek($resultadoCDoc, 0);
+            $filaCDoc = mysql_fetch_assoc($resultadoCDoc);
+          }
           ?>
         </select>
       </div>
@@ -132,7 +137,10 @@ include('encabezado1.php')
         Teléfono:
         <input type="text" name="telefono" id="telefono" class="campo-xs" required="required">
       </div>
-      
+      <div class="span-2">
+        E-mail:
+        <input type="text" name="email" id="email" class="campo-xs" required="required">
+      </div>
       <div class="span-2">
         Departamento (actual) :
         <select name="depto" id="depto" class="campo-xs Arial12" onChange="buscamun(this.value,this.id)">
@@ -158,6 +166,27 @@ include('encabezado1.php')
             <option value="">Seleccione</option>
           </select>
         </div>	
+      </div>
+      <div class="span-3">
+        Representante Legal:
+        <input type="text" name="replegal" id="replegal" class="campo-xs" onBlur="aMayusculas(this.value,this.id)">
+      </div>
+      <div class="span-1">
+        Clase documento:
+        <select name="IdClasedocrep" id="IdClasedocrep" class="campo-xs Arial12">
+          <option value="">Seleccione</option>
+          <?php
+          do {
+          ?>
+            <option value="<?php echo $filaCDoc['IdClasedoc'] ?>"><?php echo $filaCDoc['nombre'] ?></option>
+          <?php
+          } while ($filaCDoc = mysql_fetch_assoc($resultadoCDoc));
+          ?>
+        </select>
+      </div>
+      <div class="span-1">
+        No. Documento: (sin puntos ni comas, ni digito de verificación)
+        <input type="number" name="docrep" id="docrep" class="campo-xs Arial12">
       </div>
     </div>
     <br>
