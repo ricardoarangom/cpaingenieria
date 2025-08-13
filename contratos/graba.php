@@ -183,6 +183,11 @@ if(isset($_POST['boton1'])){
 
     ?>
     <script language="JavaScript" type="text/javascript">
+      var laboral = <?php
+      if($_POST['IdSubClase']<=4){
+        echo 1;
+      } ?>;
+      var contrato = <?php echo $last_id?>;
       swal({
           html: "<?php echo $mensaje ?>",
           type: "success",
@@ -190,6 +195,9 @@ if(isset($_POST['boton1'])){
           confirmButtonText: "¡Cerrar!"
       }).then(function(result){
         if (result.value) {
+          if(laboral==1){
+            window.open('contratolab-pdf.php?contrato='+contrato, '_blank');
+          }
           window.location = "inicio.php";
         }
       });
