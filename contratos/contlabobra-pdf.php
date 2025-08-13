@@ -8,6 +8,67 @@ set_time_limit(0);
 require_once('../fpdf/fpdf.php');
 require_once('../fpdf/WriteTag.php');
 require_once('../funciones.php');
+
+function get_letter_from_number($number) {
+    // A -> 0, B -> 1, C -> 2, etc.
+    return chr(65 + $number);
+}
+
+$contrato=$_GET['contrato'];
+
+$buscaCont =   "SELECT 
+                    proveedor,
+                    documento,
+                    telefono,
+                    direccion,
+                    departamento,
+                    ciudad,
+                    email,
+                    fconstitucion,
+                    departamenton,
+                    ciudadn,
+                    consec,
+                    finicio,
+                    ffin,
+                    clasedocsi.codigo,
+                    nombre,
+                    munexp,
+                    municipios.municipio,
+                    municipios_1.municipio as lugar,
+                    valor,
+                    incs,
+                    cargo,
+                    alcance,
+                    objeto,
+                    auxilio
+                    
+                FROM
+                    (((((contrat
+                    LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
+                    LEFT JOIN municipios ON contratistas.munexp = municipios.IdMunicipio)
+                    LEFT JOIN clasedocsi ON contratistas.IdClasedoc = clasedocsi.IdClasedoc)
+                    left join municipios as municipios_1 on contrat.lugar=municipios_1.IdMunicipio)
+                    left join cargos on contrat.IdCargo=cargos.IdCargo)
+                WHERE
+                    IdContrato = ".$contrato;
+$resultadoCont = mysql_query($buscaCont, $datos) or die(mysql_error());
+$filaCont = mysql_fetch_assoc($resultadoCont);
+$totalfilas_buscaCont = mysql_num_rows($resultadoCont);
+
+$buscaAct = "   SELECT 
+                    actividad
+                FROM
+                    actividadescont
+                WHERE
+                    IdContrato = ".$contrato;
+$resultadoAct = mysql_query($buscaAct, $datos) or die(mysql_error());
+$filaAct = mysql_fetch_assoc($resultadoAct);
+$totalfilas_buscaAct = mysql_num_rows($resultadoAct);
+
+$arregloInicio=explode("-",$filaCont['finicio']);
+
+$textoFirma=strtolower(convertir1($arregloInicio[2]))." (".$arregloInicio[2].") dias del mes de ".fechaactual7($arregloInicio[1])." del año ".$arregloInicio[0];
+
 ?>
 <?php
 
@@ -223,14 +284,18 @@ class PDF extends PDF_WriteTag {
   function Footer()
   { 
 
-    $this->SetY(-14);
+    $this->SetY(-22);
+    $this->Image('../imagenes/banner.png',26,262,160);
+
+    $this->SetX(18);
+
     $pagina='Página '.$this->PageNo().' de {nb}';
     $this->SetFont('Arial','',7);
-    $this->Cell(120,3.5,utf8_decode("CONTRATO INDIVIDUAL DE TRABAJO POR LA DURACIÓN DE UNA OBRA O LABOR DETERMINADA"),0,0,'L');
-    $this->Cell(60,3.5,utf8_decode($pagina),0,1,'R');
+    $this->Cell(120,3.7,utf8_decode("CONTRATO INDIVIDUAL DE TRABAJO POR LA DURACIÓN DE UNA OBRA O LABOR DETERMINADA"),0,0,'L');
+    $this->Cell(60,3.7,utf8_decode($pagina),0,1,'R');
     $this->SetDrawColor(255,158,126);
     $this->SetLineWidth(0.1);
-    $this->line(0,265,216,265);
+    $this->line(0,257,216,257);
     
   }
 }
@@ -253,7 +318,7 @@ $pdf->SetStyle("vb","arial","",0,"153,0,0");
 $pdf->SetStyle("neg","Arial","B",0,"0,0,0");
 
 $pdf->SetMargins(20,10,20);
-$pdf->SetAutoPageBreak(true, 20);
+$pdf->SetAutoPageBreak(true, 23);
 $pdf->AliasNbPages();
 $pdf->AddPage();
 
@@ -262,7 +327,7 @@ $pdf->ln(4);
 $pdf->SetFont('Arial','',10);
 $pdf->SetWidths(array(70,106));
 $pdf->SetAligns(array('L','L'));
-$pdf->Row(array(utf8_decode('NUMERO DE CONTRATO'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('NUMERO DE CONTRATO'),utf8_decode('NM LAB '.sprintf("%03d",$filaCont['consec']))),0);
 
 $pdf->Row(array(utf8_decode('Nombre del empleador:'),utf8_decode('COMPAÑÍA DE PROYECTOS AMBIENTALES SAS. "CPA INGENIERIA SAS"')),0);
 $pdf->Row(array(utf8_decode('Domicilio del empleador:'),utf8_decode('BOGOTÁ D.C.')),0);
@@ -271,25 +336,25 @@ $pdf->Row(array(utf8_decode('NIT del empleador:'),utf8_decode('830.042.614')),0)
 $pdf->Row(array(utf8_decode('Representante legal:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
 $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
 
-$pdf->Row(array(utf8_decode('Nombre del trabajador:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Lugar, Fecha De Nacimiento Y Nacionalidad'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Domicilio del trabajador:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Teléfono:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Cargo u oficio para desempeñar:'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('Nombre del trabajador:'),utf8_decode($filaCont['proveedor'])),0);
+$pdf->Row(array(utf8_decode('Fecha De Nacimiento'),utf8_decode(fechaactual3($filaCont['fconstitucion']))),0);
+$pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),$filaCont['codigo']." ".colocapuntos($filaCont['documento'])),0);
+$pdf->Row(array(utf8_decode('Domicilio del trabajador:'),utf8_decode($filaCont['direccion'])),0);
+$pdf->Row(array(utf8_decode('Teléfono:'),utf8_decode($filaCont['telefono'])),0);
+$pdf->Row(array(utf8_decode('Cargo u oficio para desempeñar:'),utf8_decode($filaCont['cargo'])),0);
 
-$pdf->Row(array(utf8_decode('Salario:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Auxilio de transporte (MLV):'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('Salario:'),number_format($filaCont['valor'])),0);
+$pdf->Row(array(utf8_decode('Auxilio de transporte (MLV):'),number_format($filaCont['auxilio'])),0);
 $pdf->Row(array(utf8_decode('Períodos de pago:'),utf8_decode('MENSUAL')),0);
 $pdf->Row(array(utf8_decode('Ciudad donde ha sido contratado el trabajador'),utf8_decode('BOGOTA D.C')),0);
 $pdf->Row(array(utf8_decode('Domicilio contractual:'),utf8_decode('Calle 106 N°59-21, Bogotá')),0);
 $pdf->Row(array(utf8_decode('Jornada Laboral'),utf8_decode('TIEMPO COMPLETO')),0);
 
-$pdf->Row(array(utf8_decode('Fecha de inicio de la labor:'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('Fecha de inicio de la labor:'),fechaactual3($filaCont['finicio'])),0);
 $pdf->Row(array(utf8_decode('Fecha de fin de la labor:'),utf8_decode('HASTA FINALIZAR LABORES')),0);
 $pdf->Row(array(utf8_decode('Tipo de contrato:'),utf8_decode('CONTRATO INDIVIDUAL DE TRABAJO POR OBRA O LABOR')),0);
-$pdf->Row(array(utf8_decode('Lugar Donde Desempeñara Las Labores'),utf8_decode('Variable-Proyecto')),0);
-$pdf->Row(array(utf8_decode('Obra o labor contratada:'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('Lugar Donde Desempeñara Las Labores'),utf8_decode($filaCont['lugar'])),0);
+$pdf->Row(array(utf8_decode('Obra o labor contratada:'),utf8_decode($filaCont['objeto'])),0);
 
 $pdf->ln(5);
 
@@ -310,7 +375,7 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p><neg>ALCANCE.</neg> <vb>[Apoyar con el trabajo como Conductor del proyecto y poner al servicio del empleador toda su capacidad normal de trabajo, en el desempeño de las funciones propias del oficio mencionado y las labores anexas y complementarias del mismo, de conformidad con las órdenes e instrucciones que le imparta el empleador o sus representantes.]</vb>.
+<p><neg>ALCANCE.</neg> '.$filaCont['alcance'].'
 </p>
 ');
 
@@ -324,148 +389,23 @@ $txt=utf8_decode('
 
 $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 
+$pdf->SetLeftMargin(22);
+$pdf->ln(2);
+
+$pdf->SetFont('Arial','B',10);
+$itemAc=0;
+do{
+    $letter = get_letter_from_number($itemAc);
+    $itemAc++;
+    
+    $pdf->Cell(10,4.5,utf8_decode($letter.'.'),0,0,'L');
+    $pdf->Cell(10,4.5,utf8_decode($filaAct['actividad']),0,1,'L');
+
+} while ($filaAct = mysql_fetch_assoc($resultadoAct));
+
 $pdf->SetLeftMargin(20);
 $pdf->ln(2);
 
-// $pdf->SetFont('Arial','B',10);
-// $pdf->Cell(10,4.5,utf8_decode('A.'),0,0,'C');
-// $pdf->SetFont('Arial','',10);
-
-// $pdf->SetLeftMargin(29);
-// $txt=utf8_decode('
-// <p><neg>Planificación de actividades:</neg> <vb>[varible]</vb>.
-// </p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-// $pdf->SetLeftMargin(20);
-// $pdf->ln(2);
-
-// $pdf->SetFont('Arial','B',10);
-// $pdf->Cell(10,4.5,utf8_decode('B.'),0,0,'C');
-// $pdf->SetFont('Arial','',10);
-
-// $pdf->SetLeftMargin(29);
-// $txt=utf8_decode('
-// <p><neg>Recopilación de Información:</neg>  <vb>[varible]</vb>.
-// </p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-// $pdf->SetLeftMargin(20);
-// $pdf->ln(2);
-
-// $pdf->SetFont('Arial','B',10);
-// $pdf->Cell(10,4.5,utf8_decode('C.'),0,0,'C');
-// $pdf->SetFont('Arial','',10);
-
-// $pdf->SetLeftMargin(29);
-// $txt=utf8_decode('
-// <p><neg>Revisión de los expedientes:</neg>  <vb>[varible]</vb>.
-// </p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-// $pdf->SetLeftMargin(20);
-// $pdf->ln(2);
-
-// $pdf->SetFont('Arial','B',10);
-// $pdf->Cell(10,4.5,utf8_decode('D.'),0,0,'C');
-// $pdf->SetFont('Arial','',10);
-
-// $pdf->SetLeftMargin(29);
-// $txt=utf8_decode('
-// <p><neg>Trabajo de Campo:</neg>  <vb>[varible]</vb>.
-// </p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-// $pdf->SetLeftMargin(20);
-// $pdf->ln(2);
-
-// $pdf->SetFont('Arial','B',10);
-// $pdf->Cell(10,4.5,utf8_decode('E.'),0,0,'C');
-// $pdf->SetFont('Arial','',10);
-
-// $pdf->SetLeftMargin(29);
-// $txt=utf8_decode('
-// <p><neg>Gestión del Riesgo:</neg>  <vb>[varible]</vb>.
-// </p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-// $pdf->SetLeftMargin(20);
-// $pdf->ln(2);
-
-// $pdf->SetFont('Arial','B',10);
-// $pdf->Cell(10,4.5,utf8_decode('F.'),0,0,'C');
-// $pdf->SetFont('Arial','',10);
-
-// $pdf->SetLeftMargin(29);
-// $txt=utf8_decode('
-// <p><neg>Actividades socioambientales:</neg>  <vb>[varible]</vb>.
-// </p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-// $pdf->SetLeftMargin(20);
-// $pdf->ln(2);
-
-// $pdf->SetFont('Arial','B',10);
-// $pdf->Cell(10,4.5,utf8_decode('G.'),0,0,'C');
-// $pdf->SetFont('Arial','',10);
-
-// $pdf->SetLeftMargin(29);
-// $txt=utf8_decode('
-// <p><neg>Fase final:</neg>  <vb>[varible]</vb>.
-// </p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-// $pdf->SetLeftMargin(20);
-// $pdf->ln(2);
-
-// $txt=utf8_decode('
-// <p><neg>CUARTA: PRODUCTOS A ENTREGAR.</neg> <vb>[variable]</vb></p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-// $pdf->ln(2);
-
-// $txt=utf8_decode('
-// <p><neg>QUINTA: OBLIGACIONES DEL EMPLEADO.</neg> Son obligaciones especiales del <neg>EMPLEADO</neg>:</p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-// $pdf->ln(0);
-
-// $pdf->Cell(10,4.5,utf8_decode('a).'),0,0,'C');
-// $pdf->MultiCell(167,4.5,utf8_decode('Colocar al servicio del empleador toda su capacidad normal de trabajo de manera exclusiva, en el desempeño de las funciones propias del cargo contratado y en las labores conexas y complementarias del mismo, en consideración con las órdenes e instrucciones que le imparta el empleador o sus representantes.'),0,'J');
-
-// $pdf->Cell(10,4.5,utf8_decode('b).'),0,0,'C');
-// $pdf->MultiCell(167,4.5,utf8_decode('No prestar directa ni indirectamente servicios laborales a otros empleadores, ni trabajar por cuenta propia en el mismo oficio durante la vigencia del presente contrato.'),0,'J');
-
-// $pdf->Cell(10,4.5,utf8_decode('c).'),0,0,'C');
-// $pdf->MultiCell(167,4.5,utf8_decode('Laborar la jornada ordinaria en los turnos y dentro del horario señalado en este contrato, pudiendo el empleador efectuar ajustes o cambios de horario cuando lo estime conveniente.'),0,'J');
-
-// $pdf->Cell(10,4.5,utf8_decode('d).'),0,0,'C');
-// $pdf->MultiCell(167,4.5,utf8_decode('Las demás consagradas en el artículo 58 del Código Sustantivo del Trabajo'),0,'J');
-
-// $pdf->ln(2);
-
-// $txt=utf8_decode('
-// <p><neg>PARAGRAFO.</neg> La descripción anterior es general y no excluye ni limita para ejecutar labores conexas complementarias o similares y, en general aquellas que sean necesarias para un mejor resultado en la ejecución de la causa que dio origen al contrato.</p>
-// ');
-
-// $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-// $pdf->ln(2);
 
 $txt=utf8_decode('
 <p><neg>SEGUNDA: REMUNERACION.</neg> EL EMPLEADOR pagará a EL TRABAJADOR por la prestación de sus servicios el salario indicado en el encabezado del presente documento, pagadero en las oportunidades también señaladas arriba. <neg>PARÁGRAFO PRIMERO: SALARIO ORDINARIO.</neg> Dentro del salario ordinario se encuentra incluida la remuneración de los descansos dominicales y festivos de que tratan los capítulos I, II y III del título VII del C.S.T. De igual manera, se aclara y se conviene en que los casos en los que EL TRABAJADOR devengue comisiones o cualquier otra modalidad del salario variable, el 82.5% de dichos ingresos constituye remuneración de la labor realizada, y el 17.5% restante está destinado a remunerar el descanso en los días dominicales y festivos de que tratan los capítulos I y II del Título VIII del C.S.T. <neg>PARÁGRAFO SEGUNDO: SALARIO INTEGRAL.</neg> En la eventualidad en que EL TRABAJADOR devengue salario integral se entiende de conformidad con el numeral 2 del artículo 132 del C.S.T., subrogado por el artículo 18 de la ley 50/90, que dentro del salario integral convenido se encuentra incorporado el factor prestacional de EL TRABAJADOR, el cual no será INFERIOR AL 30% del salario antes mencionado. De igual manera, se conviene y aclara que en los casos en los que EL TRABAJADOR devengue comisiones o cualquier otra modalidad de salario antes mencionado. El salario integral acordado, además de retribuir la remuneración ordinaria, remunera y compensa todo recargo por trabajo extraordinario, nocturno dominical o festivo, primas de servicios legales o extralegales, cesantías e intereses a la cesantías, subsidios y suministros en especie, incidencia prestacional de eventuales viáticos y en general toda prestación o acreencia legal o extralegal derivada del contrato, con excepción de las vacaciones. <neg>PARÁGRAFO TERCERO:</neg> Las partes acuerdan que en los casos en que se le reconozcan a EL TRABAJADOR beneficios por concepto de alimentación, comunicaciones, habitación o vivienda, transporte, vestuario, auxilios en dinero o en especie o bonificaciones ocasionales, se considerarán tales beneficios o reconocimientos como no salariales, y por tanto, no se tendrán en cuenta como factor salarial para liquidación de acreencias laborales y para el pago de aportes parafiscales y cotizaciones a la seguridad social, de conformidad con los Arts. 15 y 16 de la ley 50/90, en concordancia con el Art. 17 de la 344/96.</p>
@@ -553,12 +493,12 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p>Para constancia del pleno acuerdo sobre los términos referidos en este contrato, se firma en dos (2) ejemplares del mismo tenor y valor a <vb>[los diez (10) días del mes de enero del año 2025 en la ciudad de Bogotá D.C.]</vb>. 
+<p>Para constancia del pleno acuerdo sobre los términos referidos en este contrato, se firma en dos (2) ejemplares del mismo tenor y valor a lof '.$textoFirma.' en la ciudad de Bogotá D.C.
 </p>
 ');
 
 $pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(0);
+$pdf->ln(5);
 
 
 $pdf->SetLeftMargin(19);
@@ -573,7 +513,7 @@ if($linea>221){
   $pdf->SetY($linea);
 }else{
   $pdf->ln(5);
-  $linea=$linea+18;
+  $linea=$linea+20;
   
   $pdf->Cell(88,4.5,utf8_decode('EMPLEADOR'),0,0,'L');
   $pdf->Cell(88,4.5,utf8_decode('TRABAJADOR'),0,1,'L');
@@ -586,10 +526,10 @@ $pdf->Line(108, $linea, 168, $linea);
 
 
 $pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
-$pdf->Cell(88,4.5,utf8_decode('VARIABLE'),0,1,'L');
+$pdf->Cell(88,4.5,utf8_decode($filaCont['proveedor']),0,1,'L');
 
 $pdf->Cell(88,4.5,utf8_decode('C.C.79.315.619 De Bogotá D.C.'),0,0,'L');
-$pdf->Cell(88,4.5,utf8_decode('CC VARIABLE de VARIABLE'),0,1,'L');
+$pdf->Cell(88,4.5,$filaCont['codigo']." ".colocapuntos($filaCont['documento'])." de ".utf8_decode($filaCont['municipio']),0,1,'L');
 
 $pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
 

@@ -8,6 +8,73 @@ set_time_limit(0);
 require_once('../fpdf/fpdf.php');
 require_once('../fpdf/WriteTag.php');
 require_once('../funciones.php');
+
+$contrato=$_GET['contrato'];
+
+$buscaCont =   "SELECT 
+                    proveedor,
+                    IdClasedoc,
+                    documento,
+                    telefono,
+                    direccion,
+                    departamento,
+                    ciudad,
+                    email,
+                    fconstitucion,
+                    departamenton,
+                    ciudadn,
+                    consec,
+                    finicio,
+                    ffin,
+                    ffinfin,
+                    especialidad,
+                    grupo,
+                    centrofor,
+                    munexp,
+                    municipio, 
+                    auxilio,
+                    valor
+                FROM
+                    ((contrat
+                    LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
+                    LEFT JOIN municipios ON contratistas.munexp = municipios.IdMunicipio)
+                WHERE
+                    IdContrato = ".$contrato;
+$resultadoCont = mysql_query($buscaCont, $datos) or die(mysql_error());
+$filaCont = mysql_fetch_assoc($resultadoCont);
+$totalfilas_buscaCont = mysql_num_rows($resultadoCont);
+
+$ffin=(strtotime ( '+1 day' , strtotime ( $filaCont['ffin']  )));
+$ffin=date("Y-m-d",$ffin);
+
+$fecha1 = new DateTime($filaCont['finicio']);
+$fecha2 = new DateTime($ffin);
+
+// Calcular la diferencia usando el método diff()
+$diferencia = $fecha1->diff($fecha2);
+
+$meses=($diferencia->y)*12+$diferencia->m;
+$dias=$diferencia->d;
+
+$textoPeriodo='';
+if($meses<>0){
+  $textoPeriodo.="(".$meses.") meses"; 
+}
+if($dias<>0){
+  $textoPeriodo.=" y (".$dias.") dias"; 
+}
+
+$arregloInicio=explode("-",$filaCont['finicio']);
+$textoInicio=" Día (".$arregloInicio[2].") Mes (".$arregloInicio[1].") Año (".$arregloInicio[0].")";
+
+$arregloFin=explode("-",$filaCont['ffin']);
+$textoFin=" Día (".$arregloFin[2].") Mes (".$arregloFin[1].") Año (".$arregloFin[0].")";
+
+$arregloPro=explode("-",$filaCont['ffinfin']);
+$textoPro=" Día (".$arregloPro[2].") Mes (".$arregloPro[1].") Año (".$arregloPro[0].")";
+
+
+
 ?>
 <?php
 
@@ -225,14 +292,17 @@ class PDF extends PDF_WriteTag {
 
     global $textoPie;
 
-    $this->SetY(-14);
+    // $this->SetY(-14);
+    $this->SetY(-21);
+    $this->Image('../imagenes/banner.png',27,261,160);
+
     $pagina='Página '.$this->PageNo().' de {nb}';
     $this->SetFont('Arial','',7);
     $this->Cell(120,3.5,utf8_decode($textoPie),0,0,'L');
     $this->Cell(60,3.5,utf8_decode($pagina),0,1,'R');
     $this->SetDrawColor(255,158,126);
     $this->SetLineWidth(0.1);
-    $this->line(0,265,216,265);
+    $this->line(0,258,216,258);
     
   }
 }
@@ -241,7 +311,7 @@ class PDF extends PDF_WriteTag {
 <?php
 
 $ancho=210;
-$textoPie = 'Contrato No. NM Variable';
+$textoPie = 'Contrato No. LAB-'.sprintf("%03d",$filaCont['consec']);
 
 $pdf = new PDF('P','mm',Letter);
 
@@ -263,7 +333,7 @@ $pdf->AddPage();
 $pdf->ln(4);
 $pdf->SetFont('Arial','B',12);
 $pdf->Cell(176,4.5,utf8_decode('CONTRATO DE APRENDIZAJE'),0,1,'C');
-$pdf->Cell(176,4.5,utf8_decode('NM variable'),0,1,'C');
+$pdf->Cell(176,4.5,utf8_decode('NM LAB '.sprintf("%03d",$filaCont['consec'])),0,1,'C');
 
 
 $pdf->ln(4);
@@ -283,29 +353,28 @@ $pdf->Row(array(utf8_decode('CEDULA NO.'),utf8_decode('79.315.619')),0);
 
 $pdf->ln(5);
 
-$pdf->Row(array(utf8_decode('NOMBRE APRENDIZ'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('CEDULA O TARJETA IDENTIDAD'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('FECHA NACIMIENTO'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('DIRECCION'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('TELEFONO'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('CORREO ELECTRONICO'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('NOMBRE APRENDIZ'),utf8_decode($filaCont['proveedor'])),0);
+$pdf->Row(array(utf8_decode('CEDULA O TARJETA IDENTIDAD'),utf8_decode(colocapuntos($filaCont['documento']))),0);
+$pdf->Row(array(utf8_decode('FECHA NACIMIENTO'),fechaactual3($filaCont['fconstitucion'])),0);
+$pdf->Row(array(utf8_decode('DIRECCION'),utf8_decode($filaCont['direccion'])),0);
+$pdf->Row(array(utf8_decode('TELEFONO'),utf8_decode($filaCont['telefono'])),0);
+$pdf->Row(array(utf8_decode('CORREO ELECTRONICO'),utf8_decode($filaCont['email'])),0);
 
-$pdf->Row(array(utf8_decode('ESTRATO'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('FECHA INICIACIÓN CONTRATO'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('FECHA TERMINACIÓN CONTRATO'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('ESPECIALIDAD O CURSO'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('No. DE GRUPO'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('EPS DEL APRENDIZ'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('SALARIO'),number_format($filaCont['valor'])),0);
+$pdf->Row(array(utf8_decode('AUXILIO DE TRANSPORTE (MLV):'),number_format($filaCont['auxilio'])),0);
 
-$pdf->Row(array(utf8_decode('ARL DEL APRENDIZ'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('FECHA INICIACIÓN CONTRATO'),fechaactual3($filaCont['finicio'])),0);
+$pdf->Row(array(utf8_decode('FECHA TERMINACIÓN CONTRATO'),fechaactual3($filaCont['ffin'])),0);
+$pdf->Row(array(utf8_decode('ESPECIALIDAD O CURSO'),utf8_decode($filaCont['especialidad'])),0);
+$pdf->Row(array(utf8_decode('No. DE GRUPO'),utf8_decode($filaCont['grupo'])),0);
+
 $pdf->Row(array(utf8_decode('INSTITUCIÓN DE FORMACION:'),utf8_decode('SENA')),0);
-$pdf->Row(array(utf8_decode('NIT:'),utf8_decode('1')),0);
-$pdf->Row(array(utf8_decode('SI ES SENA, CENTRO DE FORMACION'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('SI ES SENA, CENTRO DE FORMACION'),utf8_decode($filaCont['centrofor'])),0);
 
 $pdf->ln(5);
 
 $txt=utf8_decode('
-<p>Entre los suscritos a saber <neg>LUIS HECTOR RUBIANO VERGARA</neg>, identificado con la cédula de ciudadanía No. 79.315.619 de Bogotá D.C., actuando como Representante Legal de la Empresa COMPAÑIA DE PROYECTOS AMBIENTALES E INGENIERIA S.A.S. - CPA INGENIERIA S.A.S. NIT 830.042.614-3 quien para los efectos del presente Contrato se denominará EMPRESA y <vb>[NOMBRES Y APELLIDOS]</vb> identificado(a) con cédula de ciudadanía No. <vb>[XXXXXXXXX]</vb> expedida en  <vb>[Bogotá D.C.]</vb>, quien para los efectos del presente contrato se denominará el APRENDIZ, se suscribe el presente Contrato de Aprendizaje, conforme a lo preceptuado por la Ley 789 de 2002 y de acuerdo a las siguientes cláusulas:
+<p>Entre los suscritos a saber <neg>LUIS HECTOR RUBIANO VERGARA</neg>, identificado con la cédula de ciudadanía No. 79.315.619 de Bogotá D.C., actuando como Representante Legal de la Empresa COMPAÑIA DE PROYECTOS AMBIENTALES E INGENIERIA S.A.S. - CPA INGENIERIA S.A.S. NIT 830.042.614-3 quien para los efectos del presente Contrato se denominará EMPRESA y <neg>'.$filaCont['proveedor'].'</neg> identificado(a) con cédula de ciudadanía No. <neg>'.colocapuntos($filaCont['documento']).'</neg> expedida en '.$filaCont['municipio'].', quien para los efectos del presente contrato se denominará el APRENDIZ, se suscribe el presente Contrato de Aprendizaje, conforme a lo preceptuado por la Ley 789 de 2002 y de acuerdo a las siguientes cláusulas:
 </p>
 ');
 
@@ -313,7 +382,7 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p><neg><sub>PRIMERA.-</sub></neg> Objeto. El presente contrato tiene como objeto garantizar al APRENDIZ la formación profesional integral en la especialidad de <vb>[TECNÓLOGO EN GESTIÓN ADMINISTRATIVA]</vb> Grupo <vb>[2774940]</vb>, la cual se impartirá en su etapa lectiva por el  <vb>[(SENA - Centro de Gestión Administrativa - Regional Distrito Capital)]</vb> mientras su etapa práctica se desarrollará en la EMPRESA; <neg>para el caso de los aprendices que pertenecen a Instituciones distintas al SENA se debe tener en cuenta su fase de patrocinio.</neg>
+<p><neg><sub>PRIMERA.-</sub></neg> Objeto. El presente contrato tiene como objeto garantizar al APRENDIZ la formación profesional integral en la especialidad de <neg>'.$filaCont['especialidad'].'</neg> Grupo '.$filaCont['grupo'].', la cual se impartirá en su etapa lectiva por el  '.$filaCont['centrofor'].' mientras su etapa práctica se desarrollará en la EMPRESA; <neg>para el caso de los aprendices que pertenecen a Instituciones distintas al SENA se debe tener en cuenta su fase de patrocinio.</neg>
 </p>
 ');
 
@@ -321,14 +390,14 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p><neg><sub>SEGUNDA.</sub></neg> El contrato tiene un término de duración de: <vb>[(9) meses y (2) días]</vb>, comprendidos entre el Día <vb>[(08) Mes (01) Año 2025]</vb> fecha de iniciación del Contrato; y el Día <vb>[(9) Mes (10) Año 2025]</vb> fecha de terminación del mismo. (No podrá excederse el término máximo de dos años contenido en el Artículo 30 de la Ley 789/02) y previa revisión de la normatividad para cada una de las modalidades de patrocinio, el contrato se encuentra distribuido por la siguientes etapas: Etapa Lectiva: Inicio <vb>[Día (08) Mes (01) Año 2025]</vb> Etapa Productiva: <vb>[Inicio Día (11) Mes (04) Año (2025)]</vb> Finalización <vb>[Día (9) Mes (10) Año (2025)]</vb>.</p>
+<p><neg><sub>SEGUNDA.</sub></neg> El contrato tiene un término de duración de: '.$textoPeriodo.', comprendidos entre el '.$textoInicio.' fecha de iniciación del Contrato; y el '.$textoFin.' fecha de terminación del mismo. (No podrá excederse el término máximo de dos años contenido en el Artículo 30 de la Ley 789/02) y previa revisión de la normatividad para cada una de las modalidades de patrocinio, el contrato se encuentra distribuido por la siguientes etapas: Etapa Lectiva: Inicio '.$textoInicio.' Etapa Productiva: '.$textoPro.' Finalización '.$textoFin.'.</p>
 ');
 
 $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p><neg><sub>TERCERA.-</sub></neg> Obligaciones.  1) POR PARTE DE LA EMPRESA.- En virtud del presente contrato la EMPRESA deberá: a) Facilitar al APRENDIZ los medios para que tanto en las fases Lectiva y Práctica, reciba Formación Profesional Integral, metódica y completa en la ocupación u oficio materia del presente contrato.  b) Diligenciar y reportar al respectivo Centro de Formación Profesional Integral del SENA (o por la Institución Educativa donde el aprendiz adelanta sus estudios) las evaluaciones y certificaciones del APRENDIZ en su fase práctica del aprendizaje.  C) Reconocer mensualmente al APRENDIZ, por concepto de apoyo económico para el aprendizaje, durante la etapa lectiva, en el SENA el equivalente al 50% de 1 SMLMV y durante la etapa práctica de su formación el equivalente al 75% de 1 SMLMV y/o al 100% cuando la tasa de desempleo promedio del año inmediatamente anterior sea de un solo digito, para la vigencia 2016 este apoyo será del 100%. (Artículo 30 de la Ley 789 de 2002 y Decreto 451 de 2008) <neg>PARAGRAFO</neg>.- Este apoyo de sostenimiento no constituye salario en forma alguna, ni podrá  ser regulado a través de convenios o contratos colectivos o fallos arbítrales que recaigan sobre estos últimos.  d) Afiliar al APRENDIZ, durante la etapa práctica de su formación, a la Aseguradora de Riesgos Laborales COLMENA RIESGOS PROFESIONALES (<sub>ARL manejada por la empresa para su planta de personal</sub>), de conformidad con lo dispuesto por el artículo 30 de la Ley 789 de 2002.   E) Afiliar al APRENDIZ y efectuar, durante las fases lectiva y práctica de la formación, el pago mensual del aporte al régimen de Seguridad Social correspondiente al APRENDIZ en <vb>[NUEVA EPS]</vb>, conforme al régimen de trabajadores independientes, tal y como lo establece el Artículo 30 de la Ley 789 de 2002. Los pagos a la seguridad social (A.R.L. y E.P.S.) están a cargo en su totalidad por el empleador f) Dar al aprendiz la dotación de seguridad industrial, cuando el desarrollo de la etapa práctica así lo requiera, para la protección contra accidentes y enfermedades profesionales. 2) POR PARTE DEL APRENDIZ.- Por su parte se compromete en virtud del presente contrato a:  a) Concurrir puntualmente a las clases durante los periodos de enseñanza para así recibir la Formación Profesional Integral a que se refiere el presente Contrato, someterse a los reglamentos y normas establecidas por el respectivo Centro de Formación del SENA ( o de la Institución Educativa  donde el aprendiz adelante sus estudios), y poner toda diligencia y aplicación para lograr el mayor rendimiento en su Formación.  B) <sub>Concurrir puntualmente al lugar asignado por la Empresa para desarrollar su formación en la fase práctica, durante el periodo establecido para el mismo</sub>, en las actividades que se le encomiende y que guarde relación con la Formación, cumpliendo con las indicaciones que le señale la EMPRESA.  En todo caso la intensidad horaria que debe cumplir el APRENDIZ durante la etapa práctica en la EMPRESA, <sub>no podrá exceder de 8 horas diarias y 48 horas Semanales</sub>. (según el acuerdo 000023 de 2.005) c) Proporcionar la información necesaria para que el Empleador lo afilie como trabajador aprendiz al sistema de seguridad social en salud en la E.P.S., que elija.</p>
+<p><neg><sub>TERCERA.-</sub></neg> Obligaciones.  1) POR PARTE DE LA EMPRESA.- En virtud del presente contrato la EMPRESA deberá: a) Facilitar al APRENDIZ los medios para que tanto en las fases Lectiva y Práctica, reciba Formación Profesional Integral, metódica y completa en la ocupación u oficio materia del presente contrato.  b) Diligenciar y reportar al respectivo Centro de Formación Profesional Integral del SENA (o por la Institución Educativa donde el aprendiz adelanta sus estudios) las evaluaciones y certificaciones del APRENDIZ en su fase práctica del aprendizaje.  C) Reconocer mensualmente al APRENDIZ, por concepto de apoyo económico para el aprendizaje, durante la etapa lectiva, en el SENA el equivalente al 50% de 1 SMLMV y durante la etapa práctica de su formación el equivalente al 75% de 1 SMLMV y/o al 100% cuando la tasa de desempleo promedio del año inmediatamente anterior sea de un solo digito, para la vigencia 2016 este apoyo será del 100%. (Artículo 30 de la Ley 789 de 2002 y Decreto 451 de 2008) <neg>PARAGRAFO</neg>.- Este apoyo de sostenimiento no constituye salario en forma alguna, ni podrá  ser regulado a través de convenios o contratos colectivos o fallos arbítrales que recaigan sobre estos últimos.  d) Afiliar al APRENDIZ, durante la etapa práctica de su formación, a la Aseguradora de Riesgos Laborales COLMENA RIESGOS PROFESIONALES (<sub>ARL manejada por la empresa para su planta de personal</sub>), de conformidad con lo dispuesto por el artículo 30 de la Ley 789 de 2002.   E) Afiliar al APRENDIZ y efectuar, durante las fases lectiva y práctica de la formación, el pago mensual del aporte al régimen de Seguridad Social correspondiente al APRENDIZ en la EPS que el elija, conforme al régimen de trabajadores independientes, tal y como lo establece el Artículo 30 de la Ley 789 de 2002. Los pagos a la seguridad social (A.R.L. y E.P.S.) están a cargo en su totalidad por el empleador f) Dar al aprendiz la dotación de seguridad industrial, cuando el desarrollo de la etapa práctica así lo requiera, para la protección contra accidentes y enfermedades profesionales. 2) POR PARTE DEL APRENDIZ.- Por su parte se compromete en virtud del presente contrato a:  a) Concurrir puntualmente a las clases durante los periodos de enseñanza para así recibir la Formación Profesional Integral a que se refiere el presente Contrato, someterse a los reglamentos y normas establecidas por el respectivo Centro de Formación del SENA ( o de la Institución Educativa  donde el aprendiz adelante sus estudios), y poner toda diligencia y aplicación para lograr el mayor rendimiento en su Formación.  B) <sub>Concurrir puntualmente al lugar asignado por la Empresa para desarrollar su formación en la fase práctica, durante el periodo establecido para el mismo</sub>, en las actividades que se le encomiende y que guarde relación con la Formación, cumpliendo con las indicaciones que le señale la EMPRESA.  En todo caso la intensidad horaria que debe cumplir el APRENDIZ durante la etapa práctica en la EMPRESA, <sub>no podrá exceder de 8 horas diarias y 44 horas Semanales</sub>. (según el acuerdo 000023 de 2.005) c) Proporcionar la información necesaria para que el Empleador lo afilie como trabajador aprendiz al sistema de seguridad social en salud en la E.P.S., que elija.</p>
 ');
 
 
@@ -364,7 +433,7 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p><neg><sub>OCTAVA.</sub></neg> El presente contrato de aprendizaje rige a partir de <vb>[D (08) de M (01) del A 2025]</vb> y termina el <vb>[D (9) de M (10) de A 2025]</vb> fecha prevista como terminación de la etapa productiva que se describe en la cláusula segunda de este contrato. Para efectos de lo anterior, firman a los <vb>[D (08) de M (01) de A 2025]</vb>.</p>
+<p><neg><sub>OCTAVA.</sub></neg> El presente contrato de aprendizaje rige a partir de'.$textoInicio.' y termina el '.$textoFin.' fecha prevista como terminación de la etapa productiva que se describe en la cláusula segunda de este contrato. Para efectos de lo anterior, firman a los '.$textoInicio.'.</p>
 ');
 
 $pdf->WriteTag(0,4.5,$txt,0,"J",0);
@@ -396,7 +465,7 @@ if($linea>218){
 
 
 $pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
-$pdf->Cell(88,4.5,utf8_decode('VARIABLE'),0,1,'L');
+$pdf->Cell(88,4.5,utf8_decode($filaCont['proveedor']),0,1,'L');
 
 $pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,0,'L');
 $pdf->Cell(88,4.5,utf8_decode('Aprendiz'),0,1,'L');

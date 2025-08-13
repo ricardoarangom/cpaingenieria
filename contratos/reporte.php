@@ -5,83 +5,84 @@ include('encabezado.php');
 // echo "<pre>";
 // print_r($_POST);
 // echo "</pre>";
-
-if(!$_POST['proyecto'] and !$_POST['solicitante'] and !$_POST['proveedor'] and !$_POST['dsolicitud'] and !$_POST['hsolicitud'] and !$_POST['drecibido'] and !$_POST['hrecibido'] and !$_POST['dcomprado'] and !$_POST['hcomprado']){
+ 
+if(!$_POST['proyecto'] and !$_POST['contratista'] and !$_POST['IdClase'] and !$_POST['IdSubClase'] and !$_POST['dfinicio'] and !$_POST['hfinicio']){
 	$buscador1="";
 }else{
 	$buscador1=" where ";
 
 	if($_POST['proyecto']){
-		$buscador.=" ordencompra.IdArea=".$_POST['proyecto']." and ";
+		$buscador.=" contrat.IdArea=".$_POST['proyecto']." and ";
 	}
-	if($_POST['solicitante']){
-		$buscador.=" ordencompra.IdSolicitante=".$_POST['solicitante']." and ";
+	if($_POST['contratista']){
+		$buscador.=" contrat.IdProveedor=".$_POST['contratista']." and ";
 	}
-	if($_POST['proveedor']){
-		$buscador.=" compras.IdProveedor=".$_POST['proveedor']." and ";
+	if($_POST['IdClase']){
+		$buscador.=" contrat.IdClase=".$_POST['IdClase']." and ";
 	}
-	if($_POST['dsolicitud']){
-		$buscador.=" fsolicitud>='".$_POST['dsolicitud']."' and ";
+	if($_POST['IdSubClase']){
+		$buscador.=" contrat.IdSubClase=".$_POST['IdSubClase']." and ";
 	}
-	if($_POST['hsolicitud']){
-		$buscador.=" fsolicitud<='".$_POST['hsolicitud']."' and ";
+	if($_POST['dfinicio']){
+		$buscador.=" contrat.finicio>='".$_POST['dfinicio']."' and ";
 	}
-	if($_POST['drecibido']){
-		$buscador.=" compras.recibido>='".$_POST['drecibido']."' and ";
+	if($_POST['hfinicio']){
+		$buscador.=" contrat.finicio<='".$_POST['hfinicio']."' and ";
 	}
-	if($_POST['hrecibido']){
-		$buscador.=" compras.recibido<='".$_POST['hrecibido']."' and ";
-	}
-	if($_POST['dcomprado']){
-		$buscador.=" ordencompra.comprado>='".$_POST['dcomprado']."' and ";
-	}
-	if($_POST['hcomprado']){
-		$buscador.=" ordencompra.comprado<='".$_POST['hcomprado']."' and ";
-	}	
+	
 
 }
 $buscador=substr($buscador, 0, -4);
-// echo $buscador;
+// echo $buscador." ".$buscador1;
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
-function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
 
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
 
-  switch ($theType) {
-    case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;    
-    case "long":
-    case "int":
-      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-      break;
-    case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-      break;
-    case "date":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;
-    case "defined":
-      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-      break;
-  }
-  return $theValue;
-}
-}
+$buscaCont = "SELECT 
+									IdContrato,
+									proveedor,
+									IdProveedor,
+									area,
+									contrat.IdClase,
+									contrat.IdSubClase,
+									clase,
+									subclase,
+									objeto,
+									finicio,
+									ffin,
+									ffinfin,
+									iva,
+									consec,
+									contrato,
+									valor,
+									valorf,
+									formaPago,
+									anticipo,
+									panticipo,
+									anticipop,
+									terminado,
+									integral,
+									incs,
+									especialidad,
+									grupo,
+									centrofor,
+									alcance,
+									lugar,
+									auxilio,
+									cargo,
+									contrato
+							FROM
+									(((((contrat
+									LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
+									LEFT JOIN areas ON contrat.IdArea = areas.IdArea)
+									LEFT JOIN calsecontratos ON contrat.IdClase = calsecontratos.IdClaseContrato)
+									LEFT JOIN subclasescontrat ON contrat.IdSubClase = subclasescontrat.IdSubClase)
+									LEFT JOIN cargos ON contrat.IdCargo = cargos.IdCargo)  ".$buscador1.$buscador;
+$resultadoCont = mysql_query($buscaCont, $datos) or die(mysql_error());
+$filaCont = mysql_fetch_assoc($resultadoCont);
+$totalfilas_buscaCont = mysql_num_rows($resultadoCont);
 
-mysql_select_db($database_datos, $datos);
-$query_Recordset1 = "SELECT compras.IdCompra, compras.IdOrdencompra, fecha, compras.comprado, compras.recibido, proveedor, fsolicitud, nombre, apellido, area, factura, evaluacion, calpro, compras.precio, condpago, cumplimiento, higsegind, gesamb, rse, total FROM ((((compras inner join proveedores ON compras.IdProveedor=proveedores.IdProveedor) inner join ordencompra On compras.IdOrdencompra=ordencompra.IdOrdencompra) inner join usuarios On ordencompra.IdSolicitante=usuarios.IdUsuario) inner join areas on ordencompra.IdArea=areas.IdArea) left join totcompras on compras.IdCompra=totcompras.IdCompra".$buscador1.$buscador;
-
-// echo $query_Recordset1;
-$Recordset1 = mysql_query($query_Recordset1, $datos) or die(mysql_error());
-$row_Recordset1 = mysql_fetch_assoc($Recordset1);
-$totalRows_Recordset1 = mysql_num_rows($Recordset1);
+// echo $buscaCont;
 
 
 mysql_select_db($database_datos, $datos);
@@ -110,31 +111,6 @@ $Recordset2 = mysql_query($query_Recordset2, $datos) or die(mysql_error());
 $row_Recordset2 = mysql_fetch_assoc($Recordset2);
 $totalRows_Recordset2 = mysql_num_rows($Recordset2);
 
-if($totalRows_Recordset1>0){
-  do { 
-    $tabla[$row_Recordset1['IdCompra']]['sc']=$row_Recordset1['IdOrdencompra'];
-		$tabla[$row_Recordset1['IdCompra']]['solicitante']=$row_Recordset1['nombre']." ".$row_Recordset1['apellido'];
-		$tabla[$row_Recordset1['IdCompra']]['area']=$row_Recordset1['area'];
-		$tabla[$row_Recordset1['IdCompra']]['fsolicitud']=$row_Recordset1['fsolicitud'];
-		$tabla[$row_Recordset1['IdCompra']]['comprado']=$row_Recordset1['comprado'];
-		$tabla[$row_Recordset1['IdCompra']]['recibido']=$row_Recordset1['recibido'];
-		$tabla[$row_Recordset1['IdCompra']]['proveedor']=$row_Recordset1['proveedor'];
-		$tabla[$row_Recordset1['IdCompra']]['evaluacion']=$row_Recordset1['evaluacion'];
-		$tabla[$row_Recordset1['IdCompra']]['factura']=$row_Recordset1['factura'];
-
-		$tabla[$row_Recordset1['IdCompra']]['calpro']=$row_Recordset1['calpro'];
-		$tabla[$row_Recordset1['IdCompra']]['precio']=$row_Recordset1['precio'];
-		$tabla[$row_Recordset1['IdCompra']]['condpago']=$row_Recordset1['condpago'];
-		$tabla[$row_Recordset1['IdCompra']]['cumplimiento']=$row_Recordset1['cumplimiento'];
-		$tabla[$row_Recordset1['IdCompra']]['higsegind']=$row_Recordset1['higsegind'];
-		$tabla[$row_Recordset1['IdCompra']]['gesamb']=$row_Recordset1['gesamb'];
-		$tabla[$row_Recordset1['IdCompra']]['rse']=$row_Recordset1['rse'];
-		$tabla[$row_Recordset1['IdCompra']]['total']=$row_Recordset1['total'];
-    
-  } while ($row_Recordset1 = mysql_fetch_assoc($Recordset1));
-}
-
-$cadenaTabla=json_encode($tabla,JSON_UNESCAPED_UNICODE);
 
 ?>
 <script>
@@ -163,78 +139,61 @@ $cadenaTabla=json_encode($tabla,JSON_UNESCAPED_UNICODE);
     ?>";
     document.getElementById('proyecto').value=proyecto;
     
-    var solicitante ="<?php 
+    var contratista ="<?php 
     if($_POST){
-      echo $_POST['solicitante'];
+      echo $_POST['contratista'];
     }else{
       echo "";
     }
     ?>";
-    document.getElementById('solicitante').value=solicitante;
+    document.getElementById('contratista').value=contratista;
 		
-		var proveedor ="<?php 
+		var IdClase ="<?php 
     if($_POST){
-      echo $_POST['proveedor'];
+      echo $_POST['IdClase'];
     }else{
       echo "";
     }
     ?>";
-    document.getElementById('proveedor').value=proveedor;
+		if(IdClase){
+			buscaSubClase(IdClase)
+		}
+		
+    document.getElementById('IdClase').value=IdClase;
     
-    var dsolicitud ="<?php 
+    var IdSubClase ="<?php 
     if($_POST){
-      echo $_POST['dsolicitud'];
+      echo $_POST['IdSubClase'];
     }else{
       echo "";
     }
     ?>";
-    document.getElementById('dsolicitud').value=dsolicitud;
+
+		setTimeout(() => {
+        document.getElementById('IdSubClase').value=IdSubClase;
+      }, "100");
+    
        
-    var hsolicitud ="<?php 
+    var dfinicio ="<?php 
     if($_POST){
-      echo $_POST['hsolicitud'];
+      echo $_POST['dfinicio'];
     }else{
       echo "";
     }
     ?>";
-    document.getElementById('hsolicitud').value=hsolicitud;
+    document.getElementById('dfinicio').value=dfinicio;
     
-    var drecibido ="<?php 
+    var hfinicio ="<?php 
     if($_POST){
-      echo $_POST['drecibido'];
+      echo $_POST['hfinicio'];
     }else{
       echo "";
     }
     ?>";
-    document.getElementById('drecibido').value=drecibido;
-    
-    var hrecibido ="<?php 
-    if($_POST){
-      echo $_POST['hrecibido'];
-    }else{
-      echo "";
-    }
-    ?>";
-    document.getElementById('hrecibido').value=hrecibido;
-     
-    var dcomprado="<?php 
-    if($_POST){
-      echo $_POST['dcomprado'];
-    }else{
-      echo "";
-    }
-    ?>";
-    document.getElementById('dcomprado').value=dcomprado;
 		
-		var hcomprado="<?php 
-    if($_POST){
-      echo $_POST['hcomprado'];
-    }else{
-      echo "";
-    }
-    ?>";
-    document.getElementById('hcomprado').value=hcomprado;
-        
+    document.getElementById('hfinicio').value=hfinicio;
+    
+         
   }
 
 	function buscaSubClase(IdClaseContrato){
@@ -261,8 +220,94 @@ $cadenaTabla=json_encode($tabla,JSON_UNESCAPED_UNICODE);
       }
     });
   }
+
+	function subeRadicado(id,consec){
+
+		document.getElementById('m-id').value=id;
+		document.getElementById('m-consec').value=consec;
+
+		$('#subirRadicado').modal({backdrop: 'static', keyboard: false});
+
+	}
+
+	function validarArchivo1(archivo){
+          
+    if((archivo[0]["size"] > 1100000) || (archivo[0]["type"]!="application/pdf") ){
+          
+      $("#m-radicado").val("");
+      
+      swal({
+          title: "Error al subir el archivo",
+          text: "¡El archivo no debe pesar más de 1000B y ser en formato PDF!",
+          type: "error",
+          confirmButtonText: "¡Cerrar!"
+        });
+    }
+  }
+
+	function subeRadicado1(){
+		var radicado = document.getElementById('m-radicado').files[0];
+		var id = document.getElementById('m-id').value;
+		var consec = document.getElementById('m-consec').value
+
+    if(!radicado){
+			document.getElementById('m-radicado').focus();
+			swal({
+				 html: '¡Debe seleccionar el archivo con el contrato!',
+				 type: "error",
+				 showConfirmButton: true,
+				 confirmButtonText: "Cerrar"
+				 }).then(function(result){
+				 if (result.value) {					 
+				 }
+			 });
+			return
+		}
+
+		var datos = new FormData();
+    datos.append("radicado",radicado);
+		datos.append("id",id);
+		datos.append("consec",consec);
+    datos.append("proced",12);
+
+    $.ajax({
+				url:"ajax.php",
+				method: "POST",
+				data: datos,
+				cache: false,
+				contentType: false,
+				processData: false,
+				success: function(respuesta){
+          var res = respuesta.trim();
+					console.log(respuesta);
+          if(res=='ok'){
+						$('#subirRadicado').modal('hide');
+						swal({
+							html: '¡Contrato subido con exito!',
+							type: "success",
+							showConfirmButton: true,
+							confirmButtonText: "Cerrar"
+						}).then(function(result){
+						if (result.value) {	
+							window.location.reload();
+						}
+						});
+            
+          }
+				}
+			});
+	}
 </script>
 <style>
+
+	#relleno-sm {
+		min-width:1700px;
+	}
+
+	body{		
+		/* background-color: lightgray;  */
+	}
+
 	.div-form{
 		padding-top: 4px;
 		padding-bottom: 4px;
@@ -397,111 +442,160 @@ include('encabezado1.php');
 		</div>
 	</form>
 </div>
-<div class="contenedor" align="center">
+
   <br>
-	<?php 
-	if(isset($_POST['boton'])){
-		?>
-	<table border="1" width="1300" class="tablita">
-			<col width="30">
-			<col width="30">
+<?php 
+if(isset($_POST['boton'])){
+	?>
+	<div align="center" style="width:1700px">
+		<table border="1" align="center"  class="tablita">
+			<col width="60">
 			<col width="220">
-			<col width="300">
+			<col width="220">
+			<col width="140">
+			<col width="250">
+			<col width="250">
+			<col width="70">
+			<col width="65">
+			<col width="65">
+			<col width="75">
+			<col width="75">
+			<col width="93">
 			<col width="80">
-			<col width="80">
+			<!-- 
+			
+		
 			<col width="80">
 			<col width="250">
 			<col width="70">
 			<col width="80">
-      <col width="80">
-			<col width="107">
-			<tr class="Arial13 titulos">
-				<td align="center">OC</td>
-				<td align="center">SC</td>
-				<td align="center">SOLICITANTE</td>
+			<col width="80">
+			<col width="107"> -->
+			<tr class="Arial14 titulos">
+				<td align="center">CONSEC</td>				
+				<td align="center">CONTRATISTA</td>
 				<td align="center">AREA</td>
-				<td align="center">SOLICITADO</td>
-				<td align="center">COMPRADO</td>
-				<td align="center">RECIBIDO</td>
-				<td align="center">PROVEEDOR</td>
-				<td align="center">EVAL</td>
-				<td align="center"></td>
-        <td align="center"></td>
-				<td align="center"></td>
+				<td align="center">CLASE</td>
+				<td align="center">CARGO / OBJETO</td>
+				<td align="center">LABOR CONTRATADA</td>
+				<td align="center">VALOR</td>	
+				<td align="center">INCS</td>
+				<td align="center">AUXILIO</td>			
+				<td align="center">INICIO</td>
+				<td align="center">FIN</td>
+
+				<td align="center">ACCIONES</td>
+				<td align="center">VER</td>
 			</tr>
 			<?php
-			
+
+			if($totalfilas_buscaCont>0){
+				do{
+					if($filaCont['IdClase']==1){
+						$consec='LAB '.sprintf("%03d",$filaCont['consec']);
+					}
+					if($filaCont['IdClase']==2){
+						$consec='PS '.sprintf("%03d",$filaCont['consec']);
+					}
+
+					if($filaCont['cargo']){
+						$cargo=$filaCont['cargo'];
+					}else{
+						$cargo=$filaCont['objeto'];
+					}
+
+					if($filaCont['IdSubClase']==2){
+						$labor=$filaCont['objeto'];
+					}else{
+						$labor='';
+					}
+
+					?>
+					<tr class="Arial10" >
+						<td align="center"><?php echo $consec ?></td>
+						<td><?php echo $filaCont['proveedor']?></td>
+						<td><?php echo $filaCont['area']?></td>
+						<td><?php echo $filaCont['clase']?><br><?php echo $filaCont['subclase']?></td>
+						<td class="Arial10" ><?php echo $cargo?></td>
+						<td class="Arial10" ><?php echo $labor?></td>
+						<td align="right"><?php echo number_format($filaCont['valor'])?></td>
+						<td align="right"><?php echo number_format($filaCont['incs'])?></td>
+						<td align="right"><?php echo number_format($filaCont['auxilio'])?></td>
+						<td align="center"><?php echo fechaactual3($filaCont['finicio'])?></td>
+						<td align="center"><?php echo $filaCont['ffin'] ? fechaactual3($filaCont['ffin']) : ""?></td>
+						<td>
+							<?php 
+							if(!$filaCont['contrato']){
+								?>
+								<button class="btn btn-verde btn-xs1" onClick="subeRadicado(<?php echo $filaCont['IdContrato']?>,'<?php echo $consec?>')" >Subir contrato<br>firmado</button>
+								<?php
+							}
+							?>
+						</td>
+						<td>
+							<?php 
+							if($filaCont['contrato']){
+								?>
+								<a href="<?php echo $filaCont['contrato']?>" class="btn btn-rosa btn-xs1"  target="_blank">Ver Contrato</a>
+								<?php
+							}else if($filaCont['IdClase']==1){
+								?>
+								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1"  target="_blank" >Ver Contrato</a> 
+								<?php
+							}
+							?>
+						</td>
+					</tr>
+					<?php
+
+				} while ($filaCont = mysql_fetch_assoc($resultadoCont));
+
+			}else{
+
+			}
 			?>
 			
-	</table>
+		</table>
+	</div>	
 	<?php
-	}
-	?>
-</div>
-  <br><br>
-    
-</div>
+}
+?>
+<br><br><br><br><br>
 
 <!-- modal -->
-
-<div id="detalleEval" class="modal fade" role="dialog" >
-  <div class="modal-dialog" >    
+<div id="subirRadicado" class="modal fade" role="dialog" >
+  <div class="modal-dialog">
     <div class="modal-content">
-			<div class="modal-header" style="background:#d8d8d8; color:black">
-            <h5 class="modal-title">Detalle de la evaluación</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+      <div class="modal-header" style="background:#d8d8d8; color:black">
+          <h5 class="modal-title">SUBIR CONTRATO</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
 			<div class="modal-body">
-
-				<table class="tablita Arial12" border="1" align="center">
-					<col width="250px">
-					<col width="100px">
-					<tr class="titulos">
-						<td>Criterio</td>
-						<td>Evaluación</td>
-					</tr>
-					<tr>
-						<td>Calidad del Producto o Servicio</td>
-						<td id="calpro" align="right"></td>
-					</tr>
-					<tr>
-						<td>Precio</td>
-						<td id="precio" align="right"></td>
-					</tr>
-					<tr>
-						<td>Condiciones de pago</td>
-						<td id="condpago" align="right"></td>
-					</tr>
-					<tr>
-						<td>Cumplimiento</td>
-						<td id="cumplimiento" align="right"></td>
-					</tr>
-					<tr>
-						<td>Aspectos Higiene y Seguridad Industrial</td>
-						<td id="higsegind" align="right"></td>
-					</tr>
-					<tr>
-						<td>Aspectos de Gestión ambiental</td>
-						<td id="gesamb" align="right"></td>
-					</tr>
-					<tr>
-						<td>Aspectos de RSE</td>
-						<td id="rse" align="right"></td>
-					</tr>
-					<tr>
-						<td><strong>Total</strong></td>
-						<td id="evaluacion" align="right"></td>
-					</tr>
-				</table>
+        <div>
+					<input type="hidden" id="m-id">
+					<input type="hidden" id="m-consec">
+					<div class="grid columna-2">
+						<div class="span-2" id="div-radicado">
+							Formato PDF max 1000B
+          		<input type="file" name="m-radicado" id="m-radicado"  class="campo-xs Arial12" onChange="validarArchivo1(this.files)" >
+						</div>
+					</div>
+					<br>
+					<div align="center">
+						<button type="button" class="btn btn-rosa btn-sm"  onClick="subeRadicado1()">Subir</button>
+					</div>
+          
+        </div>	
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cerrar</button>
+			<div class="modal-footer">					
+				<button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Cerrar</button>
 			</div>
-		</div>
-	</div>
+    </div>
+  </div>
 </div>
+
 
 <?php 
 	mysql_close($datos);
@@ -514,7 +608,7 @@ include('footer.php')
 </body>
 </html>
 <?php
-mysql_free_result($Recordset1);
+
 
 mysql_free_result($Recordset3);
 

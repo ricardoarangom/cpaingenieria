@@ -304,7 +304,13 @@ include('encabezado.php');
 			document.getElementById('div-integral').style.display='none';
 			document.getElementById('div-iva').style.display='none';
 
+			document.getElementById('div-ffinfin').style.display='';
+			document.getElementById('div-auxilio').style.display='';
+			document.getElementById('div-deptol').style.display='none';
+			document.getElementById('div-lugar').style.display='none';
+
 			document.getElementById('ffin').setAttribute('required', 'required');
+			document.getElementById('ffinfin').setAttribute('required', 'required');
 			document.getElementById('IdCargo').setAttribute('required', 'required');
 			document.getElementById('especialidad').setAttribute('required', 'required');
 			document.getElementById('grupo').setAttribute('required', 'required');
@@ -312,8 +318,12 @@ include('encabezado.php');
 			document.getElementById('objeto').removeAttribute('required');
 			document.getElementById('alcance').removeAttribute('required');
 
+			document.getElementById('lugar').removeAttribute('required');
+
+			
 			document.getElementById('finicio').value='';
 			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
 			document.getElementById('valor').value='';
 			document.getElementById('IdCargo').value='';
 			document.getElementById('especialidad').value='';
@@ -321,8 +331,6 @@ include('encabezado.php');
 			document.getElementById('centrofor').value='';
 			document.getElementById('objeto').value='';
 			document.getElementById('alcance').value='';
-
-			document.getElementById('div-incs').value=0;
 
 
 			document.getElementById('integral-no').checked=true;
@@ -349,7 +357,13 @@ include('encabezado.php');
 			document.getElementById('div-integral').style.display='';
 			document.getElementById('div-iva').style.display='none';
 
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='';
+			document.getElementById('div-deptol').style.display='';
+			document.getElementById('div-lugar').style.display='';
+
 			document.getElementById('ffin').removeAttribute('required');
+			document.getElementById('ffinfin').removeAttribute('required');
 			document.getElementById('IdCargo').setAttribute('required', 'required');
 			document.getElementById('especialidad').removeAttribute('required');
 			document.getElementById('grupo').removeAttribute('required');
@@ -357,8 +371,11 @@ include('encabezado.php');
 			document.getElementById('objeto').setAttribute('required', 'required');
 			document.getElementById('alcance').setAttribute('required', 'required');
 
+			document.getElementById('lugar').setAttribute('required', 'required');
+
 			document.getElementById('finicio').value='';
 			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
 			document.getElementById('valor').value='';
 			document.getElementById('IdCargo').value='';
 			document.getElementById('especialidad').value='';
@@ -366,9 +383,7 @@ include('encabezado.php');
 			document.getElementById('centrofor').value='';
 			document.getElementById('objeto').value='';
 			document.getElementById('alcance').value='';
-
-			document.getElementById('div-incs').value=0;
-
+			
 			document.getElementById('label-objeto').innerHTML='Objeto obra o labor contratada'
 
 			document.getElementById('integral-no').checked=true;
@@ -398,7 +413,13 @@ include('encabezado.php');
 			document.getElementById('div-integral').style.display='';
 			document.getElementById('div-iva').style.display='none';
 
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='';
+			document.getElementById('div-deptol').style.display='';
+			document.getElementById('div-lugar').style.display='';
+
 			document.getElementById('ffin').setAttribute('required', 'required');
+			document.getElementById('ffinfin').removeAttribute('required');
 			document.getElementById('IdCargo').setAttribute('required', 'required');
 			document.getElementById('especialidad').removeAttribute('required');
 			document.getElementById('grupo').removeAttribute('required');
@@ -406,8 +427,11 @@ include('encabezado.php');
 			document.getElementById('objeto').removeAttribute('required');
 			document.getElementById('alcance').setAttribute('required', 'required');
 
+			document.getElementById('lugar').setAttribute('required', 'required');
+
 			document.getElementById('finicio').value='';
 			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
 			document.getElementById('valor').value='';
 			document.getElementById('IdCargo').value='';
 			document.getElementById('especialidad').value='';
@@ -416,8 +440,7 @@ include('encabezado.php');
 			document.getElementById('objeto').value='';
 			document.getElementById('alcance').value='';
 
-			document.getElementById('div-incs').value=0;
-
+			
 			document.getElementById('integral-no').checked=true;
 			document.getElementById('iva-no').checked=true;
 
@@ -452,7 +475,13 @@ include('encabezado.php');
 			document.getElementById('div-integral').style.display='';
 			document.getElementById('div-iva').style.display='none';
 
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='';
+			document.getElementById('div-deptol').style.display='';
+			document.getElementById('div-lugar').style.display='';
+
 			document.getElementById('ffin').removeAttribute('required');
+			document.getElementById('ffinfin').removeAttribute('required');
 			document.getElementById('IdCargo').setAttribute('required', 'required');
 			document.getElementById('especialidad').removeAttribute('required');
 			document.getElementById('grupo').removeAttribute('required');
@@ -460,8 +489,11 @@ include('encabezado.php');
 			document.getElementById('objeto').removeAttribute('required');
 			document.getElementById('alcance').removeAttribute('required');
 
+			document.getElementById('lugar').setAttribute('required', 'required');
+
 			document.getElementById('finicio').value='';
 			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
 			document.getElementById('valor').value='';
 			document.getElementById('IdCargo').value='';
 			document.getElementById('especialidad').value='';
@@ -470,8 +502,7 @@ include('encabezado.php');
 			document.getElementById('objeto').value='';
 			document.getElementById('alcance').value='';
 
-			document.getElementById('div-incs').value=0;
-
+			
 			document.getElementById('integral-no').checked=true;
 			document.getElementById('iva-no').checked=true;
 
@@ -505,7 +536,13 @@ include('encabezado.php');
 			document.getElementById('div-integral').style.display='none';
 			document.getElementById('div-iva').style.display='';
 
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='none';
+			document.getElementById('div-deptol').style.display='none';
+			document.getElementById('div-lugar').style.display='none';
+
 			document.getElementById('ffin').setAttribute('required', 'required');
+			document.getElementById('ffinfin').removeAttribute('required');
 			document.getElementById('IdCargo').removeAttribute('required');
 			document.getElementById('especialidad').removeAttribute('required');
 			document.getElementById('grupo').removeAttribute('required');
@@ -515,6 +552,7 @@ include('encabezado.php');
 
 			document.getElementById('finicio').value='';
 			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
 			document.getElementById('valor').value='';
 			document.getElementById('IdCargo').value='';
 			document.getElementById('especialidad').value='';
@@ -523,8 +561,9 @@ include('encabezado.php');
 			document.getElementById('objeto').value='';
 			document.getElementById('alcance').value='';
 
-			document.getElementById('div-incs').value=0;
+			document.getElementById('lugar').removeAttribute('required');
 
+			
 			document.getElementById('label-objeto').innerHTML='Objeto:'
 
 			document.getElementById('integral-no').checked=true;
@@ -565,7 +604,13 @@ include('encabezado.php');
 			document.getElementById('div-integral').style.display='none';
 			document.getElementById('div-iva').style.display='';
 
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='none';
+			document.getElementById('div-deptol').style.display='none';
+			document.getElementById('div-lugar').style.display='none';
+
 			document.getElementById('ffin').setAttribute('required', 'required');
+			document.getElementById('ffinfin').removeAttribute('required');
 			document.getElementById('IdCargo').removeAttribute('required');
 			document.getElementById('especialidad').removeAttribute('required');
 			document.getElementById('grupo').removeAttribute('required');
@@ -575,6 +620,7 @@ include('encabezado.php');
 
 			document.getElementById('finicio').value='';
 			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
 			document.getElementById('valor').value='';
 			document.getElementById('IdCargo').value='';
 			document.getElementById('especialidad').value='';
@@ -583,8 +629,8 @@ include('encabezado.php');
 			document.getElementById('objeto').value='';
 			document.getElementById('alcance').value='';
 
-			document.getElementById('div-incs').value=0;
-
+			document.getElementById('lugar').removeAttribute('required');
+			
 			document.getElementById('label-objeto').innerHTML='Objeto:'
 
 			document.getElementById('integral-no').checked=true;
@@ -1167,6 +1213,14 @@ include('encabezado.php');
 					var fila = '<select name="municipion" id="municipion" class="campo-xs Arial12" required="required" >' +
 						'<option value="">Seleccione</option>';
 				}
+				if (id == "deptoe") {
+					var fila = '<select name="municipioe" id="municipioe" class="campo-xs Arial12">' +
+						'<option value="">Seleccione</option>';
+				}
+				if (id == "deptol") {
+					var fila = '<select name="lugar" id="lugar" class="campo-sm Arial12" required="required">' +
+						'<option value="">Seleccione</option>';
+				}
 
 
 
@@ -1180,6 +1234,12 @@ include('encabezado.php');
 				}
 				if (id == "depton") {
 					$('#midiv1').html(fila);
+				}
+				if (id == "deptoe") {
+					$('#midiv0').html(fila);
+				}
+				if (id == "deptol") {
+					$('#midiv4').html(fila);
 				}
 			}
 		});
@@ -1203,6 +1263,7 @@ include('encabezado.php');
 		var replegal = document.getElementById('replegal').value;
 		var IdClasedocrep = document.getElementById('IdClasedocrep').value;
 		var docrep = document.getElementById('docrep').value;
+		var municipioe = document.getElementById('municipioe').value;
 
 		if (proveedor == "") {
 			document.getElementById('proveedor').focus();
@@ -1331,6 +1392,7 @@ include('encabezado.php');
 		datos.append("replegal", replegal);
 		datos.append("IdClasedocrep", IdClasedocrep);
 		datos.append("docrep", docrep);
+		datos.append("municipioe", municipioe);
 
 		datos.append("proced", 5);
 
@@ -2048,6 +2110,10 @@ include('encabezado1.php');
 				Inicio:
 				<input type="date" class="campo-sm Arial12" name="finicio" id="finicio" required>
 			</div>
+			<div class="span-2" id="div-ffinfin">
+				Inicio etapa productiva:
+				<input type="date" class="campo-sm Arial12" name="ffinfin" id="ffinfin">
+			</div>
 			<div class="span-2" id="div-ffin">
 				Terminación:
 				<input type="date" class="campo-sm Arial12" name="ffin" id="ffin">
@@ -2055,6 +2121,10 @@ include('encabezado1.php');
 			<div class="span-2">
 				Valor:
 				<input type="number" class="campo-sm Arial12" name="valor" id="valor" required>
+			</div>
+			<div class="span-2" id="div-auxilio">
+				Auxilio Transporte:
+				<input type="number" class="campo-sm Arial12" name="auxilio" id="auxilio" value="0">
 			</div>
 			<div class="span-2" id="div-IdCargo">
 				Cargo:
@@ -2084,6 +2154,32 @@ include('encabezado1.php');
 			<div class="span-2" id="div-centrofor">
 				C Fromación
 				<input type="text" name="centrofor" id="centrofor" class="campo-sm Arial12" onBlur="aMayusculas(this.value,this.id)">	
+			</div>
+			<div class="span-2" id="div-deptol">
+				Depto donde desepmpeñara labores:
+				<select name="deptol" id="deptol" class="campo-sm Arial12" onChange="buscamun(this.value,this.id)">
+					<option value="">Seleccione</option>
+					<?php
+					do {  
+						?>
+						<option value="<?php echo $filaDepto['IdDepartamento']?>"><?php echo $filaDepto['departamentos']?></option>
+						<?php
+					} while ($filaDepto = mysql_fetch_assoc($resultadoDepto));
+					$rows = mysql_num_rows($resultadoDepto);
+					if($rows > 0) {
+						mysql_data_seek($resultadoDepto, 0);
+						$filaDepto = mysql_fetch_assoc($resultadoDepto);
+					}
+					?>
+				</select>
+			</div>
+			<div class="span-2" id="div-lugar">
+				Mcpio donde desepmpeñara labores:
+				<div id='midiv4'>
+					<select name="lugar" id="lugar"  class="campo-sm Arial12" >	
+						<option value="">Seleccione</option>
+					</select>
+				</div>	
 			</div>
 		</div>
 		<br>	
@@ -2250,11 +2346,38 @@ include('encabezado1.php');
 						</div>
 						<div class="span-1">
 							<br>
+							Departamento (expedición):
+							<select name="deptoe" id="deptoe" class="campo-xs Arial12" onChange="buscamun(this.value,this.id)">
+								<option value="">Seleccione</option>
+								<?php
+								do {  
+									?>
+									<option value="<?php echo $filaDepto['IdDepartamento']?>"><?php echo $filaDepto['departamentos']?></option>
+									<?php
+								} while ($filaDepto = mysql_fetch_assoc($resultadoDepto));
+								$rows = mysql_num_rows($resultadoDepto);
+								if($rows > 0) {
+									mysql_data_seek($resultadoDepto, 0);
+									$filaDepto = mysql_fetch_assoc($resultadoDepto);
+								}
+								?>
+							</select>
+						</div>
+						<div class="span-1">
+							<br>
+							Municipio (expedición)
+							<div id='midiv0'>
+								<select name="municipioe" id="municipioe"  class="campo-xs Arial12" >	
+									<option value="">Seleccione</option>
+								</select>
+							</div>
+						</div>
+						<div class="span-1">
 							F. de constitución o de nacimiento:
 							<input type="date" name="fconstitucion" id="fconstitucion" class="campo-xs Arial12" required="required">
 						</div>
-						<div class="span-2">
-							Departamento (Origen):
+						<div class="span-1">
+							Departamento (Origen)
 							<select name="depton" id="depton" class="campo-xs Arial12" onChange="buscamun(this.value,this.id)">
 								<option value="">Seleccione</option>
 								<?php
@@ -2271,7 +2394,8 @@ include('encabezado1.php');
 								?>
 							</select>
 						</div>
-						<div class="span-2">
+						<div class="span-1">
+							<br>
 							Municipio (Origen):
 							<div id='midiv1'>
 								<select name="municipion" id="municipion" class="campo-xs Arial12" required="required">
@@ -2280,18 +2404,21 @@ include('encabezado1.php');
 							</div>
 						</div>
 						<div class="span-2">
+							<br>
 							Dirección:
 							<input type="text" name="direccion" id="direccion" class="campo-xs" required="required">
 						</div>
 						<div class="span-1">
+							<br>
 							Teléfono:
 							<input type="text" name="telefono" id="telefono" class="campo-xs" required="required">
 						</div>
 						<div class="span-2">
+							<br>
 							E-mail:
 							<input type="text" name="email" id="email" class="campo-xs" required="required">
 						</div>		
-						<div class="span-2">
+						<div class="span-1">
 							Departamento (Actual):
 							<select name="depton" id="depto" class="campo-xs Arial12" onChange="buscamun(this.value,this.id)">
 								<option value="">Seleccione</option>
@@ -2309,7 +2436,8 @@ include('encabezado1.php');
 								?>
 							</select>
 						</div>
-						<div class="span-2">
+						<div class="span-1">
+							<br>
 							Municipio (Actual):
 							<div id='midiv2'>
 								<select name="municipio" id="municipio" class="campo-xs Arial12" required="required">
@@ -2318,10 +2446,12 @@ include('encabezado1.php');
 							</div>
 						</div>
 						<div class="span-3">
+							<br><br>
 							Representante Legal:
 							<input type="text" name="replegal" id="replegal" class="campo-xs" onBlur="aMayusculas(this.value,this.id)">
 						</div>
 						<div class="span-1">
+							<br><br>
 							Clase documento:
 							<select name="IdClasedocrep" id="IdClasedocrep" class="campo-xs Arial12" required="required">
 								<option value="">Seleccione</option>

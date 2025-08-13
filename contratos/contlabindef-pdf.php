@@ -8,6 +8,74 @@ set_time_limit(0);
 require_once('../fpdf/fpdf.php');
 require_once('../fpdf/WriteTag.php');
 require_once('../funciones.php');
+
+function get_letter_from_number($number) {
+    // A -> 0, B -> 1, C -> 2, etc.
+    return chr(65 + $number);
+}
+
+$contrato=$_GET['contrato'];
+
+$buscaCont =   "SELECT 
+                    proveedor,
+                    documento,
+                    telefono,
+                    direccion,
+                    departamento,
+                    ciudad,
+                    email,
+                    fconstitucion,
+                    departamenton,
+                    ciudadn,
+                    consec,
+                    finicio,
+                    ffin,
+                    clasedocsi.codigo,
+                    nombre,
+                    munexp,
+                    municipios.municipio,
+                    municipios_1.municipio as lugar,
+                    valor,
+                    incs,
+                    cargo,
+                    auxilio
+                    
+                FROM
+                    (((((contrat
+                    LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
+                    LEFT JOIN municipios ON contratistas.munexp = municipios.IdMunicipio)
+                    LEFT JOIN clasedocsi ON contratistas.IdClasedoc = clasedocsi.IdClasedoc)
+                    left join municipios as municipios_1 on contrat.lugar=municipios_1.IdMunicipio)
+                    left join cargos on contrat.IdCargo=cargos.IdCargo)
+                WHERE
+                    IdContrato = ".$contrato;
+$resultadoCont = mysql_query($buscaCont, $datos) or die(mysql_error());
+$filaCont = mysql_fetch_assoc($resultadoCont);
+$totalfilas_buscaCont = mysql_num_rows($resultadoCont);
+
+$buscaRes = "SELECT 
+                responsabilidad
+            FROM
+                resposabilidadescont
+            WHERE
+                IdContrato =   ".$contrato;
+$resultadoRes = mysql_query($buscaRes, $datos) or die(mysql_error());
+$filaRes = mysql_fetch_assoc($resultadoRes);
+$totalfilas_buscaRes = mysql_num_rows($resultadoRes);
+
+$buscaFun = "SELECT 
+                funcion
+            FROM
+                funcionescont
+            WHERE
+                IdContrato = ".$contrato;
+$resultadoFun = mysql_query($buscaFun, $datos) or die(mysql_error());
+$filaFun = mysql_fetch_assoc($resultadoFun);
+$totalfilas_buscaFun = mysql_num_rows($resultadoFun);
+
+$arregloInicio=explode("-",$filaCont['finicio']);
+
+$textoFirma=strtolower(convertir1($arregloInicio[2]))." (".$arregloInicio[2].") dias del mes de ".fechaactual7($arregloInicio[1])." del año ".$arregloInicio[0];
 ?>
 <?php
 
@@ -223,15 +291,18 @@ class PDF extends PDF_WriteTag {
   function Footer()
   { 
 
-    $this->SetY(-14);
+    $this->SetY(-22);
+    $this->Image('../imagenes/banner.png',26,262,160);
+
+    $this->SetX(18);
+
     $pagina='Página '.$this->PageNo().' de {nb}';
     $this->SetFont('Arial','',7);
-    $this->Cell(120,3.5,utf8_decode("CONTRATO INDIVIDUAL DE TRABAJO A TÉRMINO INDEFINIDO"),0,0,'L');
-    $this->Cell(60,3.5,utf8_decode($pagina),0,1,'R');
-
+    $this->Cell(120,3.7,utf8_decode("CONTRATO INDIVIDUAL DE TRABAJO A TÉRMINO INDEFINIDO"),0,0,'L');
+    $this->Cell(60,3.7,utf8_decode($pagina),0,1,'R');
     $this->SetDrawColor(255,158,126);
     $this->SetLineWidth(0.1);
-    $this->line(0,265,216,265);
+    $this->line(0,257,216,257);
   }
 }
 
@@ -253,7 +324,7 @@ $pdf->SetStyle("vb","arial","",0,"153,0,0");
 $pdf->SetStyle("neg","Arial","B",0,"0,0,0");
 
 $pdf->SetMargins(20,10,20);
-$pdf->SetAutoPageBreak(true, 15);
+$pdf->SetAutoPageBreak(true, 23);
 $pdf->AliasNbPages();
 $pdf->AddPage();
 
@@ -275,22 +346,23 @@ $pdf->Row(array(utf8_decode('NIT del empleador:'),utf8_decode('830.042.614')),0)
 $pdf->Row(array(utf8_decode('Representante legal Suplente:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
 $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
 
-$pdf->Row(array(utf8_decode('Nombre del trabajador:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Lugar, Fecha De Nacimiento Y Nacionalidad'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Domicilio del trabajador:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Teléfono:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Cargo u oficio para desempeñar:'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('Nombre del trabajador:'),utf8_decode($filaCont['proveedor'])),0);
+$pdf->Row(array(utf8_decode('Fecha De Nacimiento'),utf8_decode(fechaactual3($filaCont['fconstitucion']))),0);
+$pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),$filaCont['codigo']." ".colocapuntos($filaCont['documento'])),0);
+$pdf->Row(array(utf8_decode('Domicilio del trabajador:'),utf8_decode($filaCont['direccion'])),0);
+$pdf->Row(array(utf8_decode('Teléfono:'),utf8_decode($filaCont['telefono'])),0);
+$pdf->Row(array(utf8_decode('Cargo u oficio para desempeñar:'),utf8_decode($filaCont['cargo'])),0);
 
-$pdf->Row(array(utf8_decode('Salario:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Pagos sin carácter salarial:'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('Salario:'),number_format($filaCont['valor'])),0);
+$pdf->Row(array(utf8_decode('Auxilio de transporte (MLV):'),number_format($filaCont['auxilio'])),0);
+$pdf->Row(array(utf8_decode('Pagos sin carácter salarial:'),number_format($filaCont['incs'])),0);
 $pdf->Row(array(utf8_decode('Períodos de pago:'),utf8_decode('MENSUAL')),0);
 $pdf->Row(array(utf8_decode('Ciudad donde ha sido contratado el trabajador'),utf8_decode('BOGOTA D.C')),0);
 $pdf->Row(array(utf8_decode('Domicilio contractual:'),utf8_decode('Calle 106 N°59-21, Bogotá')),0);
 $pdf->Row(array(utf8_decode('Jornada Laboral'),utf8_decode('TIEMPO COMPLETO')),0);
 
-$pdf->Row(array(utf8_decode('Fecha de inicio de la labor:'),utf8_decode('Variable')),0);
-$pdf->Row(array(utf8_decode('Lugar Donde Desempeñara Las Labores'),utf8_decode('Variable')),0);
+$pdf->Row(array(utf8_decode('Fecha de inicio de la labor:'),fechaactual3($filaCont['finicio'])),0);
+$pdf->Row(array(utf8_decode('Lugar Donde Desempeñara Las Labores'),utf8_decode($filaCont['lugar'])),0);
 $pdf->Row(array(utf8_decode('Tipo de contrato:'),utf8_decode('CONTRATO DE TRABAJO A TERMINO INDEFINIDO')),0);
 
 $pdf->ln(5);
@@ -298,13 +370,48 @@ $pdf->ln(5);
 $pdf->SetFont('Arial','',7);
 
 $txt=utf8_decode('
-<p><neg>RESPONSABILIDADES:</neg><vb>[variable respomsabilidades]</vb></p>
-<p><neg>FUNCIONES:</neg><vb>[variable funciones]</vb></p>
+<p><neg>RESPONSABILIDADES:</neg></p>
 ');
 
 $pdf->WriteTag(0,5,$txt,0,"J",0);
-$pdf->ln(3);
+$pdf->SetLeftMargin(22);
+$pdf->ln(2);
 
+$pdf->SetFont('Arial','B',10);
+$itemAc=0;
+do{
+    $letter = get_letter_from_number($itemAc);
+    $itemAc++;
+    
+    $pdf->Cell(10,4.5,utf8_decode($letter.'.'),0,0,'L');
+    $pdf->Cell(10,4.5,utf8_decode($filaRes['responsabilidad']),0,1,'L');
+
+} while($filaRes = mysql_fetch_assoc($resultadoRes));
+
+$pdf->SetLeftMargin(20);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>FUNCIONES:</neg></p>
+');
+
+$pdf->WriteTag(0,5,$txt,0,"J",0);
+$pdf->SetLeftMargin(22);
+$pdf->ln(2);
+
+$pdf->SetFont('Arial','B',10);
+
+$itemFu=1;
+do{
+
+    $pdf->Cell(10,4.5,utf8_decode($itemFu.'.'),0,0,'L');
+    $pdf->Cell(10,4.5,utf8_decode($filaFun['funcion']),0,1,'L');
+
+    $itemFu++;
+} while($filaFun = mysql_fetch_assoc($resultadoFun));
+
+$pdf->SetLeftMargin(20);
+$pdf->ln(2);
 
 $txt=utf8_decode('
 <p>Entre el empleador y el trabajador, de las condiciones ya dichas, identificados como aparece al pie de sus correspondientes firmas, se ha celebrado el presente contrato Individual de Trabajo a Término indefinido , regido por las siguientes cláusulas: <neg>PRIMERA:</neg> El empleador contrata los servicios personales del trabajador, y éste se obliga: a). Poner al servicio del empleador toda su capacidad normal de trabajo, de manera exclusiva, en el desempeño de las funciones propias del cargo contratado y en las labores conexas y complementarias del mismo, en consideración con las órdenes e instrucciones que le imparta al empleador o sus representantes; b). No prestar directa ni indirectamente servicios laborales a otros empleadores, ni trabajar por cuenta propia en el mismo oficio, durante la vigencia del presente contrato; c). Laborar la jornada ordinaria en los turnos y dentro del horario señalado en este contrato, pudiendo el empleador efectuar ajustes o cambios de horario cuando lo estime conveniente y d). Las demás consagradas en el artículo 58 del Código Sustantivo del Trabajo. <neg>SEGUNDA:</neg> Como contraprestación por su labor, el empleador pagará al Trabajador el salario estipulado, el cual deberá cancelar en la fecha y lugar indicado, quedando establecido que en dicho pago se halla incluida la remuneración correspondiente a los descansos dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo. Se aclara y se conviene que en los casos en los que el trabajador devengue comisiones o cualquiera otra modalidad de salario variable, el 82.5% de dichos ingresos, constituye remuneración ordinaria, y el 17.5% restante está destinado a remunerar el descanso en los días dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo. <neg>TERCERA:</neg> Se considera el trabajador como personal de Manejo y Confianza por sus funciones y representación de la empresa frente al cliente en el lugar donde desarrolla sus labores, se deja estipulado que según el artículo 162 de la norma laboral, el personal de manejo y confianza queda excluido de la regulación sobre la jornada máxima legal de trabajo, pues su labor es la de estar dispuestos en cualquier momento por las labores propias de su cargo dentro de los días de trabajo asignados por el cliente. <neg>CUARTA:</neg> Son justas causas para dar por terminado unilateralmente el presente contrato, por cualquiera de las partes, las expresadas en los artículos 62 y 63 del Código Sustantivo del Trabajo, en concordancia con las modificaciones introducidas por el artículo 7° del Decreto 2351 de 1965; y, además, por parte del empleador, las faltas que para el efecto se califiquen como graves en el espacio reservado para cláusulas adicionales en el presente contrato. <neg>QUINTA:</neg> Aunque el lugar de trabajo es el indicado en este contrato, las partes pueden acordar que el mismo se preste en sitio diferente, siempre que las condiciones laborales del trabajador no se desmejoren o se disminuya su remuneración o le cause perjuicio. De todos modos, corren por cuenta del empleador los gastos que ocasione dicho traslado. El trabajador desde ahora acepta los cambios de oficio que decida el empleador, siempre que sus condiciones laborales se mantengan, se respeten sus derechos y no le causen perjuicios. <neg>SEXTA:</neg> El trabajador se obliga a laborar la jornada ordinaria en los turnos y dentro de las horas señaladas por el empleador. Por el acuerdo expreso o tácito de las partes, podrán repartirse las horas de la jornada ordinaria en la forma permitida por el artículo 164 del Código Sustantivo del Trabajo, teniendo en cuenta que las secciones de descanso entre las jornadas de trabajo no se computan dentro de la misma, conforme lo prescribe el artículo 167 del mismo código. <neg>SEPTIMA:</neg> La quinta parte de la duración estimada del presente contrato se considera como periodo de prueba, sin que exceda de dos (2) meses contados a partir de la fecha de inicio, y, por consiguiente, cualquiera de las partes podrá terminar el contrato unilateralmente, en cualquier momento durante dicho periodo y sin previo aviso, sin que se cause pago de indemnización alguna. <neg>OCTAVA:</neg> Este contrato ha sido redactado estrictamente de acuerdo con la Ley y Jurisprudencia y será interpretado de buena fe y en consonancia con el Código Sustantivo del Trabajo cuyo objeto, definido en su artículo 1º, es lograr la justicia en las relaciones entre empleadores y trabajadores dentro de un espíritu de coordinación económica y equilibrio social. <neg>NOVENA:</neg> El presente contrato reemplaza y deja sin efecto cualquier otro contrato verbal o escrito, que se hubiera celebrado entre las partes con anterioridad. Cualquier modificación al presente contrato debe efectuarse por escrito y anotarse a continuación de su texto.
@@ -328,7 +435,7 @@ $pdf->MultiCell(167,4.5,utf8_decode('Es obligación del trabajador no divulgar a
 $pdf->SetFont('Arial','B',10);
 $pdf->Cell(10,4.5,utf8_decode('3.'),0,0,'C');
 $pdf->SetFont('Arial','',10);
-$pdf->MultiCell(167,4.5,utf8_decode('Horario de Trabajo oficina Bogotá: Lunes a Jueves de 7:30 a.m. - 5:30 p.m. Viernes 7:30 a.m. - 4:30 p.m. con una hora de almuerzo. Sábados: en caso de requerirse, previa solicitud del empleador; teniendo en cuenta que en el horario de lunes a viernes no se cumplen las 47 horas semanales legales.'),0,'J');
+$pdf->MultiCell(167,4.5,utf8_decode('Horario de Trabajo oficina Bogotá: Lunes a Jueves de 7:30 a.m. - 5:30 p.m. Viernes 7:30 a.m. - 1:30 p.m. con una hora de almuerzo. Sábados: en caso de requerirse, previa solicitud del empleador; teniendo en cuenta que en el horario de lunes a viernes no se cumplen las 44 horas semanales legales.'),0,'J');
 
 $pdf->ln(4);
 
@@ -336,36 +443,47 @@ $pdf->ln(4);
 
 
 $txt=utf8_decode('
-<p>Para constancia se firma por las partes que han intervenido, en dos (2) ejemplares del mismo tenor y valor, ante testigos en la ciudad de Bogotá, a <vb>[los Diecinueve (19) días del mes de enero del año 2024.]</vb>. 
+<p>Para constancia se firma por las partes que han intervenido, en dos (2) ejemplares del mismo tenor y valor, ante testigos en la ciudad de Bogotá, a los '.$textoFirma.'. 
 </p>
 ');
 
 $pdf->WriteTag(0,5,$txt,0,"J",0);
 
 $pdf->SetLeftMargin(19);
-$pdf->ln(20); 
-
-$pdf->SetFont('Arial','B',0);
-
 $linea=$pdf->GetY();
+$pdf->SetFont('Arial','B',10);
+if($linea>221){
+  $pdf->AddPage();
+  $linea=60;
+  
+  $pdf->Cell(88,4.5,utf8_decode('EMPLEADOR'),0,0,'L');
+  $pdf->Cell(88,4.5,utf8_decode('TRABAJADOR'),0,1,'L');
+  $pdf->SetY($linea);
+}else{
+  $pdf->ln(5);
+  $linea=$linea+20;
+  
+  $pdf->Cell(88,4.5,utf8_decode('EMPLEADOR'),0,0,'L');
+  $pdf->Cell(88,4.5,utf8_decode('TRABAJADOR'),0,1,'L');
+  $pdf->SetY($linea);
+}
+
 
 $pdf->Line(20, $linea, 80, $linea);
 $pdf->Line(108, $linea, 168, $linea);
 
-$pdf->Cell(88,4.5,utf8_decode(''),0,0,'L');
-$pdf->Cell(88,4.5,utf8_decode(''),0,1,'L');
 
-$pdf->Cell(88,4.5,utf8_decode('EMPLEADOR'),0,0,'L');
-$pdf->Cell(88,4.5,utf8_decode('TRABAJADOR'),0,1,'L');
+$pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
+$pdf->Cell(88,4.5,utf8_decode($filaCont['proveedor']),0,1,'L');
 
+$pdf->Cell(88,4.5,utf8_decode('CC 79.315.619 de BOGOTA D.C.'),0,0,'L');
+$pdf->Cell(88,4.5,$filaCont['codigo']." ".colocapuntos($filaCont['documento'])." de ".utf8_decode($filaCont['municipio']),0,1,'L');
 
-// $pdf->Cell(88,4.5,utf8_decode('CPA INGENIERIA S.A.S.'),0,0,'L');
-// $pdf->Cell(88,4.5,utf8_decode('VARIABLE'),0,1,'L');
+$pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
 
-// $pdf->Cell(88,4.5,utf8_decode('NIT. 830.042.614-3 '),0,0,'L');
-// $pdf->Cell(88,4.5,utf8_decode('VARIABLE'),0,1,'L');
+$pdf->ln(2); 
 
-
+$pdf->Cell(88,4.5,utf8_decode('Testigo.'),0,1,'L');
   
 $pdf->Output();
 

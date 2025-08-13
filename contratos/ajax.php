@@ -105,7 +105,17 @@ if(($_POST['proced']==5)){
 		if($totalFilasContratista>0){
 			echo "ya,".$row_ResultadoContratista['IdContratista'].",".$row_ResultadoContratista['proveedor'].",".colocapuntos($row_ResultadoContratista['documento']) .",".$row_ResultadoContratista['telefono'].",".$row_ResultadoContratista['direccion'];
 		}else{
-			$graba="INSERT INTO contratistas (proveedor, documento, IdClasedoc, telefono, direccion, departamento, ciudad, fconstitucion, departamenton, ciudadn, email, replegal, IdClasedocrep, docrep) VALUES('".$_POST['proveedor']."', ".$_POST['nit'].", ".$_POST['IdClasedoc'].", '".$_POST['telefono']."', '".$_POST['direccion']."', ".$_POST['depto'].", ".$_POST['municipio'].", '".$_POST['fconstitucion']."', ".$_POST['depton'].", ".$_POST['municipion'].", '".$_POST['email']."', '".$_POST['replegal']."', ".$_POST['IdClasedocrep'].", '".$_POST['docrep']."')";
+			if($_POST['IdClasedocrep']){
+				$IdClasedocrep=$_POST['IdClasedocrep'];
+			}else{
+				$IdClasedocrep=0;
+			}
+			if($_POST['municipioe']){
+				$municipioe=$_POST['municipioe'];
+			}else{
+				$municipioe=0;
+			}
+			$graba="INSERT INTO contratistas (proveedor, documento, IdClasedoc, telefono, direccion, departamento, ciudad, fconstitucion, departamenton, ciudadn, email, replegal, IdClasedocrep, docrep, munexp) VALUES('".$_POST['proveedor']."', ".$_POST['nit'].", ".$_POST['IdClasedoc'].", '".$_POST['telefono']."', '".$_POST['direccion']."', ".$_POST['depto'].", ".$_POST['municipio'].", '".$_POST['fconstitucion']."', ".$_POST['depton'].", ".$_POST['municipion'].", '".$_POST['email']."', '".$_POST['replegal']."', ".$IdClasedocrep.", '".$_POST['docrep']."', ".$municipioe.")";
 			if ($results=@mysql_query($graba)){
 				$last_id = mysql_insert_id($datos);
 				 echo "ok,".$last_id.",".$_POST['proveedor'].",".colocapuntos($_POST['nit']) .",".$_POST['telefono'].",".$_POST['direccion'];
@@ -265,6 +275,27 @@ if(($_POST['proced']==11)){
       ?>
     </select>
     <?php
+}
 
+if(($_POST['proced']==12)){
+
+	echo "<pre>";
+  print_r($_POST);
+  echo "</pre>";
+
+  echo "<pre>";
+  print_r($_FILES);
+  echo "</pre>";	
+
+  $ruta="contratos/contrato-".$_POST['consec']."-".$_POST['id'].".pdf";
+  move_uploaded_file($_FILES['radicado']['tmp_name'],$ruta);
+
+	// exit();
+
+	$actualiza="UPDATE contrat set contrato='" . $ruta . "' where IdContrato=" . $_POST['id'];
+
+  if ($results=@mysql_query($actualiza)){
+		echo "ok";
+	}
 
 }

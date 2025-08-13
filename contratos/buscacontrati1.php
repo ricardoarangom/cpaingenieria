@@ -51,7 +51,7 @@ include('encabezado.php')
 include('encabezado1.php')
 ?>
 <div class="contenedor" style="width: 600px" align="center">
-  <h4 align="center" class="Century">CONSULTAR O EDITAR PROVEEDORES</h4>
+  <h5 align="center" class="Century">CONSULTAR CONTRATISTAS</h5>
   <div class="grid columna-2" style="width: 500px">
     <div class="span-1">
       Buscar por documento:

@@ -73,8 +73,20 @@ if(isset($_POST['boton1'])){
     $alcance=NULL;
   }
 
+  if($_POST['ffinfin']){
+    $ffinfin=$_POST['ffinfin'];
+  }else{
+    $ffinfin=NULL;
+  }
 
-  $inserta="INSERT INTO contrat (IdProveedor, IdEmpresa, IdArea, IdSolicitante, IdClase, IdSubClase, objeto, finicio, ffin, iva, consec, valor, integral, IdCargo, incs, especialidad, grupo, centrofor, alcance) VALUES (".$_POST['contratista'].", 1, ".$_POST['IdArea'].", ".$usuario.", ".$_POST['IdClase'].", ".$_POST['IdSubClase'].", ".($objeto == NULL ? "NULL" : "'$objeto'").", '".$_POST['finicio']."', ".($ffin == NULL ? "NULL" : "'$ffin'").", ".$iva.", ".$consec.", ".$_POST['valor'].", ".$_POST['integral'].", ".$cargo.", ".$_POST['incs'].", ".($especialidad == NULL ? "NULL" : "'$especialidad'").", ".($grupo == NULL ? "NULL" : "'$grupo'").", ".($centrofor == NULL ? "NULL" : "'$centrofor'").", ".($alcance == NULL ? "NULL" : "'$alcance'").")";
+   if($_POST['lugar']){
+    $lugar=$_POST['lugar'];
+  }else{
+    $lugar=0;
+  }
+
+
+  $inserta="INSERT INTO contrat (IdProveedor, IdEmpresa, IdArea, IdSolicitante, IdClase, IdSubClase, objeto, finicio, ffin, iva, consec, valor, integral, IdCargo, incs, especialidad, grupo, centrofor, alcance, ffinfin, lugar, auxilio) VALUES (".$_POST['contratista'].", 1, ".$_POST['IdArea'].", ".$usuario.", ".$_POST['IdClase'].", ".$_POST['IdSubClase'].", ".($objeto == NULL ? "NULL" : "'$objeto'").", '".$_POST['finicio']."', ".($ffin == NULL ? "NULL" : "'$ffin'").", ".$iva.", ".$consec.", ".$_POST['valor'].", ".$_POST['integral'].", ".$cargo.", ".$_POST['incs'].", ".($especialidad == NULL ? "NULL" : "'$especialidad'").", ".($grupo == NULL ? "NULL" : "'$grupo'").", ".($centrofor == NULL ? "NULL" : "'$centrofor'").", ".($alcance == NULL ? "NULL" : "'$alcance'").", ".($ffinfin == NULL ? "NULL" : "'$ffinfin'").", ".$lugar.", ".$_POST['auxilio'].")";
   // echo $inserta."<br>";
   $nfunciones=0;
   $nproductos=0;
@@ -217,7 +229,18 @@ if(isset($_POST['boton2'])){
     </script>
     <?php
   }else{
-    $graba="INSERT INTO contratistas (proveedor, documento, IdClasedoc, telefono, direccion, departamento, ciudad, fconstitucion, departamenton, ciudadn, email, replegal, IdClasedocrep, docrep) VALUES('".$_POST['proveedor']."', ".$_POST['nit'].", ".$_POST['IdClasedoc'].", '".$_POST['telefono']."', '".$_POST['direccion']."', ".$_POST['depto'].", ".$_POST['municipio'].", '".$_POST['fconstitucion']."', ".$_POST['depton'].", ".$_POST['municipion'].", '".$_POST['email']."', '".$_POST['replegal']."', ".$_POST['IdClasedocrep'].", '".$_POST['docrep']."')";
+    if($_POST['IdClasedocrep']){
+      $IdClasedocrep=$_POST['IdClasedocrep'];
+    }else{
+      $IdClasedocrep=0;
+    }
+    if($_POST['municipioe']){
+      $municipioe=$_POST['municipioe'];
+    }else{
+      $municipioe=0;
+    }
+    $graba="INSERT INTO contratistas (proveedor, documento, IdClasedoc, telefono, direccion, departamento, ciudad, fconstitucion, departamenton, ciudadn, email, replegal, IdClasedocrep, docrep, munexp) VALUES('".$_POST['proveedor']."', ".$_POST['nit'].", ".$_POST['IdClasedoc'].", '".$_POST['telefono']."', '".$_POST['direccion']."', ".$_POST['depto'].", ".$_POST['municipio'].", '".$_POST['fconstitucion']."', ".$_POST['depton'].", ".$_POST['municipion'].", '".$_POST['email']."', '".$_POST['replegal']."', ".$IdClasedocrep.", '".$_POST['docrep']."', ".$municipioe.")";
+    // echo $graba;
     if ($results=@mysql_query($graba)){
       ?>
       <script language="JavaScript" type="text/javascript">
@@ -242,7 +265,21 @@ if(isset($_POST['boton2'])){
 
 if(isset($_POST['boton3'])){
 
-  $actualiza="UPDATE contratistas SET proveedor='".$_POST['proveedor']."', IdClasedoc=".$_POST['IdClasedoc'].", documento='".$_POST['nit']."', telefono='".$_POST['telefono']."', direccion='".$_POST['direccion']."', departamento=".$_POST['depto'].", ciudad=".$_POST['municipio'].", fconstitucion='".$_POST['fconstitucion']."', departamenton=".$_POST['depton'].", ciudadn=".$_POST['municipion']." WHERE IdContratista=".$_POST['IdContratista'];
+  // echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
+
+  if($_POST['IdClasedocrep']){
+    $IdClasedocrep=$_POST['IdClasedocrep'];
+  }else{
+    $IdClasedocrep=0;
+  }
+
+  $actualiza="UPDATE contratistas SET proveedor='".$_POST['proveedor']."', IdClasedoc=".$_POST['IdClasedoc'].", documento='".$_POST['nit']."', telefono='".$_POST['telefono']."', direccion='".$_POST['direccion']."', departamento=".$_POST['depto'].", ciudad=".$_POST['municipio'].", fconstitucion='".$_POST['fconstitucion']."', departamenton=".$_POST['depton'].", ciudadn=".$_POST['municipion'].", email='".$_POST['email']."', replegal='".$_POST['replegal']."', docrep='".$_POST['docrep']."', IdClasedocrep=".$IdClasedocrep.", munexp=".$_POST['municipioe']."   WHERE IdContratista=".$_POST['IdContratista'];
+
+  // echo $actualiza;
+
+  
 
   if ($results=@mysql_query($actualiza)){
       ?>
