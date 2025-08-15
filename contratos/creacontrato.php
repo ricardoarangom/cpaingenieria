@@ -41,10 +41,7 @@ $resultadoCargo = mysql_query($buscaCargo, $datos) or die(mysql_error());
 $filaCargo = mysql_fetch_assoc($resultadoCargo);
 $totalfilas_buscaCargo = mysql_num_rows($resultadoCargo);
 
-$buscaClau = "SELECT * FROM borrclausulas";
-$resultadoClau = mysql_query($buscaClau, $datos) or die(mysql_error());
-$filaClau = mysql_fetch_assoc($resultadoClau);
-$totalfilas_buscaClau = mysql_num_rows($resultadoClau);
+
 
 ?>
 <?php
