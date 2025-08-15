@@ -16,9 +16,9 @@ do{
 
 $cadenaCargos=json_encode($tabla,JSON_UNESCAPED_UNICODE);
 
-echo "<pre>";
-print_r($tabla);
-echo "</pre>";
+// echo "<pre>";
+// print_r($tabla);
+// echo "</pre>";
 ?>
 <?php 
 include('encabezado.php');
