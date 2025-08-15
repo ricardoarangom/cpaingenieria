@@ -279,13 +279,13 @@ if(($_POST['proced']==11)){
 
 if(($_POST['proced']==12)){
 
-	echo "<pre>";
-  print_r($_POST);
-  echo "</pre>";
+	// echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
 
-  echo "<pre>";
-  print_r($_FILES);
-  echo "</pre>";	
+  // echo "<pre>";
+  // print_r($_FILES);
+  // echo "</pre>";	
 
   $ruta="contratos/contrato-".$_POST['consec']."-".$_POST['id'].".pdf";
   move_uploaded_file($_FILES['radicado']['tmp_name'],$ruta);
@@ -295,6 +295,37 @@ if(($_POST['proced']==12)){
 	$actualiza="UPDATE contrat set contrato='" . $ruta . "' where IdContrato=" . $_POST['id'];
 
   if ($results=@mysql_query($actualiza)){
+		echo "ok";
+	}
+
+}
+
+if(($_POST['proced']==13)){
+
+	// echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
+
+  // exit();
+
+	$actualiza="UPDATE cargos set cargo='" . $_POST['cargo'] . "' where IdCargo=" . $_POST['IdCargo'];
+
+  if ($results=@mysql_query($actualiza)){
+		echo "ok";
+	}
+
+}
+
+if(($_POST['proced']==14)){
+
+	// echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
+
+
+	$inserta="INSERT INTO cargos (cargo) VALUES ('".$_POST['cargo']."')";
+
+  if ($results=@mysql_query($inserta)){
 		echo "ok";
 	}
 
