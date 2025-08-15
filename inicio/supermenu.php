@@ -266,13 +266,13 @@
 	</div>
 	<nav  class="nv-sm-menu-se navegadores" id="nv-7" style="display: none">
 	  <ul class="nv-ul-sc">
-		<li class="submenu" id="sm-7-1">
-		  <a class="a-sec" href="../contratos/creacontrato.php">CREAR</a>
-		</li>
-    <li class="submenu" id="sm-7-2">
-		  <a class="a-sec" href="../contratos/reporte.php">REPORTE</a>
-		</li>
-		<li class="submenu" id="sm-7-3" onClick="drsmenu(this.id)">
+			<li class="submenu" id="sm-7-1">
+				<a class="a-sec" href="../contratos/creacontrato.php">CREAR</a>
+			</li>
+			<li class="submenu" id="sm-7-2">
+				<a class="a-sec" href="../contratos/reporte.php">REPORTE</a>
+			</li>
+			<li class="submenu" id="sm-7-3" onClick="drsmenu(this.id)">
 				<a href="#" class="a-sec">CONTRATISTAS</a>
 				<ul  class="children" id="7-3" valor="0">					
 					<?php 
@@ -288,7 +288,10 @@
 					}
 					?>
 				</ul>
-			</li>	
+			</li>
+			<li class="submenu" id="sm-7-4">
+				<a class="a-sec" href="../contratos/cargos.php">CARGOS</a>
+			</li>
 	  </ul>
 	</nav>
 	
