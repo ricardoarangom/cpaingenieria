@@ -2081,7 +2081,7 @@ include('encabezado1.php');
 				</table>
 			</div>		
 			<div class="span-2">
-				Clase de Contrtato:
+				Clase de Contrato:
 				<select name="IdClase" id="IdClase" class="campo-sm Arial12" onChange="buscaSubClase(this.value)">
 					<option value="">Seleccione</option>
 					<?php

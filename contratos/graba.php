@@ -96,7 +96,7 @@ if(isset($_POST['boton1'])){
   if ($results=@mysql_query($inserta)){
     $last_id = mysql_insert_id($datos);
 
-    if($_POST['actividad']){
+    if(isset($_POST['actividad'])){
       foreach($_POST['actividad'] as $key=>$j){
         if($j){
           $insertaActividad="INSERT INTO actividadescont (IdContrato, actividad) VALUES(".$last_id.", '".$j."')";
@@ -110,7 +110,7 @@ if(isset($_POST['boton1'])){
 
     }
 
-    if($_POST['producto']){
+    if(isset($_POST['producto'])){
       foreach($_POST['producto'] as $key=>$j){
         if($j){
           $insertaProducto="INSERT INTO productoscont (IdContrato, producto) VALUES(".$last_id.", '".$j."')";
@@ -123,7 +123,7 @@ if(isset($_POST['boton1'])){
       
     }
 
-    if($_POST['porpago']){
+    if(isset($_POST['porpago'])){
       foreach($_POST['porpago'] as $key=>$j){
         if($j){
           $insertaPago="INSERT INTO formapagocont (IdContrato, porpago, concepto) VALUES (".$last_id.", ".($j/100).", '".$_POST['concepto'][$key]."')";
@@ -136,7 +136,7 @@ if(isset($_POST['boton1'])){
       
     }
 
-    if($_POST['funcion']){
+    if(isset($_POST['funcion'])){
       foreach($_POST['funcion'] as $key=>$j){
         if($j){
           $insertaFuncion="INSERT INTO funcionescont (IdContrato, funcion) VALUES(".$last_id.", '".$j."')";
@@ -150,7 +150,7 @@ if(isset($_POST['boton1'])){
       
     }
 
-    if($_POST['responsabilidad']){
+    if(isset($_POST['responsabilidad'])){
       foreach($_POST['responsabilidad'] as $key=>$j){
         if($j){
           $insertaResponsabilidad="INSERT INTO resposabilidadescont (IdContrato, responsabilidad) VALUES(".$last_id.", '".$j."')";
@@ -162,7 +162,7 @@ if(isset($_POST['boton1'])){
       }
     }
     $mensaje="<div>CONTRATO GRABADO CON EXITO</div>";
-    if($_POST['IdSubClase']<>1){
+    if(isset($_POST['IdSubClase']) && $_POST['IdSubClase']<>1){
       $mensaje.="<div>SE GRABARON:</div>";
       if($nfunciones<>0){
         $mensaje.="<div>".$nfunciones." FUNCIONES</div>";
@@ -183,11 +183,9 @@ if(isset($_POST['boton1'])){
 
     ?>
     <script language="JavaScript" type="text/javascript">
-      var laboral = <?php
-      if($_POST['IdSubClase']<=4){
-        echo 1;
-      } ?>;
-      var contrato = <?php echo $last_id?>;
+      var laboral = <?php echo ($_POST['IdSubClase']<=4) ? 1 : 0; ?>;
+      var subClase = <?php echo $_POST['IdSubClase'] ?>;
+      var contrato = <?php echo $last_id ?: 0 ?>;
       swal({
           html: "<?php echo $mensaje ?>",
           type: "success",
@@ -195,8 +193,14 @@ if(isset($_POST['boton1'])){
           confirmButtonText: "¡Cerrar!"
       }).then(function(result){
         if (result.value) {
-          if(laboral==1){
+          if(laboral == 1){
             window.open('contratolab-pdf.php?contrato='+contrato, '_blank');
+          } else if(laboral == 0){
+            if(subClase == 5){
+              window.open('contrato-prestacion-servicio-persona-word.php?contrato='+contrato, '_blank');
+            } else {
+              window.open('contrato-prestacion-servicio-empresa-word.php?contrato='+contrato, '_blank');
+            }
           }
           window.location = "inicio.php";
         }
