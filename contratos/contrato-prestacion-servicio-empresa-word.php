@@ -90,6 +90,13 @@ use PhpOffice\PhpWord\IOFactory;
 // Crear nuevo documento
 $documento = new PhpWord();
 
+$documento->addParagraphStyle('NoSpaceAfter', [
+    'spaceAfter' => 0,          // Espaciado posterior a 0 twips
+    'spaceBefore' => 0,         // Opcional: también puedes poner el espacio anterior a 0
+    'lineHeight' => 1.0       // Opcional: altura de línea estándar
+    
+]);
+
 // Configurar sección con márgenes
 $seccion = $documento->addSection([
     'marginTop'    => Converter::cmToTwip(2.5),
@@ -118,8 +125,9 @@ $estiloResaltado = ['size' => 11, 'name' => 'Arial'];
 // Título del contrato
 $seccion->addText("\t\t\tCONTRATO POR PRESTACIÓN DE SERVICIOS", $estiloTitulo, ['alignment' => 'center', 'spaceAfter' => 10]);
 
+
 // Número de contrato
-$numeroContrato = "No. " . formatearNumero4Digitos($filaContrato['consec']) . '-' . date('Y', strtotime($filaContrato['finicio']));
+$numeroContrato = "No. " . sprintf("%03d",$filaContrato['consec']) . '-' . date('Y', strtotime($filaContrato['finicio']));
 $textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 240]);
 $textRun->addText("\t\t\t\t\t     ", $estiloNormal);
 $textRun->addText($numeroContrato, ['bold' => true, 'size' => 11, 'name' => 'Arial', 'smallCaps' => true]);
@@ -355,7 +363,7 @@ $seccion->addText(
 );
 
 // Fecha de firma
-$fechaActual = new DateTime();
+$fechaActual = new DateTime($filaContrato['finicio']);
 $diaLetras = numeroALetras($fechaActual->format('j'));
 $mesActual = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 $mes = $mesActual[$fechaActual->format('n') - 1];
@@ -368,44 +376,47 @@ $seccion->addText('', $estiloNormal, ['spaceAfter' => 800]);
 
 // Líneas de firma
 $seccion->addText(
-    '_______________________________           _______________________________',
+    '_______________________________            _______________________________',
     $estiloNormal,
     ['alignment' => 'center', 'spaceAfter' => 20]
 );
 
+$tabla = $seccion->addTable();
+$tabla->addRow();
+
+$celda1 = $tabla->addCell(5000);
+
 // Títulos de firmantes
-$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 20]);
-$textRun->addText('EL CONTRATANTE', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText('                                        ', $estiloNormal);
-$textRun->addText('EL CONTRATISTA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+$celda1->addText('EL CONTRATANTE', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
 
 // Nombres de firmantes
-$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 20]);
-$textRun->addText('LUIS HECTOR RUBIANO VERGARA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText('            ', $estiloNormal);
-$textRun->addText(strtoupper($filaContrato['representanteLegal']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-
+$celda1->addText('LUIS HECTOR RUBIANO VERGARA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter'
+);
 // Cédulas
-$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 20]);
-$textRun->addText('C.C. No. 79.315.619', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText(' DE BOGOTÁ D.C.            ', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText($filaContrato['codClasedocRep'] . ' No. ' . separarMiles($filaContrato['documentoRepresentante']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-// $textRun->addText(' de ' . $filaContrato['ciudadNac'], ['smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-
+$celda1->addText('C.C. No. 79.315.619 DE BOGOTÁ D.C.', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
 // Empresas
-$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 20]);
-$textRun->addText('CPA INGENIERIA S.A.S.', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText('                                ', $estiloNormal);
-$textRun->addText($filaContrato['proveedor'], ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-
+$celda1->addText('CPA INGENIERIA S.A.S.', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],
+'NoSpaceAfter');
 // NIT
-$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 20]);
-$textRun->addText('NIT. 830.042.614-3', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText("\t\t\t\t    ", $estiloNormal);
-$textRun->addText($filaContrato['codClasedoc'] . ' ' . separarMiles($filaContrato['documento']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+$celda1->addText('NIT. 830.042.614-3', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],
+'NoSpaceAfter');
+
+$celda2 = $tabla->addCell(5000);
+// Títulos de firmantes
+$celda2->addText('EL CONTRATISTA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+// Nombres de firmantes
+$celda2->addText(strtoupper($filaContrato['representanteLegal']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+// Cédulas
+$celda2->addText($filaContrato['codClasedocRep'] . ' No. ' . separarMiles($filaContrato['documentoRepresentante']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+// Empresas
+$celda2->addText($filaContrato['proveedor'], ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],
+'NoSpaceAfter');
+// NIT
+$celda2->addText($filaContrato['codClasedoc'] . ' ' . separarMiles($filaContrato['documento']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+
 
 // Guardar el documento
-$nombreArchivo = 'CPS_' . formatearNumero4Digitos($filaContrato['consec']) . '_' . date('Y') . '_' . str_replace(' ', '_', $filaContrato['proveedor']) . '.docx';
+$nombreArchivo = 'PS_' . sprintf("%03d",$filaContrato['consec']) . '_' . date('Y') . '.docx';
 
 header("Content-Description: File Transfer");
 header('Content-Disposition: attachment; filename="' . $nombreArchivo . '"');

@@ -33,5 +33,18 @@ if($filaCont['IdSubclase']==4){
   exit; // Importante para detener la ejecución del script.
 }
 
+if($filaCont['IdSubclase']==5){
+  header('Location: contrato-prestacion-servicio-persona-word.php?contrato=' . $contrato);
+  exit; // Importante para detener la ejecución del script.
+
+}
+
+if($filaCont['IdSubclase']==6){
+  header('Location: contrato-prestacion-servicio-empresa-word.php?contrato=' . $contrato);
+  exit; // Importante para detener la ejecución del script.
+
+  
+}
+
 
 ?>

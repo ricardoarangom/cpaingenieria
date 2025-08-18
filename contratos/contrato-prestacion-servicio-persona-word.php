@@ -90,6 +90,13 @@ use PhpOffice\PhpWord\IOFactory;
 // Crear nuevo documento
 $documento = new PhpWord();
 
+$documento->addParagraphStyle('NoSpaceAfter', [
+    'spaceAfter' => 0,          // Espaciado posterior a 0 twips
+    'spaceBefore' => 0,         // Opcional: también puedes poner el espacio anterior a 0
+    'lineHeight' => 1.0       // Opcional: altura de línea estándar
+    
+]);
+
 // Configurar sección con márgenes
 $seccion = $documento->addSection([
     'marginTop'    => Converter::cmToTwip(2.5),
@@ -122,9 +129,13 @@ $seccion->addText(
     ['alignment' => 'center', 'spaceAfter' => 10]
 );
 
-// Número de contrato
-$numeroContrato = "\t\t\t\t\tTPC No. " . formatearNumero4Digitos($filaContrato['consec']) . '-' . date('Y', strtotime($filaContrato['finicio']));
-$seccion->addText($numeroContrato, $estiloNegrita, ['alignment' => 'center', 'spaceAfter' => 240]);
+
+$numeroContrato = "No. " . sprintf("%03d",$filaContrato['consec']) . '-' . date('Y', strtotime($filaContrato['finicio']));
+$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 240]);
+$textRun->addText("\t\t\t\t\t     ", $estiloNormal);
+$textRun->addText($numeroContrato, ['bold' => true, 'size' => 11, 'name' => 'Arial', 'smallCaps' => true]);
+
+
 
 // Párrafo introductorio
 $textoIntro = 'Entre los suscritos ';
@@ -137,7 +148,7 @@ $textRun->addText(' mayor de edad, identificado con ' . $filaContrato['nombreCla
 $textRun->addText(separarMiles($filaContrato['documento']) . ' de ' . $filaContrato['ciudadNac'] . ', ' . $filaContrato['departamentoNac'], $estiloNormal);
 $textRun->addText(', con domicilio en la ', $estiloNormal);
 $textRun->addText($filaContrato['direccion'] . ' en la ciudad de ' . $filaContrato['ciudadResidencia'] . ', ' . $filaContrato['departamentoResidencia'], $estiloNormal);
-$textRun->addText(', y quien para los efectos del presente documento se denominará EL CONTRATISTA, acuerdan celebrar el presente contrato de prestación de servicios a trabajadores por cuenta propia, el cual se regirá por las disposiciones del Código de Comercio y en especial por las siguientes cláusulas:', $estiloNormal, ['spaceAfter' => 120]);
+$textRun->addText(', y quien para los efectos del presente documento se denominará EL CONTRATISTA, acuerdan celebrar el presente contrato de prestación de servicios a trabajadores por cuenta propia, el cual se regirá por las disposiciones del Código de Comercio y en especial por las siguientes cláusulas:', $estiloNormal, ['spaceAfter' => 120],'JustifiedStyle');
 
 // CLÁUSULA PRIMERA - OBJETO
 $seccion->addText('Primera. -- Objeto.', $estiloNegrita, ['spaceAfter' => 60, 'spaceBefore' => 300]);
@@ -327,7 +338,7 @@ $seccion->addText(
 );
 
 // Fecha de firma
-$fechaActual = new DateTime();
+$fechaActual = new DateTime($filaContrato['finicio']);
 $diaLetras = numeroALetras($fechaActual->format('j'));
 $mesActual = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 $mes = $mesActual[$fechaActual->format('n') - 1];
@@ -345,27 +356,53 @@ $seccion->addText(
     ['alignment' => 'center', 'spaceAfter' => 40]
 );
 
+
+$tabla = $seccion->addTable();
+$tabla->addRow();
+
 // Títulos de firmantes
-$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 40]);
-$textRun->addText('EL CONTRATANTE', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText('                                        ', $estiloNormal);
-$textRun->addText('TRABAJADOR POR CUENTA PROPIA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+$celda1 = $tabla->addCell(5000);
+$celda1->addText('EL CONTRATANTE', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
 
 // Nombres de firmantes
-$textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 40]);
-$textRun->addText('LUIS HECTOR RUBIANO VERGARA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText('             ', $estiloNormal);
-$textRun->addText(strtoupper($filaContrato['proveedor']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+$celda1->addText('LUIS HECTOR RUBIANO VERGARA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
 
 // Cédulas
-$textRun = $seccion->addTextRun(['alignment' => 'center']);
-$textRun->addText('C.C. No. 79.315.619', ['smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText(' de Bogotá D.C.               ', $estiloNormal);
-$textRun->addText('C.C. No. ' . separarMiles($filaContrato['documento']), ['smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
-$textRun->addText(' de ' . $filaContrato['ciudadNac'], ['smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+$celda1->addText('C.C. No. 79.315.619', ['bold' => true,'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+
+// Títulos de firmantes
+$celda2 = $tabla->addCell(5000);
+$celda2->addText('TRABAJADOR POR CUENTA PROPIA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+
+// Nombres de firmantes
+$celda2->addText(strtoupper($filaContrato['proveedor']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+
+// Cédulas
+$celda2->addText($filaContrato['codClasedoc'] . ' No. ' . separarMiles($filaContrato['documento']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+
+
+
+// // Títulos de firmantes
+// $textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 40]);
+// $textRun->addText('EL CONTRATANTE', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+// $textRun->addText('                                        ', $estiloNormal);
+// $textRun->addText('TRABAJADOR POR CUENTA PROPIA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+
+// // Nombres de firmantes
+// $textRun = $seccion->addTextRun(['alignment' => 'center', 'spaceAfter' => 40]);
+// $textRun->addText('LUIS HECTOR RUBIANO VERGARA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+// $textRun->addText('             ', $estiloNormal);
+// $textRun->addText(strtoupper($filaContrato['proveedor']), ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+
+// // Cédulas
+// $textRun = $seccion->addTextRun(['alignment' => 'center']);
+// $textRun->addText('C.C. No. 79.315.619', ['smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+// $textRun->addText(' de Bogotá D.C.               ', $estiloNormal);
+// $textRun->addText('C.C. No. ' . separarMiles($filaContrato['documento']), ['smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
+// $textRun->addText(' de ' . $filaContrato['ciudadNac'], ['smallCaps' => true, 'size' => 11, 'name' => 'Arial']);
 
 // Guardar el documento
-$nombreArchivo = 'TPC_' . formatearNumero4Digitos($filaContrato['consec']) . '_' . date('Y') . '_' . str_replace(' ', '_', $filaContrato['proveedor']) . '.docx';
+$nombreArchivo = 'PS_' . sprintf("%03d",$filaContrato['consec']) . '_' . date('Y') .  '.docx';
 
 header("Content-Description: File Transfer");
 header('Content-Disposition: attachment; filename="' . $nombreArchivo . '"');

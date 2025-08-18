@@ -542,6 +542,10 @@ if(isset($_POST['boton'])){
 								?>
 								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1"  target="_blank" >Ver Contrato</a> 
 								<?php
+							}else if($filaCont['IdClase']==2){
+								?>
+								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1"  target="_blank" >Ver Contrato<br>borrador de<br>word</a> 
+								<?php
 							}
 							?>
 						</td>
