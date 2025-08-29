@@ -340,7 +340,7 @@ include('encabezado.php');
 			$('#div-formapago').html('');
 
 		}
-		//obra o labor
+		//obra o labor calificada
 		if(id==2){
 			
 			document.getElementById('div-ffin').style.display='none';
@@ -367,6 +367,62 @@ include('encabezado.php');
 			document.getElementById('centrofor').removeAttribute('required');
 			document.getElementById('objeto').setAttribute('required', 'required');
 			document.getElementById('alcance').setAttribute('required', 'required');
+
+			document.getElementById('lugar').setAttribute('required', 'required');
+
+			document.getElementById('finicio').value='';
+			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
+			document.getElementById('valor').value='';
+			document.getElementById('IdCargo').value='';
+			document.getElementById('especialidad').value='';
+			document.getElementById('grupo').value='';
+			document.getElementById('centrofor').value='';
+			document.getElementById('objeto').value='';
+			document.getElementById('alcance').value='';
+			
+			document.getElementById('label-objeto').innerHTML='Objeto obra o labor contratada'
+
+			document.getElementById('integral-no').checked=true;
+			document.getElementById('iva-no').checked=true;
+
+			$('#div-funciones').html('');
+			$('#div-responsabilidades').html('');
+			$('#div-actividades').html('Actividades: <span id="nactividades" style="display:none">1</span>'+
+																 '<table class="tablita Arial12" width="50%" id="actividades"><col width="95%"><col width="5%">'+
+																 		'<tr><td colspan="2"><input type="text" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 actividades" ></td></tr></table>'+
+																		'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>');
+			$('#div-productos').html('');
+			$('#div-formapago').html('');
+		}
+
+		//obra o labor no calificada
+		if(id==7){
+			
+			document.getElementById('div-ffin').style.display='none';
+			document.getElementById('div-IdCargo').style.display='';
+			document.getElementById('div-incs').style.display='';
+			document.getElementById('div-especialidad').style.display='none';
+			document.getElementById('div-grupo').style.display='none';
+			document.getElementById('div-centrofor').style.display='none';
+			document.getElementById('div-objeto').style.display='';
+			document.getElementById('div-alcance').style.display='none';
+			document.getElementById('div-integral').style.display='';
+			document.getElementById('div-iva').style.display='none';
+
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='';
+			document.getElementById('div-deptol').style.display='';
+			document.getElementById('div-lugar').style.display='';
+
+			document.getElementById('ffin').removeAttribute('required');
+			document.getElementById('ffinfin').removeAttribute('required');
+			document.getElementById('IdCargo').setAttribute('required', 'required');
+			document.getElementById('especialidad').removeAttribute('required');
+			document.getElementById('grupo').removeAttribute('required');
+			document.getElementById('centrofor').removeAttribute('required');
+			document.getElementById('objeto').setAttribute('required', 'required');
+			document.getElementById('alcance').removeAttribute('required');
 
 			document.getElementById('lugar').setAttribute('required', 'required');
 

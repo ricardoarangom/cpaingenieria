@@ -277,8 +277,12 @@ if (mysql_num_rows($resultadoFormaPagos) > 0) {
         }
     }
 } else {
-    $textRun->addText('[Se realizará un único pago por valor de: (COP$XXXXXXXXXXX) [XXXXXXXXXXXXXXXXXXXXXXXXXXXXX] Pesos Moneda Corriente, IVA incluido.]', $estiloNormal);
-    $textRun->addText(' Correspondientes al 100% del valor total del contrato; a la entrega de los productos acordados; previa aprobación por parte de la coordinación del proyecto; 30 días posteriores a la radicación de la factura o cuenta de cobro.', $estiloNormal);
+    
+    // Un solo pago
+    $valorLetras = numeroALetras($valorTotal);
+    $textRun->addText('Se realizará un único pago por valor de: (COP$' . separarMiles($valorTotal) . ') ' . $valorLetras . ' Pesos Moneda Corriente' . $textIVA . '. ', $estiloNormal);
+    $textRun->addText('Correspondientes al 100% del valor total del contrato; ', $estiloNormal);
+    $textRun->addText('previa aprobación por parte de la coordinación del proyecto; 30 días posteriores a la radicación de la factura o cuenta de cobro.', $estiloNormal);
 }
 
 $textRun = $seccion->addTextRun(['alignment' => 'both', 'spaceAfter' => 120, 'spaceBefore' => 300]);

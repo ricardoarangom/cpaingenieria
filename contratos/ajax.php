@@ -8,7 +8,7 @@ if(($_POST['proced']==1)){
                       FROM
                           subclasescontrat
                       WHERE
-                          IdClase = ".$_POST['IdClaseContrato']."";
+                          IdClase = ".$_POST['IdClaseContrato']." order by subclase";
     $resultadoSubClase = mysql_query($buscaSubClase, $datos) or die(mysql_error());
     $filaSubClase = mysql_fetch_assoc($resultadoSubClase);
     $totalfilas_buscaSubClase = mysql_num_rows($resultadoSubClase);

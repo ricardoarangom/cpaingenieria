@@ -219,16 +219,19 @@ $textRun->addText('(COP$ ' . number_format($valorTotal, 0, ',', '.') . ') ' . $v
 $textRun->addText($textIVA . '.', $estiloNormal);
 
 // CLÁUSULA CUARTA - FORMA DE PAGO
-$seccion->addText('Cuarta. -- Forma de pago.', $estiloNegrita, ['spaceAfter' => 120, 'spaceBefore' => 300]);
+// $seccion->addText('Cuarta. -- Forma de pago.', $estiloNegrita, ['spaceAfter' => 120, 'spaceBefore' => 300]);
+
+$textRun = $seccion->addTextRun(['alignment' => 'both', 'spaceAfter' => 120, 'spaceBefore' => 300]);
+$textRun->addText('Cuarta. – Forma de Pago.: ', $estiloNegrita);
 if (mysql_num_rows($resultadoFormaPagos) > 0) {
     $numeroPagos = mysql_num_rows($resultadoFormaPagos);
     $nombresPagos = ['Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'];
 
-    $seccion->addText(
-        'Se realizarán ' . numeroALetras($numeroPagos) . ' (' . $numeroPagos . ') pagos así:',
-        $estiloNormal,
-        ['alignment' => 'both', 'spaceAfter' => 120]
-    );
+    // $seccion->addText(
+    //     'Se realizarán ' . numeroALetras($numeroPagos) . ' (' . $numeroPagos . ') pagos así:',
+    //     $estiloNormal,
+    //     ['alignment' => 'both', 'spaceAfter' => 120]
+    // );
 
     mysql_data_seek($resultadoFormaPagos, 0);
 
@@ -240,6 +243,7 @@ if (mysql_num_rows($resultadoFormaPagos) > 0) {
         $textRun->addText('Correspondientes al 100% del valor total del contrato; ', $estiloNormal);
         $textRun->addText($pago['concepto'], $estiloNormal);
         $textRun->addText('; previa aprobación por parte de la coordinación del proyecto; 30 días posteriores a la radicación de la factura o cuenta de cobro.', $estiloNormal);
+
     } else {
 
         $contador = 0;
@@ -253,14 +257,18 @@ if (mysql_num_rows($resultadoFormaPagos) > 0) {
                 numeroALetras($valorPago) . ' Pesos Moneda Corriente, antes de IVA; ', $estiloNormal);
             $textRun->addText('Correspondientes al ' . $porcentaje . '% del valor total del contrato; ', $estiloNormal);
             $textRun->addText($pago['concepto'] . '; ', $estiloNormal);
-            $textRun->addText('30 días posteriores a la radicación de la factura o cuenta de cobro.', $estiloNormal);
+            $textRun->addText('; previa aprobación por parte de la coordinación del proyecto; 30 días posteriores a la radicación de la factura o cuenta de cobro.', $estiloNormal);
 
             $contador++;
         }
     }
 } else {
-    $textRun->addText('[Se realizará un único pago por valor de: (COP$XXXXXXXXXXX) [XXXXXXXXXXXXXXXXXXXXXXXXXXXXX] Pesos Moneda Corriente, IVA incluido.]', ['size' => 11, 'name' => 'Arial']);
-    $textRun->addText(' Correspondientes al 100% del valor total del contrato; a la entrega de los productos acordados; previa aprobación por parte de la coordinación del proyecto; 30 días posteriores a la radicación de la factura o cuenta de cobro.', $estiloNormal);
+   
+    // Un solo pago
+    $valorLetras = numeroALetras($valorTotal);
+    $textRun->addText('Se realizará un único pago por valor de: (COP$' . separarMiles($valorTotal) . ') ' . $valorLetras . ' Pesos Moneda Corriente' . $textIVA . '. ', $estiloNormal);
+    $textRun->addText('Correspondientes al 100% del valor total del contrato; ', $estiloNormal);
+    $textRun->addText('previa aprobación por parte de la coordinación del proyecto; 30 días posteriores a la radicación de la factura o cuenta de cobro.', $estiloNormal);
 }
 
 $seccion->addText('Parágrafo Único:', $estiloNegrita, ['spaceAfter' => 120, 'spaceBefore' => 300]);

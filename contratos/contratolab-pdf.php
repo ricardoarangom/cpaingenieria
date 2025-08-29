@@ -23,6 +23,11 @@ if($filaCont['IdSubclase']==2){
   exit; // Importante para detener la ejecución del script.
 }
 
+if($filaCont['IdSubclase']==7){
+  header('Location: contlabobraNC-pdf.php?contrato=' . $contrato);
+  exit; // Importante para detener la ejecución del script.
+}
+
 if($filaCont['IdSubclase']==3){
   header('Location: contlabfijo-pdf.php?contrato=' . $contrato);
   exit; // Importante para detener la ejecución del script.
