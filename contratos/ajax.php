@@ -53,7 +53,7 @@ if(($_POST['proced']==2)){
 
 if(($_POST['proced']==3)){
 	
-	$buscaProve="SELECT IdProveedor, proveedor, documento FROM proveedores where documento like '%".$_POST['valor']."%' order by proveedor";
+	$buscaProve="SELECT IdContratista, proveedor, documento FROM contratistas where documento like '%".$_POST['valor']."%' order by proveedor";
 	$resultadoProve = mysql_query($buscaProve, $datos) or die(mysql_error());
   $row_ResultadoProve = mysql_fetch_assoc($resultadoProve);
 	$totalFilasProve = mysql_num_rows($resultadoProve);
@@ -61,7 +61,7 @@ if(($_POST['proced']==3)){
 	if($totalFilasProve>0){
 		do{
 			?>
-			<li class="item" onClick="llenar(<?php echo $row_ResultadoProve['IdProveedor'] ?>,'<?php echo $row_ResultadoProve['proveedor'];?>','<?php echo $_POST['item'];?>','<?php echo colocapuntos($row_ResultadoProve['documento']) ?>')"><?php echo colocapuntos($row_ResultadoProve['documento'])." - ".$row_ResultadoProve['proveedor'];?></li>
+			<li class="item" onClick="llenar(<?php echo $row_ResultadoProve['IdContratista'] ?>,'<?php echo $row_ResultadoProve['proveedor'];?>','<?php echo $_POST['item'];?>','<?php echo colocapuntos($row_ResultadoProve['documento']) ?>')"><?php echo colocapuntos($row_ResultadoProve['documento'])." - ".$row_ResultadoProve['proveedor'];?></li>
 			<?php		
 		} while ($row_ResultadoProve = mysql_fetch_assoc($resultadoProve));
 	}else{
