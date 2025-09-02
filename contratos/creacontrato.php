@@ -303,7 +303,7 @@ include('encabezado.php');
 
 			document.getElementById('div-ffinfin').style.display='';
 			document.getElementById('div-auxilio').style.display='';
-			document.getElementById('div-deptol').style.display='none';
+			
 			document.getElementById('div-lugar').style.display='none';
 
 			document.getElementById('ffin').setAttribute('required', 'required');
@@ -356,7 +356,7 @@ include('encabezado.php');
 
 			document.getElementById('div-ffinfin').style.display='none';
 			document.getElementById('div-auxilio').style.display='';
-			document.getElementById('div-deptol').style.display='';
+			
 			document.getElementById('div-lugar').style.display='';
 
 			document.getElementById('ffin').removeAttribute('required');
@@ -412,7 +412,7 @@ include('encabezado.php');
 
 			document.getElementById('div-ffinfin').style.display='none';
 			document.getElementById('div-auxilio').style.display='';
-			document.getElementById('div-deptol').style.display='';
+			
 			document.getElementById('div-lugar').style.display='';
 
 			document.getElementById('ffin').removeAttribute('required');
@@ -461,14 +461,14 @@ include('encabezado.php');
 			document.getElementById('div-especialidad').style.display='none';
 			document.getElementById('div-grupo').style.display='none';
 			document.getElementById('div-centrofor').style.display='none';
-			document.getElementById('div-objeto').style.display='none';
-			document.getElementById('div-alcance').style.display='';
+			document.getElementById('div-objeto').style.display='';
+			document.getElementById('div-alcance').style.display='none';
 			document.getElementById('div-integral').style.display='';
 			document.getElementById('div-iva').style.display='none';
 
 			document.getElementById('div-ffinfin').style.display='none';
 			document.getElementById('div-auxilio').style.display='';
-			document.getElementById('div-deptol').style.display='';
+			
 			document.getElementById('div-lugar').style.display='';
 
 			document.getElementById('ffin').setAttribute('required', 'required');
@@ -477,69 +477,7 @@ include('encabezado.php');
 			document.getElementById('especialidad').removeAttribute('required');
 			document.getElementById('grupo').removeAttribute('required');
 			document.getElementById('centrofor').removeAttribute('required');
-			document.getElementById('objeto').removeAttribute('required');
-			document.getElementById('alcance').setAttribute('required', 'required');
-
-			document.getElementById('lugar').setAttribute('required', 'required');
-
-			document.getElementById('finicio').value='';
-			document.getElementById('ffin').value='';
-			document.getElementById('ffinfin').value='';
-			document.getElementById('valor').value='';
-			document.getElementById('IdCargo').value='';
-			document.getElementById('especialidad').value='';
-			document.getElementById('grupo').value='';
-			document.getElementById('centrofor').value='';
-			document.getElementById('objeto').value='';
-			document.getElementById('alcance').value='';
-
-			
-			document.getElementById('integral-no').checked=true;
-			document.getElementById('iva-no').checked=true;
-
-			$('#div-funciones').html('');
-			$('#div-responsabilidades').html('');
-
-			$('#div-actividades').html('Actividades: <span id="nactividades" style="display:none">1</span>'+
-																 '<table class="tablita Arial12" width="50%" id="actividades"><col width="95%"><col width="5%">'+
-																 		'<tr><td colspan="2"><input type="text" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 actividades" ></td></tr></table>'+
-																		'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>');
-
-			$('#div-productos').html('Productos: <span id="nproductos" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="50%" id="productos"><col width="95%"><col width="5%">'+
-																	'<tr><td colspan="2"><input type="text" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 productos" ></td></tr></table>'+
-																	'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaProducto()" >Agregar producto</button>');
-
-			$('#div-formapago').html('');
-			
-		}
-
-		//indefinido
-		if(id==4){
-
-			document.getElementById('div-ffin').style.display='none';
-			document.getElementById('div-IdCargo').style.display='';
-			document.getElementById('div-incs').style.display='';
-			document.getElementById('div-especialidad').style.display='none';
-			document.getElementById('div-grupo').style.display='none';
-			document.getElementById('div-centrofor').style.display='none';
-			document.getElementById('div-objeto').style.display='none';
-			document.getElementById('div-alcance').style.display='none';
-			document.getElementById('div-integral').style.display='';
-			document.getElementById('div-iva').style.display='none';
-
-			document.getElementById('div-ffinfin').style.display='none';
-			document.getElementById('div-auxilio').style.display='';
-			document.getElementById('div-deptol').style.display='';
-			document.getElementById('div-lugar').style.display='';
-
-			document.getElementById('ffin').removeAttribute('required');
-			document.getElementById('ffinfin').removeAttribute('required');
-			document.getElementById('IdCargo').setAttribute('required', 'required');
-			document.getElementById('especialidad').removeAttribute('required');
-			document.getElementById('grupo').removeAttribute('required');
-			document.getElementById('centrofor').removeAttribute('required');
-			document.getElementById('objeto').removeAttribute('required');
+			document.getElementById('objeto').setAttribute('required', 'required');
 			document.getElementById('alcance').removeAttribute('required');
 
 			document.getElementById('lugar').setAttribute('required', 'required');
@@ -555,6 +493,69 @@ include('encabezado.php');
 			document.getElementById('objeto').value='';
 			document.getElementById('alcance').value='';
 
+			document.getElementById('label-objeto').innerHTML='Objetivo del Contrato:'
+			
+			document.getElementById('integral-no').checked=true;
+			document.getElementById('iva-no').checked=true;
+
+			$('#div-funciones').html('Funciones: <span id="nfunciones" style="display:none">1</span>'+
+																'<table class="tablita Arial12" width="50%" id="funciones"><col width="95%"><col width="5%">'+
+																'<tr><td colspan="2"><input type="text" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 funciones"></td></tr></table>'+
+																'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaFuncion()" >Agregar función</button>');
+
+			$('#div-responsabilidades').html('Responsabilidades: <span id="nresponsabilidades" style="display:none">1</span>'+
+																				'<table class="tablita Arial12" width="50%" id="responsabilidades"><col width="95%"><col width="5%">'+
+																				'<tr><td colspan="2"><input type="text" name="responsabilidad[1]" id="responsabilidad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 responsabilidades"></td></tr></table>'+
+																				'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaResponsabilidad()">Agregar responsabilidad</button>');
+
+			$('#div-actividades').html('');
+			$('#div-productos').html('');
+			$('#div-formapago').html('');
+			
+		}
+
+		//indefinido
+		if(id==4){
+
+			document.getElementById('div-ffin').style.display='none';
+			document.getElementById('div-IdCargo').style.display='';
+			document.getElementById('div-incs').style.display='';
+			document.getElementById('div-especialidad').style.display='none';
+			document.getElementById('div-grupo').style.display='none';
+			document.getElementById('div-centrofor').style.display='none';
+			document.getElementById('div-objeto').style.display='';
+			document.getElementById('div-alcance').style.display='none';
+			document.getElementById('div-integral').style.display='';
+			document.getElementById('div-iva').style.display='none';
+
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='';
+			
+			document.getElementById('div-lugar').style.display='';
+
+			document.getElementById('ffin').removeAttribute('required');
+			document.getElementById('ffinfin').removeAttribute('required');
+			document.getElementById('IdCargo').setAttribute('required', 'required');
+			document.getElementById('especialidad').removeAttribute('required');
+			document.getElementById('grupo').removeAttribute('required');
+			document.getElementById('centrofor').removeAttribute('required');
+			document.getElementById('objeto').setAttribute('required', 'required');
+			document.getElementById('alcance').removeAttribute('required');
+
+			document.getElementById('lugar').setAttribute('required', 'required');
+
+			document.getElementById('finicio').value='';
+			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
+			document.getElementById('valor').value='';
+			document.getElementById('IdCargo').value='';
+			document.getElementById('especialidad').value='';
+			document.getElementById('grupo').value='';
+			document.getElementById('centrofor').value='';
+			document.getElementById('objeto').value='';
+			document.getElementById('alcance').value='';
+
+			document.getElementById('label-objeto').innerHTML='Objetivo del Contrato:'
 			
 			document.getElementById('integral-no').checked=true;
 			document.getElementById('iva-no').checked=true;
@@ -591,7 +592,7 @@ include('encabezado.php');
 
 			document.getElementById('div-ffinfin').style.display='none';
 			document.getElementById('div-auxilio').style.display='none';
-			document.getElementById('div-deptol').style.display='none';
+			
 			document.getElementById('div-lugar').style.display='none';
 
 			document.getElementById('ffin').setAttribute('required', 'required');
@@ -659,7 +660,7 @@ include('encabezado.php');
 
 			document.getElementById('div-ffinfin').style.display='none';
 			document.getElementById('div-auxilio').style.display='none';
-			document.getElementById('div-deptol').style.display='none';
+			
 			document.getElementById('div-lugar').style.display='none';
 
 			document.getElementById('ffin').setAttribute('required', 'required');
@@ -2208,31 +2209,9 @@ include('encabezado1.php');
 				C Fromación
 				<input type="text" name="centrofor" id="centrofor" class="campo-sm Arial12" onBlur="aMayusculas(this.value,this.id)">	
 			</div>
-			<div class="span-2" id="div-deptol">
-				Depto donde desepmpeñara labores:
-				<select name="deptol" id="deptol" class="campo-sm Arial12" onChange="buscamun(this.value,this.id)">
-					<option value="">Seleccione</option>
-					<?php
-					do {  
-						?>
-						<option value="<?php echo $filaDepto['IdDepartamento']?>"><?php echo $filaDepto['departamentos']?></option>
-						<?php
-					} while ($filaDepto = mysql_fetch_assoc($resultadoDepto));
-					$rows = mysql_num_rows($resultadoDepto);
-					if($rows > 0) {
-						mysql_data_seek($resultadoDepto, 0);
-						$filaDepto = mysql_fetch_assoc($resultadoDepto);
-					}
-					?>
-				</select>
-			</div>
-			<div class="span-2" id="div-lugar">
-				Mcpio donde desepmpeñara labores:
-				<div id='midiv4'>
-					<select name="lugar" id="lugar"  class="campo-sm Arial12" >	
-						<option value="">Seleccione</option>
-					</select>
-				</div>	
+			<div class="span-3" id="div-lugar">
+				Lugar donde desepmpeñara labores:
+				<input type="text" name="lugar" id="lugar" class="campo-sm Arial12">					
 			</div>
 		</div>
 		<br>	

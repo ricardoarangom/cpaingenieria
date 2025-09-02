@@ -11,7 +11,7 @@ require_once('../funciones.php');
 
 function get_letter_from_number($number) {
     // A -> 0, B -> 1, C -> 2, etc.
-    return chr(65 + $number);
+    return chr(97 + $number);
 }
 
 $contrato=$_GET['contrato'];
@@ -34,7 +34,7 @@ $buscaCont =   "SELECT
                     nombre,
                     munexp,
                     municipios.municipio,
-                    municipios_1.municipio as lugar,
+                    lugar,
                     valor,
                     incs,
                     cargo,
@@ -43,11 +43,10 @@ $buscaCont =   "SELECT
                     auxilio
                     
                 FROM
-                    (((((contrat
+                    ((((contrat
                     LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
                     LEFT JOIN municipios ON contratistas.munexp = municipios.IdMunicipio)
                     LEFT JOIN clasedocsi ON contratistas.IdClasedoc = clasedocsi.IdClasedoc)
-                    left join municipios as municipios_1 on contrat.lugar=municipios_1.IdMunicipio)
                     left join cargos on contrat.IdCargo=cargos.IdCargo)
                 WHERE
                     IdContrato = ".$contrato;
@@ -375,29 +374,33 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 
-$txt=utf8_decode('
-<p><neg>ACTIVIDADES.</neg> Se desarrollarán las siguientes actividades:
-</p>
-');
+if($totalfilas_buscaAct>0){
 
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+    $txt=utf8_decode('
+    <p><neg>ACTIVIDADES.</neg> Se desarrollarán las siguientes actividades:
+    </p>
+    ');
 
-$pdf->SetLeftMargin(22);
-$pdf->ln(2);
+    $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 
-$pdf->SetFont('Arial','B',10);
-$itemAc=0;
-do{
-    $letter = get_letter_from_number($itemAc);
-    $itemAc++;
-    
-    $pdf->Cell(10,4.5,utf8_decode($letter.'.'),0,0,'L');
-    $pdf->Cell(10,4.5,utf8_decode($filaAct['actividad']),0,1,'L');
+    $pdf->SetLeftMargin(25);
+    $pdf->ln(2);
 
-} while ($filaAct = mysql_fetch_assoc($resultadoAct));
+    $pdf->SetFont('Arial','',10);
+    $itemAc=0;
+    do{
+        $letter = get_letter_from_number($itemAc);
+        $itemAc++;
+        $pdf->Cell(6,4.5,utf8_decode($letter.')'),0,0,'L');
+        $pdf->MultiCell(165,4.5,utf8_decode($filaAct['actividad']),0,'J');
 
-$pdf->SetLeftMargin(20);
-$pdf->ln(2);
+    } while ($filaAct = mysql_fetch_assoc($resultadoAct));
+
+    $pdf->SetLeftMargin(20);
+    $pdf->ln(2);
+}
+
+
 
 
 $txt=utf8_decode('

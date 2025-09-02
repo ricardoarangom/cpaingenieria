@@ -82,11 +82,11 @@ if(isset($_POST['boton1'])){
    if($_POST['lugar']){
     $lugar=$_POST['lugar'];
   }else{
-    $lugar=0;
+    $lugar=NULL;
   }
 
 
-  $inserta="INSERT INTO contrat (IdProveedor, IdEmpresa, IdArea, IdSolicitante, IdClase, IdSubClase, objeto, finicio, ffin, iva, consec, valor, integral, IdCargo, incs, especialidad, grupo, centrofor, alcance, ffinfin, lugar, auxilio) VALUES (".$_POST['contratista'].", 1, ".$_POST['IdArea'].", ".$usuario.", ".$_POST['IdClase'].", ".$_POST['IdSubClase'].", ".($objeto == NULL ? "NULL" : "'$objeto'").", '".$_POST['finicio']."', ".($ffin == NULL ? "NULL" : "'$ffin'").", ".$iva.", ".$consec.", ".$_POST['valor'].", ".$_POST['integral'].", ".$cargo.", ".$_POST['incs'].", ".($especialidad == NULL ? "NULL" : "'$especialidad'").", ".($grupo == NULL ? "NULL" : "'$grupo'").", ".($centrofor == NULL ? "NULL" : "'$centrofor'").", ".($alcance == NULL ? "NULL" : "'$alcance'").", ".($ffinfin == NULL ? "NULL" : "'$ffinfin'").", ".$lugar.", ".$_POST['auxilio'].")";
+  $inserta="INSERT INTO contrat (IdProveedor, IdEmpresa, IdArea, IdSolicitante, IdClase, IdSubClase, objeto, finicio, ffin, iva, consec, valor, integral, IdCargo, incs, especialidad, grupo, centrofor, alcance, ffinfin, lugar, auxilio) VALUES (".$_POST['contratista'].", 1, ".$_POST['IdArea'].", ".$usuario.", ".$_POST['IdClase'].", ".$_POST['IdSubClase'].", ".($objeto == NULL ? "NULL" : "'$objeto'").", '".$_POST['finicio']."', ".($ffin == NULL ? "NULL" : "'$ffin'").", ".$iva.", ".$consec.", ".$_POST['valor'].", ".$_POST['integral'].", ".$cargo.", ".$_POST['incs'].", ".($especialidad == NULL ? "NULL" : "'$especialidad'").", ".($grupo == NULL ? "NULL" : "'$grupo'").", ".($centrofor == NULL ? "NULL" : "'$centrofor'").", ".($alcance == NULL ? "NULL" : "'$alcance'").", ".($ffinfin == NULL ? "NULL" : "'$ffinfin'").", ".($lugar == NULL ? "NULL" : "'$lugar'").", ".$_POST['auxilio'].")";
   // echo $inserta."<br>";
   $nfunciones=0;
   $nproductos=0;
@@ -162,7 +162,7 @@ if(isset($_POST['boton1'])){
       }
     }
     $mensaje="<div>CONTRATO GRABADO CON EXITO</div>";
-    if(isset($_POST['IdSubClase']) && $_POST['IdSubClase']<>1){
+    if($nfunciones<>0 or $nproductos<>0 or $npagos<>0 or $nactividades<>0 or $nresponsabilidades<>0){
       $mensaje.="<div>SE GRABARON:</div>";
       if($nfunciones<>0){
         $mensaje.="<div>".$nfunciones." FUNCIONES</div>";
@@ -183,7 +183,7 @@ if(isset($_POST['boton1'])){
 
     ?>
     <script language="JavaScript" type="text/javascript">
-      var laboral = <?php echo ($_POST['IdSubClase']<=4) ? 1 : 0; ?>;
+      var laboral = <?php echo $_POST['IdClase'] ?>;
       var subClase = <?php echo $_POST['IdSubClase'] ?>;
       var contrato = <?php echo $last_id ?: 0 ?>;
       swal({
@@ -195,7 +195,7 @@ if(isset($_POST['boton1'])){
         if (result.value) {
           if(laboral == 1){
             window.open('contratolab-pdf.php?contrato='+contrato, '_blank');
-          } else if(laboral == 0){
+          } else if(laboral == 2){
             if(subClase == 5){
               window.open('contrato-prestacion-servicio-persona-word.php?contrato='+contrato, '_blank');
             } else {

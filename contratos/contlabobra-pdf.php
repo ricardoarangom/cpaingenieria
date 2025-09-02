@@ -11,7 +11,7 @@ require_once('../funciones.php');
 
 function get_letter_from_number($number) {
     // A -> 0, B -> 1, C -> 2, etc.
-    return chr(65 + $number);
+    return chr(97 + $number);
 }
 
 $contrato=$_GET['contrato'];
@@ -34,7 +34,7 @@ $buscaCont =   "SELECT
                     nombre,
                     munexp,
                     municipios.municipio,
-                    municipios_1.municipio as lugar,
+                    lugar,
                     valor,
                     incs,
                     cargo,
@@ -43,11 +43,10 @@ $buscaCont =   "SELECT
                     auxilio
                     
                 FROM
-                    (((((contrat
+                    ((((contrat
                     LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
                     LEFT JOIN municipios ON contratistas.munexp = municipios.IdMunicipio)
                     LEFT JOIN clasedocsi ON contratistas.IdClasedoc = clasedocsi.IdClasedoc)
-                    left join municipios as municipios_1 on contrat.lugar=municipios_1.IdMunicipio)
                     left join cargos on contrat.IdCargo=cargos.IdCargo)
                 WHERE
                     IdContrato = ".$contrato;
@@ -382,30 +381,31 @@ $txt=utf8_decode('
 $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
-$txt=utf8_decode('
-<p><neg>ACTIVIDADES.</neg> Se desarrollarán las siguientes actividades:
-</p>
-');
+if($totalfilas_buscaAct>0){
 
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+    $txt=utf8_decode('
+    <p><neg>ACTIVIDADES.</neg> Se desarrollarán las siguientes actividades:
+    </p>
+    ');
 
-$pdf->SetLeftMargin(22);
-$pdf->ln(2);
+    $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 
-$pdf->SetFont('Arial','B',10);
-$itemAc=0;
-do{
-    $letter = get_letter_from_number($itemAc);
-    $itemAc++;
-    
-    $pdf->Cell(10,4.5,utf8_decode($letter.'.'),0,0,'L');
-    $pdf->Cell(10,4.5,utf8_decode($filaAct['actividad']),0,1,'L');
+    $pdf->SetLeftMargin(25);
+    $pdf->ln(2);
 
-} while ($filaAct = mysql_fetch_assoc($resultadoAct));
+    $pdf->SetFont('Arial','',10);
+    $itemAc=0;
+    do{
+        $letter = get_letter_from_number($itemAc);
+        $itemAc++;
+        $pdf->Cell(6,4.5,utf8_decode($letter.')'),0,0,'L');
+        $pdf->MultiCell(165,4.5,utf8_decode($filaAct['actividad']),0,'J');
 
-$pdf->SetLeftMargin(20);
-$pdf->ln(2);
+    } while ($filaAct = mysql_fetch_assoc($resultadoAct));
 
+    $pdf->SetLeftMargin(20);
+    $pdf->ln(2);
+}
 
 $txt=utf8_decode('
 <p><neg>SEGUNDA: REMUNERACION.</neg> EL EMPLEADOR pagará a EL TRABAJADOR por la prestación de sus servicios el salario indicado en el encabezado del presente documento, pagadero en las oportunidades también señaladas arriba. <neg>PARÁGRAFO PRIMERO: SALARIO ORDINARIO.</neg> Dentro del salario ordinario se encuentra incluida la remuneración de los descansos dominicales y festivos de que tratan los capítulos I, II y III del título VII del C.S.T. De igual manera, se aclara y se conviene en que los casos en los que EL TRABAJADOR devengue comisiones o cualquier otra modalidad del salario variable, el 82.5% de dichos ingresos constituye remuneración de la labor realizada, y el 17.5% restante está destinado a remunerar el descanso en los días dominicales y festivos de que tratan los capítulos I y II del Título VIII del C.S.T. <neg>PARÁGRAFO SEGUNDO: SALARIO INTEGRAL.</neg> En la eventualidad en que EL TRABAJADOR devengue salario integral se entiende de conformidad con el numeral 2 del artículo 132 del C.S.T., subrogado por el artículo 18 de la ley 50/90, que dentro del salario integral convenido se encuentra incorporado el factor prestacional de EL TRABAJADOR, el cual no será INFERIOR AL 30% del salario antes mencionado. De igual manera, se conviene y aclara que en los casos en los que EL TRABAJADOR devengue comisiones o cualquier otra modalidad de salario antes mencionado. El salario integral acordado, además de retribuir la remuneración ordinaria, remunera y compensa todo recargo por trabajo extraordinario, nocturno dominical o festivo, primas de servicios legales o extralegales, cesantías e intereses a la cesantías, subsidios y suministros en especie, incidencia prestacional de eventuales viáticos y en general toda prestación o acreencia legal o extralegal derivada del contrato, con excepción de las vacaciones. <neg>PARÁGRAFO TERCERO:</neg> Las partes acuerdan que en los casos en que se le reconozcan a EL TRABAJADOR beneficios por concepto de alimentación, comunicaciones, habitación o vivienda, transporte, vestuario, auxilios en dinero o en especie o bonificaciones ocasionales, se considerarán tales beneficios o reconocimientos como no salariales, y por tanto, no se tendrán en cuenta como factor salarial para liquidación de acreencias laborales y para el pago de aportes parafiscales y cotizaciones a la seguridad social, de conformidad con los Arts. 15 y 16 de la ley 50/90, en concordancia con el Art. 17 de la 344/96.</p>

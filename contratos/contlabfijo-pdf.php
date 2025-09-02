@@ -11,7 +11,7 @@ require_once('../funciones.php');
 
 function get_letter_from_number($number) {
     // A -> 0, B -> 1, C -> 2, etc.
-    return chr(65 + $number);
+    return chr(97 + $number);
 }
 
 $contrato=$_GET['contrato'];
@@ -34,45 +34,44 @@ $buscaCont =   "SELECT
                     nombre,
                     munexp,
                     municipios.municipio,
-                    municipios_1.municipio as lugar,
+                    lugar,
                     valor,
                     incs,
                     cargo,
                     alcance,
-                    auxilio
-                    
+                    auxilio,
+                    objeto
                 FROM
-                    (((((contrat
+                    ((((contrat
                     LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
                     LEFT JOIN municipios ON contratistas.munexp = municipios.IdMunicipio)
                     LEFT JOIN clasedocsi ON contratistas.IdClasedoc = clasedocsi.IdClasedoc)
-                    left join municipios as municipios_1 on contrat.lugar=municipios_1.IdMunicipio)
-                    left join cargos on contrat.IdCargo=cargos.IdCargo)
+                    LEFT JOIN cargos ON contrat.IdCargo = cargos.IdCargo)
                 WHERE
                     IdContrato = ".$contrato;
 $resultadoCont = mysql_query($buscaCont, $datos) or die(mysql_error());
 $filaCont = mysql_fetch_assoc($resultadoCont);
 $totalfilas_buscaCont = mysql_num_rows($resultadoCont);
 
-$buscaAct = "   SELECT 
-                    actividad
-                FROM
-                    actividadescont
-                WHERE
-                    IdContrato = ".$contrato;
-$resultadoAct = mysql_query($buscaAct, $datos) or die(mysql_error());
-$filaAct = mysql_fetch_assoc($resultadoAct);
-$totalfilas_buscaAct = mysql_num_rows($resultadoAct);
-
-$buscaPro = "SELECT 
-                producto
+$buscaRes = "SELECT 
+                responsabilidad
             FROM
-                productoscont
+                resposabilidadescont
             WHERE
                 IdContrato =   ".$contrato;
-$resultadoPro = mysql_query($buscaPro, $datos) or die(mysql_error());
-$filaPro = mysql_fetch_assoc($resultadoPro);
-$totalfilas_buscaPro = mysql_num_rows($resultadoPro);
+$resultadoRes = mysql_query($buscaRes, $datos) or die(mysql_error());
+$filaRes = mysql_fetch_assoc($resultadoRes);
+$totalfilas_buscaRes = mysql_num_rows($resultadoRes);
+
+$buscaFun = "SELECT 
+                funcion
+            FROM
+                funcionescont
+            WHERE
+                IdContrato = ".$contrato;
+$resultadoFun = mysql_query($buscaFun, $datos) or die(mysql_error());
+$filaFun = mysql_fetch_assoc($resultadoFun);
+$totalfilas_buscaFun = mysql_num_rows($resultadoFun);
 
 $ffin=(strtotime ( '+1 day' , strtotime ( $filaCont['ffin']  )));
 $ffin=date("Y-m-d",$ffin);
@@ -391,11 +390,68 @@ $pdf->Row(array(utf8_decode('Fecha de fin de la labor:'),fechaactual3($filaCont[
 $pdf->Row(array(utf8_decode('Lugar Donde Desempeñara Las Labores'),utf8_decode($filaCont['lugar'])),0);
 $pdf->Row(array(utf8_decode('Tipo de contrato:'),utf8_decode('TERMINO FIJO INFERIOR A UN AÑO')),0);
 
-
 $pdf->ln(5);
 
 $txt=utf8_decode('
-<p>Entre EL EMPLEADOR y EL TRABAJADOR, de las condiciones ya dichas, identificados como aparece al pie de sus firmas, se ha celebrado el presente contrato individual de trabajo, regido además por las siguientes clausulas:
+<p><neg>OBJETIVO DEL CARGO:</neg></p>
+<p>'.$filaCont['objeto'].'</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+if($totalfilas_buscaRes>0){
+
+    $txt=utf8_decode('
+    <p><neg>RESPONSABILIDADES:</neg></p>
+    ');
+
+    $pdf->WriteTag(0,4.5,$txt,0,"J",0);
+    $pdf->SetLeftMargin(25);
+    $pdf->ln(2);
+
+    $pdf->SetFont('Arial','',10);
+    $itemAc=0;
+    do{
+        $letter = get_letter_from_number($itemAc);
+        $itemAc++;
+        
+        $pdf->Cell(6,4.5,utf8_decode($letter.')'),0,0,'L');
+        $pdf->MultiCell(165,4.5,utf8_decode($filaRes['responsabilidad']),0,'J');
+
+    } while($filaRes = mysql_fetch_assoc($resultadoRes));
+
+    $pdf->SetLeftMargin(20);
+    $pdf->ln(2);
+
+}
+if($totalfilas_buscaFun>0){
+
+    $txt=utf8_decode('
+    <p><neg>FUNCIONES:</neg></p>
+    ');
+
+    $pdf->WriteTag(0,4.5,$txt,0,"J",0);
+    $pdf->SetLeftMargin(25);
+    $pdf->ln(2);
+
+    $pdf->SetFont('Arial','',10);
+    $itemFu=1;
+    do{
+
+        $pdf->Cell(7,4.5,utf8_decode($itemFu.'.'),0,0,'L');
+        $pdf->MultiCell(164,4.5,utf8_decode($filaFun['funcion']),0,'J');
+
+        $itemFu++;
+    } while($filaFun = mysql_fetch_assoc($resultadoFun));
+
+    $pdf->SetLeftMargin(20);
+    $pdf->ln(2);
+}
+
+
+$txt=utf8_decode('
+<p>Entre el empleador y el trabajador, de las condiciones ya dichas, identificados como aparece al pie de sus correspondientes firmas, se ha celebrado el presente contrato Individual de Trabajo a Término fijo inferior a un año, regido por las siguientes cláusulas:
 </p>
 ');
 
@@ -403,7 +459,16 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p><neg>PRIMERA: OBJETO.</neg> EL EMPLEADOR contrata los servicios personales de EL TRABAJADOR y éste obliga a) a poner al servicio de EL EMPLEADOR toda su capacidad normal de trabajo en el desempeño de las funciones propias del oficio mencionado y en las labores anexas y complementarias del mismo, de conformidad con las órdenes e instrucciones que le imparta EL EMPLEADOR directamente o a través de sus representantes; b) a prestar sus servicios en forma exclusiva al empleador; es decir, a no prestar directa ni indirectamente servicios laborales a otros empleadores, ni a trabajar por cuenta propia en el mismo oficio, durante la vigencia de este contrato; y c) a guardar absoluta reserva sobre los hechos, documentos físicos y/o electrónicos, información y en general, sobre todos los asuntos y materias que lleguen a su conocimiento por causa o con ocasión de su contrato de trabajo.
+<p><neg>PRIMERA:</neg> El empleador contrata los servicios personales del trabajador, y éste se obliga: a). Poner al servicio del empleador toda su capacidad normal de trabajo, de manera exclusiva, en el desempeño de las funciones propias del cargo contratado y en las labores conexas y complementarias del mismo, en consideración con las órdenes e instrucciones que le imparta al empleador o sus representantes; b). No prestar directa ni indirectamente servicios laborales a otros empleadores, ni trabajar por cuenta propia en el mismo oficio, durante la vigencia del presente contrato; c). Laborar la jornada ordinaria en los turnos y dentro del horario señalado en este contrato, pudiendo el empleador efectuar ajustes o cambios de horario cuando lo estime conveniente y d). Las demás consagradas en el artículo 58 del Código Sustantivo del Trabajo.
+</p>
+');
+
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>SEGUNDA:</neg> Como contraprestación por su labor, el empleador pagará al Trabajador el salario estipulado, el cual deberá cancelar en la fecha y lugar indicado, quedando establecido que en dicho pago se halla incluida la remuneración correspondiente a los descansos dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo. Se aclara y se conviene que en los casos en los que el trabajador devengue comisiones o cualquiera otra modalidad de salario variable, el 82.5% de dichos ingresos, constituye remuneración ordinaria, y el 17.5% restante está destinado a remunerar el descanso en los días dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo.
 </p>
 ');
 
@@ -411,160 +476,94 @@ $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
 $txt=utf8_decode('
-<p><neg>SEGUNDA: ALCANCE.</neg> '.$filaCont['alcance'].'
+<p><neg>TERCERA:</neg> Se considera el trabajador como personal de Manejo y Confianza por sus funciones y representación de la empresa frente al cliente en el lugar donde desarrolla sus labores, se deja estipulado que según el artículo 162 de la norma laboral, el personal de manejo y confianza queda excluido de la regulación sobre la jornada máxima legal de trabajo, pues su labor es la de estar dispuestos en cualquier momento por las labores propias de su cargo dentro de los días de trabajo asignados por el cliente.
+</p>
+');
+
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>CUARTA:</neg>  Son justas causas para dar por terminado unilateralmente el presente contrato, por cualquiera de las partes, las expresadas en los artículos 62 y 63 del Código Sustantivo del Trabajo, en concordancia con las modificaciones introducidas por el artículo 7° del Decreto 2351 de 1965; y, además, por parte del empleador, las faltas que para el efecto se califiquen como graves en el espacio reservado para cláusulas adicionales en el presente contrato.
+</p>
+');
+
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+
+$txt=utf8_decode('
+<p><neg>QUINTA:</neg> Aunque el lugar de trabajo es el indicado en este contrato, las partes pueden acordar que el mismo se preste en sitio diferente, siempre que las condiciones laborales del trabajador no se desmejoren o se disminuya su remuneración o le cause perjuicio. De todos modos, corren por cuenta del empleador los gastos que ocasione dicho traslado. El trabajador desde ahora acepta los cambios de oficio que decida el empleador, siempre que sus condiciones laborales se mantengan, se respeten sus derechos y no le causen perjuicios.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+
+$txt=utf8_decode('
+<p><neg>SEXTA: </neg> El trabajador se obliga a laborar la jornada ordinaria en los turnos y dentro de las horas señaladas por el empleador. Por el acuerdo expreso o tácito de las partes, podrán repartirse las horas de la jornada ordinaria en la forma permitida por el artículo 164 del Código Sustantivo del Trabajo, teniendo en cuenta que las secciones de descanso entre las jornadas de trabajo no se computan dentro de la misma, conforme lo prescribe el artículo 167 del mismo código.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>SEPTIMA: </neg> La quinta parte de la duración estimada del presente contrato se considera como periodo de prueba, sin que exceda de dos (2) meses contados a partir de la fecha de inicio, y, por consiguiente, cualquiera de las partes podrá terminar el contrato unilateralmente, en cualquier momento durante dicho periodo y sin previo aviso, sin que se cause pago de indemnización alguna.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+
+$txt=utf8_decode('
+<p><neg>OCTAVA:</neg> Este contrato ha sido redactado estrictamente de acuerdo con la Ley y Jurisprudencia y será interpretado de buena fe y en consonancia con el Código Sustantivo del Trabajo cuyo objeto, definido en su artículo 1º, es lograr la justicia en las relaciones entre empleadores y trabajadores dentro de un espíritu de coordinación económica y equilibrio social.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>NOVENA:</neg> El presente contrato reemplaza y deja sin efecto cualquier otro contrato verbal o escrito, que se hubiera celebrado entre las partes con anterioridad. Cualquier modificación al presente contrato debe efectuarse por escrito y anotarse a continuación de su texto.
 </p>
 ');
 
 $pdf->WriteTag(0,4.5,$txt,0,"J",0);
 $pdf->ln(2);
 
+
 $txt=utf8_decode('
-<p><neg>TERCERA: ACTIVIDADES.</neg> Para las actividades que se describirán a continuación se debe tener en cuenta que el sitio para la ejecución de las actividades es en '.$filaCont['lugar'].', en las instalaciones del mismo, así como la respectiva oficina donde se deberá realizar la entrega de los productos de las actividades desarrolladas en desarrollo del presente contrato, así:
+<p><neg>CLAUSULAS ADICIONALES:</neg></p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>1.</neg> Las partes expresamente acuerdan que ninguno de los pagos enumerados en el artículo 128 del Código Sustantivo del Trabajo (modificado por la Ley 50 de 1990, art. 15) tiene carácter de salario. Igualmente se acuerda que lo que reciba el trabajador o llegue a recibir en el futuro, adicional a su salario ordinario, ya sean beneficios o auxilios habituales u ocasionales, tales como alimentación, gastos de representación, habitación o vestuario, medios de transporte, elementos de trabajo, propinas,  auxilio de rodamiento, bonificaciones ocasionales o cualquier otra que reciba, durante la vigencia del contrato de trabajo en dinero o en especie, no tendrán naturaleza salarial para ningún efecto. </p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>2.</neg> Es obligación del trabajador no divulgar aquella información que se le haya confiado en virtud del secreto profesional o aquella que deba ser mantenida en reserva por su carácter de confidencial, de la cual haya tenido noticia por cualquier circunstancia, excepción hecha de aquello que el Trabajador deba informar por razones de ley o providencias judiciales. Entiéndase por información confidencial aquella información societaria, técnica, financiera, jurídica, comercial y estratégica de los negocios del Empleador, presentes o futuros.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>3.</neg> Horario de trabajo oficina Bogotá: lunes a jueves de 7:30 a.m. - 5:30 p.m. con una hora de almuerzo Y viernes de 7:30 a.m. - 1:30 p.m., se requiere disponibilidad los sábados.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>4.</neg> Se da por iniciado el contrato laboral desde la fecha de inicio de actividades en campo, según lo establecido en el sitio de trabajo para el cual fue contratado. 
 </p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-
-$pdf->SetLeftMargin(22);
-$pdf->ln(2);
-
-$pdf->SetFont('Arial','B',10);
-$itemAc=0;
-do{
-    $letter = get_letter_from_number($itemAc);
-    $itemAc++;
-    
-    $pdf->Cell(10,4.5,utf8_decode($letter.'.'),0,0,'L');
-    $pdf->Cell(10,4.5,utf8_decode($filaAct['actividad']),0,1,'L');
-
-} while ($filaAct = mysql_fetch_assoc($resultadoAct));
-
-$pdf->SetLeftMargin(20);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>CUARTA: PRODUCTOS A ENTREGAR.</neg></p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->SetLeftMargin(22);
-$pdf->ln(2);
-
-$pdf->SetFont('Arial','B',10);
-
-$itemPr=1;
-do{
-    $pdf->Cell(10,4.5,utf8_decode($itemPr.'.'),0,0,'L');
-    $pdf->Cell(10,4.5,utf8_decode($filaPro['producto']),0,1,'L');
-
-    $itemPr++;
-
-}while($filaPro = mysql_fetch_assoc($resultadoPro));
-
-$pdf->SetLeftMargin(20);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>QUINTA: OBLIGACIONES DEL EMPLEADO.</neg> Son obligaciones especiales del <neg>EMPLEADO</neg>:</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(0);
-
-$pdf->Cell(10,4.5,utf8_decode('a).'),0,0,'C');
-$pdf->MultiCell(167,4.5,utf8_decode('Colocar al servicio del empleador toda su capacidad normal de trabajo de manera exclusiva, en el desempeño de las funciones propias del cargo contratado y en las labores conexas y complementarias del mismo, en consideración con las órdenes e instrucciones que le imparta el empleador o sus representantes.'),0,'J');
-
-$pdf->Cell(10,4.5,utf8_decode('b).'),0,0,'C');
-$pdf->MultiCell(167,4.5,utf8_decode('No prestar directa ni indirectamente servicios laborales a otros empleadores, ni trabajar por cuenta propia en el mismo oficio durante la vigencia del presente contrato.'),0,'J');
-
-$pdf->Cell(10,4.5,utf8_decode('c).'),0,0,'C');
-$pdf->MultiCell(167,4.5,utf8_decode('Laborar la jornada ordinaria en los turnos y dentro del horario señalado en este contrato, pudiendo el empleador efectuar ajustes o cambios de horario cuando lo estime conveniente.'),0,'J');
-
-$pdf->Cell(10,4.5,utf8_decode('d).'),0,0,'C');
-$pdf->MultiCell(167,4.5,utf8_decode('Las demás consagradas en el artículo 58 del Código Sustantivo del Trabajo'),0,'J');
-
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>PARAGRAFO.</neg> La descripción anterior es general y no excluye ni limita para ejecutar labores conexas complementarias o similares y, en general aquellas que sean necesarias para un mejor resultado en la ejecución de la causa que dio origen al contrato.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>SEXTA: REMUNERACION.</neg> EL EMPLEADOR pagará a EL TRABAJADOR por la prestación de sus servicios el salario indicado en el encabezado del presente documento, pagadero en las oportunidades también señaladas arriba. <neg>PARÁGRAFO PRIMERO: SALARIO ORDINARIO.</neg> Dentro del salario ordinario se encuentra incluida la remuneración de los descansos dominicales y festivos de que tratan los capítulos I, II y III del título VII del C.S.T. De igual manera, se aclara y se conviene en que los casos en los que EL TRABAJADOR devengue comisiones o cualquier otra modalidad del salario variable, el 82.5% de dichos ingresos constituye remuneración de la labor realizada, y el 17.5% restante está destinado a remunerar el descanso en los días dominicales y festivos de que tratan los capítulos I y II del Título VIII del C.S.T. <neg>PARÁGRAFO SEGUNDO: SALARIO INTEGRAL.</neg> En la eventualidad en que EL TRABAJADOR devengue salario integral se entiende de conformidad con el numeral 2 del artículo 132 del C.S.T., subrogado por el artículo 18 de la ley 50/90, que dentro del salario integral convenido se encuentra incorporado el factor prestacional de EL TRABAJADOR, el cual no será INFERIOR AL 30% del salario antes mencionado. De igual manera, se conviene y aclara que en los casos en los que EL TRABAJADOR devengue comisiones o cualquier otra modalidad de salario antes mencionado. El salario integral acordado, además de retribuir la remuneración ordinaria, remunera y compensa todo recargo por trabajo extraordinario, nocturno dominical o festivo, primas de servicios legales o extralegales, cesantías e intereses a la cesantías, subsidios y suministros en especie, incidencia prestacional de eventuales viáticos y en general toda prestación o acreencia legal o extralegal derivada del contrato, con excepción de las vacaciones. <neg>PARÁGRAFO TERCERO:</neg> Las partes acuerdan que en los casos en que se le reconozcan a EL TRABAJADOR beneficios por concepto de alimentación, comunicaciones, habitación o vivienda, transporte, vestuario, auxilios en dinero o en especie o bonificaciones ocasionales, se considerarán tales beneficios o reconocimientos como no salariales, y por tanto, no se tendrán en cuenta como factor salarial para liquidación de acreencias laborales y para el pago de aportes parafiscales y cotizaciones a la seguridad social, de conformidad con los Arts. 15 y 16 de la ley 50/90, en concordancia con el Art. 17 de la 344/96.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>SEPTIMA: DURACIÓN DEL CONTRATO.</neg> El presente contrato se celebra por un término de '.$textoPeriodo1.', a partir de la fecha de inicio de labores de acuerdo al encabezado y a lo establecido en el objeto del contrato.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>OCTAVA: TRABAJO NOCTURNO, SUPLEMENTARIO, DOMINICAL Y/O FESTIVO.</neg> Todo trabajo nocturno, suplementario o en horas extras, y todo trabajo en domingo o festivo en los que legalmente debe concederse descanso, se remunerará conforme a la ley. Para el reconocimiento y pago del trabajo suplementario, nocturno, dominical o festivo, EL EMPLEADOR o sus representantes deberán haberlo autorizado previamente y por escrito. Cuando la necesidad de este trabajo se presenta de manera imprevista o inaplazable, deberá ejecutarse y darse cuenta de él por escrito y a la mayor brevedad a EL EMPLEADOR o a sus representantes para su aprobación. EL EMPLEADOR, en consecuencia, no reconocerá ningún trabajo suplementario, trabajo nocturno o en días de descanso legalmente obligatorio que no haya sido autorizado previamente o que, habiendo sido avisado inmediatamente, no haya sido aprobado como queda dicho. Tratándose de trabajadores de dirección, confianza o manejo, no habría lugar al pago de horas extras.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>NOVENA: JORNADA DE TRABAJO.</neg> EL TRABAJADOR se obliga a laborar la jornada máxima legal, salvo de acuerdo especial, en los turnos y dentro de las horas señaladas por EL EMPLEADOR, pudiendo hacer este ajuste o cambios de horario cuando lo estime conveniente, sin que ello se considere como una desmejora en las condiciones laborales de EL TRABAJADOR. Por el acuerdo expreso o tácito de las partes, podrán modificar total o parcialmente las horas de jornada ordinaria, con base en lo dispuesto por el Art. 164 del C.S.T., modificado por el Art. 23 de la ley 50/90, teniendo en cuenta que los tiempos de descanso entre las secciones de la jornada no se computan dentro de las misma, según el Art.167 ibídem.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>DÉCIMA: PERIODO DE PRUEBA.</neg> La quinta parte de la duración estimada del presente contrato se considera como periodo de prueba, sin que exceda de dos (2) meses contados a partir de la fecha de inicio y, por consiguiente, cualquiera de las partes podrá terminar el contrato unilateralmente en cualquier momento durante dicho periodo y sin previo aviso, sin que se cause el pago de indemnización alguna.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>DÉCIMA PRIMERA: TERMINACIÓN UNILATERAL.</neg> Son justas causas para dar por terminado unilateralmente este contrato, por cualquiera de las partes, las enumeradas en el Art. 62 C.S.T., modificado por el Art. 7° del Decreto 2351/65 y además, por parte de EL EMPLEADOR, las faltas que para el efecto se cualifiquen como graves en reglamentos, manuales, instructivos y demás documentos que contengan reglamentaciones, órdenes, instrucciones o prohibiciones de carácter general o particular , pactos, convenciones colectivas, laudos arbitrales y las que expresamente convengan calificar así en escritos que formarán parte integral del presente contrato. Expresamente, se califica en este acto como falta grave; la violación a las obligaciones y prohibiciones contenidas en la cláusula primera del presente contrato.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>DÉCIMA SEGUNDA: PROPIEDAD INTELECTUAL.</neg> Las partes acuerdan que todas las invenciones, descubrimientos y trabajos originales concebidos o hechos por EL TRABAJADOR en vigencia del presente contrato pertenecerán a EL EMPLEADOR, por lo cual EL TRABAJADOR se obliga a informar a EL EMPLEADOR de forma inmediata sobre la existencia de dichas invenciones y/o trabajos originales. EL TRABAJADOR accederá a facilitar el cumplimiento oportuno de las correspondientes formalidades y dará su firma, extenderá los poderes y documentos necesarios para transferir la propiedad intelectual a EL EMPLEADOR cuando así se lo solicite. Teniendo en cuenta lo dispuesto en la normatividad de derechos de autor y lo estipulado anteriormente, las partes acuerdan que el salario devengado contiene la remuneración por la transferencia de todo tipo de propiedad intelectual, razón por la cual no se causara ninguna compensación adicional.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>DÉCIMA TERCERA: MODIFICACIONES DE LAS CONDICIONES LABORALES.</neg> EL TRABAJADOR  acepta desde ahora expresamente todas las modificaciones de sus condiciones laborales determinadas por EL EMPLEADOR en ejercicio de su poder subordinante, tales como el horario de trabajo, el lugar de prestación del servicio y el cargo u oficio y/o funciones, siempre que tales modificaciones no afecten su honor, dignidad o sus derechos mínimos, ni impliquen desmejoras sustanciales o graves perjuicios para él, de conformidad con lo dispuesto por el Art 23 de C.S.T. modificado por el Art. 1° de la ley 50/90.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-
-$txt=utf8_decode('
-<p><neg>DÉCIMA CUARTA: DIRECCIÓN DEL TRABAJADOR.</neg> EL TRABAJADOR para todos los efectos legales, y en especial para aplicación del parágrafo 1 del Art. 29 de la ley 798/02, norma que modificó el Art. 65 del C.S.T., se compromete a informar por escrito y de manera inmediata a EL EMPLEADOR cualquier cambio en su dirección de residencia, teniéndose en todo caso como suya, la última dirección registrada en su hoja de vida.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>DÉCIMA QUINTA: EFECTOS.</neg> El presente contrato reemplaza en su integridad y deja sin efecto cualquier otro contrato, verbal o escrito, celebrado entre las partes con anterioridad, pudiendo las partes convenir por escrito modificaciones al mismo, las que formarán parte integral de este contrato.</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>DÉCIMA SEXTA:</neg> -Las partes expresamente acuerdan que ninguno de los pagos enumerados en el artículo 128 del Código Sustantivo del Trabajo (modificado por la Ley 50 de 1990, art. 15) tiene carácter de salario. Igualmente, se acuerda que lo que reciba el trabajador o llegue a recibir en el futuro, adicional a su salario ordinario, ya sean beneficios o auxilios habituales u ocasionales, tales como alimentación, gastos de representación, habitación o vestuario, medios de transporte, elementos de trabajo, propinas,  auxilio de rodamiento, bonificaciones ocasionales o cualquier otra que reciba durante la vigencia del contrato de trabajo en dinero o en especie, no tendrán naturaleza salarial para ningún efecto. -Es obligación del trabajador no divulgar aquella información que se le haya confiado en virtud del secreto profesional o aquella que deba ser mantenida en reserva por su carácter de confidencial, de la cual haya tenido noticia por cualquier circunstancia, excepción hecha de aquello que el Trabajador deba informar por razones de ley o providencias judiciales. Entiéndase por información confidencial aquella información societaria, técnica, financiera, jurídica, comercial y estratégica de los negocios de EL EMPLEADOR, presentes o futuros. -Se requiere que el trabajador tenga disponibilidad en su tiempo de descanso para cualquier solicitud por parte del cliente. - Se da por iniciado el contrato laboral desde la fecha de inicio de actividades en campo, según lo establecido en el sitio de trabajo para el cual fue contratado.</p>
 ');
 
 $pdf->WriteTag(0,4.5,$txt,0,"J",0);
