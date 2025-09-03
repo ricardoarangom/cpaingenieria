@@ -201,7 +201,7 @@
 				</ul>
 			</li>-->
 			<?php
-			if($nivel==3 or $nivel==0){
+			if($nivel==1 or $nivel==0 or $snivel==1){
 			  ?>
 			  <li class="submenu" id="sm-3-3">
 				<a href="../gviaje/girargv.php" class="a-sec">PAGAR</a>
