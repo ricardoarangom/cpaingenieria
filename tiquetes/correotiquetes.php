@@ -68,7 +68,7 @@ foreach($trayectos as $key=>$j){
 
 
 	$destinatario[0]='ricardoarangom@gmail.com';
-	$destinatario[1]='recepcion@cpaingenieria.com';
+	$destinatario[1]='laura.rodriguez@cpaingenieria.com';
   $destinatario[2]=$fila5['correo'];
 
 
