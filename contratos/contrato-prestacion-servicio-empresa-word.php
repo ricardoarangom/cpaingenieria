@@ -55,7 +55,8 @@ $queryContrato = "SELECT
                     alcance, 
                     ffinfin, 
                     lugar, 
-                    auxilio 
+                    auxilio,
+                    IdFirmante 
                 FROM
                     contrat 
                 LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista 
@@ -394,10 +395,17 @@ $celda1 = $tabla->addCell(5000);
 $celda1->addText('EL CONTRATANTE', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
 
 // Nombres de firmantes
-$celda1->addText('LUIS HECTOR RUBIANO VERGARA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter'
-);
-// Cédulas
-$celda1->addText('C.C. No. 79.315.619 DE BOGOTÁ D.C.', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+if($filaContrato['IdFirmante']==1){
+    $celda1->addText('LUIS HECTOR RUBIANO VERGARA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter'
+    );
+    // Cédulas
+    $celda1->addText('C.C. No. 79.315.619 DE BOGOTÁ D.C.', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+}else{
+    $celda1->addText('MARTHA GABRIELA BOTERO SERNA', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter'
+    );
+    // Cédulas
+    $celda1->addText('C.C. No. 24.434.581 DE ARANZAZU', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],'NoSpaceAfter');
+}
 // Empresas
 $celda1->addText('CPA INGENIERIA S.A.S.', ['bold' => true, 'smallCaps' => true, 'size' => 11, 'name' => 'Arial'],
 'NoSpaceAfter');

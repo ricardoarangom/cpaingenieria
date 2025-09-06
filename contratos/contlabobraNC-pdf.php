@@ -40,7 +40,8 @@ $buscaCont =   "SELECT
                     cargo,
                     alcance,
                     objeto,
-                    auxilio
+                    auxilio,
+                    IdFirmante
                     
                 FROM
                     ((((contrat
@@ -63,6 +64,17 @@ $buscaAct = "   SELECT
 $resultadoAct = mysql_query($buscaAct, $datos) or die(mysql_error());
 $filaAct = mysql_fetch_assoc($resultadoAct);
 $totalfilas_buscaAct = mysql_num_rows($resultadoAct);
+
+$buscaPro = "SELECT 
+                IdProducto, 
+                producto 
+            FROM 
+                productoscont 
+            WHERE 
+                IdContrato = " . $contrato;
+$resultadoPro = mysql_query($buscaPro, $datos) or die(mysql_error());
+$filaPro = mysql_fetch_assoc($resultadoPro);
+$totalfilas_buscaPro = mysql_num_rows($resultadoPro);
 
 $arregloInicio=explode("-",$filaCont['finicio']);
 
@@ -332,8 +344,14 @@ $pdf->Row(array(utf8_decode('Nombre del empleador:'),utf8_decode('COMPAÑÍA DE 
 $pdf->Row(array(utf8_decode('Domicilio del empleador:'),utf8_decode('BOGOTÁ D.C.')),0);
 $pdf->Row(array(utf8_decode('Dirección del empleador:'),utf8_decode('CALLE 106 No 59 -21')),0);
 $pdf->Row(array(utf8_decode('NIT del empleador:'),utf8_decode('830.042.614')),0);
-$pdf->Row(array(utf8_decode('Representante legal:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
-$pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
+
+if($filaCont['IdFirmante']==1){
+    $pdf->Row(array(utf8_decode('Representante legal:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
+    $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
+}else{
+    $pdf->Row(array(utf8_decode('Representante legal suplente:'),utf8_decode('MARTHA GABRIELA BOTERO SERNA')),0);
+    $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('24.434.581')),0);
+}
 
 $pdf->Row(array(utf8_decode('Nombre del trabajador:'),utf8_decode($filaCont['proveedor'])),0);
 $pdf->Row(array(utf8_decode('Fecha De Nacimiento'),utf8_decode(fechaactual3($filaCont['fconstitucion']))),0);
@@ -356,23 +374,6 @@ $pdf->Row(array(utf8_decode('Lugar Donde Desempeñara Las Labores'),utf8_decode(
 $pdf->Row(array(utf8_decode('Obra o labor contratada:'),utf8_decode($filaCont['objeto'])),0);
 
 $pdf->ln(5);
-
-$txt=utf8_decode('
-<p>Entre EL EMPLEADOR y EL TRABAJADOR, de las condiciones ya dichas, identificados como aparece al pie de sus firmas, se ha celebrado el presente contrato individual de trabajo, regido además por las siguientes clausulas:
-</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
-$txt=utf8_decode('
-<p><neg>PRIMERA: OBJETO.</neg> EL EMPLEADOR contrata los servicios personales de EL TRABAJADOR y éste obliga: a). A poner al servicio de EL EMPLEADOR toda su capacidad normal de trabajo en el desempeño de las funciones propias del oficio mencionado y en las labores anexas y complementarias del mismo, de conformidad con las órdenes e instrucciones que le imparta EL EMPLEADOR directamente o a través de sus representantes; b). A prestar sus servicios en forma exclusiva al empleador; es decir, a no prestar directa ni indirectamente servicios laborales a otros empleadores, ni a trabajar por cuenta propia en el mismo oficio durante la vigencia de este contrato; y c). A guardar absoluta reserva sobre los hechos, documentos físicos y/o electrónicos, información y en general, sobre todos los asuntos y materias que lleguen a su conocimiento por causa o con ocasión de su contrato de trabajo.
-</p>
-');
-
-$pdf->WriteTag(0,4.5,$txt,0,"J",0);
-$pdf->ln(2);
-
 
 if($totalfilas_buscaAct>0){
 
@@ -400,7 +401,47 @@ if($totalfilas_buscaAct>0){
     $pdf->ln(2);
 }
 
+if($totalfilas_buscaPro>0){
 
+    $txt=utf8_decode('
+    <p><neg>ENTREGABLES:</neg>
+    </p>
+    ');
+
+    $pdf->WriteTag(0,4.5,$txt,0,"J",0);
+
+    $pdf->SetLeftMargin(25);
+    $pdf->ln(2);
+
+    $pdf->SetFont('Arial','',10);
+    $itemPr=0;
+    do{
+        
+        $itemPr++;
+        $pdf->Cell(7,4.5,utf8_decode($itemPr.'.'),0,0,'L');
+        $pdf->MultiCell(164,4.5,utf8_decode($filaPro['producto']),0,'J');
+
+    } while ($filaPro = mysql_fetch_assoc($resultadoPro));
+
+    $pdf->SetLeftMargin(20);
+    $pdf->ln(2);
+}
+
+$txt=utf8_decode('
+<p>Entre EL EMPLEADOR y EL TRABAJADOR, de las condiciones ya dichas, identificados como aparece al pie de sus firmas, se ha celebrado el presente contrato individual de trabajo, regido además por las siguientes clausulas:
+</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>PRIMERA: OBJETO.</neg> EL EMPLEADOR contrata los servicios personales de EL TRABAJADOR y éste obliga: a). A poner al servicio de EL EMPLEADOR toda su capacidad normal de trabajo en el desempeño de las funciones propias del oficio mencionado y en las labores anexas y complementarias del mismo, de conformidad con las órdenes e instrucciones que le imparta EL EMPLEADOR directamente o a través de sus representantes; b). A prestar sus servicios en forma exclusiva al empleador; es decir, a no prestar directa ni indirectamente servicios laborales a otros empleadores, ni a trabajar por cuenta propia en el mismo oficio durante la vigencia de este contrato; y c). A guardar absoluta reserva sobre los hechos, documentos físicos y/o electrónicos, información y en general, sobre todos los asuntos y materias que lleguen a su conocimiento por causa o con ocasión de su contrato de trabajo.
+</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
 
 
 $txt=utf8_decode('
@@ -521,13 +562,28 @@ $pdf->Line(20, $linea, 80, $linea);
 $pdf->Line(108, $linea, 168, $linea);
 
 
-$pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('MARTHA GABRIELA BOTERO SERNA'),0,0,'L');
+}
+
 $pdf->Cell(88,4.5,utf8_decode($filaCont['proveedor']),0,1,'L');
 
-$pdf->Cell(88,4.5,utf8_decode('C.C.79.315.619 De Bogotá D.C.'),0,0,'L');
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('CC 79.315.619 de BOGOTA D.C.'),0,0,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('CC 24.434.581 de ARANZAZU'),0,0,'L');
+}
+
+
 $pdf->Cell(88,4.5,$filaCont['codigo']." ".colocapuntos($filaCont['documento'])." de ".utf8_decode($filaCont['municipio']),0,1,'L');
 
-$pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('Representante Legal Suplente'),0,1,'L');
+}
 
 $pdf->ln(2); 
 

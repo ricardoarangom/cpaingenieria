@@ -389,10 +389,13 @@ include('encabezado.php');
 			$('#div-funciones').html('');
 			$('#div-responsabilidades').html('');
 			$('#div-actividades').html('Actividades: <span id="nactividades" style="display:none">1</span>'+
-																 '<table class="tablita Arial12" width="50%" id="actividades"><col width="95%"><col width="5%">'+
-																 		'<tr><td colspan="2"><input type="text" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 actividades" ></td></tr></table>'+
+																 '<table class="tablita Arial12" width="80%" id="actividades"><col width="97%"><col width="3%">'+
+																 		'<tr><td colspan="2"><textarea class="txtarea actividades" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																		'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>');
-			$('#div-productos').html('');
+			$('#div-productos').html('Productos y/o entregables: <span id="nproductos" style="display:none">1</span>'+
+																'<table class="tablita Arial12" width="80%" id="productos"><col width="97%"><col width="3%">'+
+																	'<tr><td colspan="2"><textarea class="txtarea productos" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
+																	'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaProducto()" >Agregar producto</button>');
 			$('#div-formapago').html('');
 		}
 
@@ -445,10 +448,13 @@ include('encabezado.php');
 			$('#div-funciones').html('');
 			$('#div-responsabilidades').html('');
 			$('#div-actividades').html('Actividades: <span id="nactividades" style="display:none">1</span>'+
-																 '<table class="tablita Arial12" width="50%" id="actividades"><col width="95%"><col width="5%">'+
-																 		'<tr><td colspan="2"><input type="text" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 actividades" ></td></tr></table>'+
+																 '<table class="tablita Arial12" width="80%" id="actividades"><col width="97%"><col width="3%">'+
+																 		'<tr><td colspan="2"><textarea class="txtarea actividades" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																		'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>');
-			$('#div-productos').html('');
+			$('#div-productos').html('Productos y/o entregables: <span id="nproductos" style="display:none">1</span>'+
+																'<table class="tablita Arial12" width="80%" id="productos"><col width="97%"><col width="3%">'+
+																	'<tr><td colspan="2"><textarea class="txtarea productos" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
+																	'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaProducto()" >Agregar producto</button>');
 			$('#div-formapago').html('');
 		}
 
@@ -499,13 +505,13 @@ include('encabezado.php');
 			document.getElementById('iva-no').checked=true;
 
 			$('#div-funciones').html('Funciones: <span id="nfunciones" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="50%" id="funciones"><col width="95%"><col width="5%">'+
-																'<tr><td colspan="2"><input type="text" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 funciones"></td></tr></table>'+
+																'<table class="tablita Arial12" width="80%" id="funciones"><col width="97%"><col width="3%">'+
+																'<tr><td colspan="2"><textarea class="txtarea funciones" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></td></tr></table>'+
 																'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaFuncion()" >Agregar función</button>');
 
 			$('#div-responsabilidades').html('Responsabilidades: <span id="nresponsabilidades" style="display:none">1</span>'+
-																				'<table class="tablita Arial12" width="50%" id="responsabilidades"><col width="95%"><col width="5%">'+
-																				'<tr><td colspan="2"><input type="text" name="responsabilidad[1]" id="responsabilidad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 responsabilidades"></td></tr></table>'+
+																				'<table class="tablita Arial12" width="80%" id="responsabilidades"><col width="97%"><col width="3%">'+
+																				'<tr><td colspan="2"><textarea class="txtarea responsabilidades" name="responsabilidad[1]" id="responsabilidad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																				'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaResponsabilidad()">Agregar responsabilidad</button>');
 
 			$('#div-actividades').html('');
@@ -561,13 +567,13 @@ include('encabezado.php');
 			document.getElementById('iva-no').checked=true;
 
 			$('#div-funciones').html('Funciones: <span id="nfunciones" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="50%" id="funciones"><col width="95%"><col width="5%">'+
-																'<tr><td colspan="2"><input type="text" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 funciones"></td></tr></table>'+
+																'<table class="tablita Arial12" width="80%" id="funciones"><col width="97%"><col width="3%">'+
+																'<tr><td colspan="2"><textarea class="txtarea funciones" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></td></tr></table>'+
 																'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaFuncion()" >Agregar función</button>');
 
 			$('#div-responsabilidades').html('Responsabilidades: <span id="nresponsabilidades" style="display:none">1</span>'+
-																				'<table class="tablita Arial12" width="50%" id="responsabilidades"><col width="95%"><col width="5%">'+
-																				'<tr><td colspan="2"><input type="text" name="responsabilidad[1]" id="responsabilidad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 responsabilidades"></td></tr></table>'+
+																				'<table class="tablita Arial12" width="80%" id="responsabilidades"><col width="97%"><col width="3%">'+
+																				'<tr><td colspan="2"><textarea class="txtarea responsabilidades" name="responsabilidad[1]" id="responsabilidad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																				'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaResponsabilidad()">Agregar responsabilidad</button>');
 
 			$('#div-actividades').html('');
@@ -627,17 +633,17 @@ include('encabezado.php');
 			$('#div-responsabilidades').html('');
 
 			$('#div-actividades').html('Actividades: <span id="nactividades" style="display:none">1</span>'+
-																 '<table class="tablita Arial12" width="50%" id="actividades"><col width="95%"><col width="5%">'+
-																 		'<tr><td colspan="2"><input type="text" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 actividades" ></td></tr></table>'+
+																 '<table class="tablita Arial12" width="80%" id="actividades"><col width="97%"><col width="3%">'+
+																 		'<tr><td colspan="2"><textarea class="txtarea actividades" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																		'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>');
 
-			$('#div-productos').html('Productos: <span id="nproductos" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="50%" id="productos"><col width="95%"><col width="5%">'+
-																	'<tr><td colspan="2"><input type="text" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 productos" ></td></tr></table>'+
+			$('#div-productos').html('Productos y/o entregables: <span id="nproductos" style="display:none">1</span>'+
+																'<table class="tablita Arial12" width="80%" id="productos"><col width="97%"><col width="3%">'+
+																	'<tr><td colspan="2"><textarea class="txtarea productos" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																	'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaProducto()" >Agregar producto</button>');
 
 			$('#div-formapago').html('Forma de pago: <span id="numpagos" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="50%" id="pagos"><col width="15%"><col width="80%"><col width="5%">'+
+																'<table class="tablita Arial12" width="80%" id="pagos"><col width="13%"><col width="83%"><col width="5%">'+
 																'<tr class="titulos" ><td>%</td><td colspan="2">Condición</td></tr>'+
 																'<tr><td><input type="number" name="porpago[1]" id="porpago-1" class="campo-xs Arial12 porpago"></td>'+
 																'<td colspan="2"><input type="text" name="concepto[1]" id="concepto-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 concepto"></td></tr></table>'+
@@ -694,17 +700,17 @@ include('encabezado.php');
 			$('#div-responsabilidades').html('');
 
 			$('#div-actividades').html('Actividades: <span id="nactividades" style="display:none">1</span>'+
-																 '<table class="tablita Arial12" width="50%" id="actividades"><col width="95%"><col width="5%">'+
-																 		'<tr><td colspan="2"><input type="text" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 actividades" ></td></tr></table>'+
+																 '<table class="tablita Arial12" width="80%" id="actividades"><col width="97%"><col width="3%">'+
+																 		'<tr><td colspan="2"><textarea class="txtarea actividades" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																		'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>');
 
-			$('#div-productos').html('Productos: <span id="nproductos" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="50%" id="productos"><col width="95%"><col width="5%">'+
-																	'<tr><td colspan="2"><input type="text" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 productos" ></td></tr></table>'+
+			$('#div-productos').html('Productos y/o entregables: <span id="nproductos" style="display:none">1</span>'+
+																'<table class="tablita Arial12" width="80%" id="productos"><col width="97%"><col width="3%">'+
+																	'<tr><td colspan="2"><textarea class="txtarea productos" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																	'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaProducto()" >Agregar producto</button>');
 
 			$('#div-formapago').html('Forma de pago: <span id="numpagos" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="50%" id="pagos"><col width="15%"><col width="80%"><col width="5%">'+
+																'<table class="tablita Arial12" width="80%" id="pagos"><col width="13%"><col width="83%"><col width="5%">'+
 																'<tr class="titulos" ><td>%</td><td colspan="2">Condición</td></tr>'+
 																'<tr><td><input type="number" name="porpago[1]" id="porpago-1" class="campo-xs Arial12 porpago"></td>'+
 																'<td colspan="2"><input type="text" name="concepto[1]" id="concepto-1" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 concepto"></td></tr></table>'+
@@ -1532,11 +1538,12 @@ include('encabezado.php');
 
 	}
 
+	
 	function agregaProducto(){
 		var a=parseFloat(document.getElementById('nproductos').innerHTML);
   	a=a+1;
 
-		var fila = '<td><input type="text" name="producto['+a+']" id="producto-'+a+'" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 productos"></td>'+
+		var fila = '<td><textarea class="txtarea productos" name="producto['+a+']" id="producto-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
 							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteProducto(this)"></td>';
 
 		document.getElementById("productos").insertRow(-1).innerHTML = fila;
@@ -1569,7 +1576,7 @@ include('encabezado.php');
 		var a=parseFloat(document.getElementById('nactividades').innerHTML);
   	a=a+1;
 
-		var fila = '<td><input type="text" name="actividad['+a+']" id="actividad-'+a+' "onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 actividades"></td>'+
+		var fila = '<td><textarea class="txtarea actividades" name="actividad['+a+']" id="actividad-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
 							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteActividad(this)"></td>';
 
 		document.getElementById("actividades").insertRow(-1).innerHTML = fila;
@@ -1598,11 +1605,12 @@ include('encabezado.php');
 
 	}
 
+
 	function agregaResponsabilidad(){
 		var a=parseFloat(document.getElementById('nresponsabilidades').innerHTML);
   	a=a+1;
 
-		var fila = '<td><input type="text" name="responsabilidad['+a+']" id="responsabilidad-'+a+'" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 responsabilidades"></td>'+
+		var fila = '<td><textarea class="txtarea responsabilidades" name="responsabilidad['+a+']" id="responsabilidad-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
 							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteResponsabilidad(this)"></td>';
 
 		document.getElementById("responsabilidades").insertRow(-1).innerHTML = fila;
@@ -1635,7 +1643,7 @@ include('encabezado.php');
 		var a=parseFloat(document.getElementById('nfunciones').innerHTML);
   	a=a+1;
 
-		var fila = '<td><input type="text" name="funcion['+a+']" id="funcion-'+a+'" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 funciones"></td>'+
+		var fila = '<td><textarea class="txtarea funciones" name="funcion['+a+']" id="funcion-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
 							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteFuncion(this)"></td>';
 
 		document.getElementById("funciones").insertRow(-1).innerHTML = fila;
@@ -2155,6 +2163,13 @@ include('encabezado1.php');
 				<select name="IdSubClase" id="IdSubClase" class="campo-sm Arial12">
 					<option value="">Seleccione</option>
 				</select>
+			</div>
+			<div class="span-2">
+				Firmante:
+				<select name="IdFirmante" class="campo-sm Arial12">
+					<option value="1">LUIS HECTOR RUBIANO VERGARA</option>
+					<option value="2">MARTHA GABRIELA	BOTERO SERNA</option>
+				</select>	
 			</div>
 		</div>
 		<br>

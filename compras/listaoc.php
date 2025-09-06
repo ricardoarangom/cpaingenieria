@@ -6,7 +6,7 @@ include('encabezado.php');
 // print_r($_POST);
 // echo "</pre>";
 
-if(!$_POST['proyecto'] and !$_POST['solicitante'] and !$_POST['proveedor'] and !$_POST['dsolicitud'] and !$_POST['hsolicitud'] and !$_POST['drecibido'] and !$_POST['hrecibido'] and !$_POST['dcomprado'] and !$_POST['hcomprado']){
+if(!$_POST['proyecto'] and !$_POST['solicitante'] and !$_POST['proveedor'] and !$_POST['dsolicitud'] and !$_POST['hsolicitud'] and !$_POST['drecibido'] and !$_POST['hrecibido'] and !$_POST['dcomprado'] and !$_POST['hcomprado'] and !$_POST['dautorizado'] and !$_POST['hautorizado']){
 	$buscador1="";
 }else{
 	$buscador1=" where ";
@@ -38,6 +38,13 @@ if(!$_POST['proyecto'] and !$_POST['solicitante'] and !$_POST['proveedor'] and !
 	if($_POST['hcomprado']){
 		$buscador.=" ordencompra.comprado<='".$_POST['hcomprado']."' and ";
 	}	
+
+	if($_POST['dautorizado']){
+		$buscador.=" ordencompra.fautorizado>='".$_POST['dautorizado']."' and ";
+	}
+	if($_POST['hautorizado']){
+		$buscador.=" ordencompra.fautorizado<='".$_POST['hautorizado']."' and ";
+	}
 
 }
 $buscador=substr($buscador, 0, -4);
@@ -76,7 +83,7 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 
 mysql_select_db($database_datos, $datos);
-$query_Recordset1 = "SELECT compras.IdCompra, compras.IdOrdencompra, fecha, compras.comprado, compras.recibido, proveedor, fsolicitud, nombre, apellido, area, factura, evaluacion, calpro, compras.precio, condpago, cumplimiento, higsegind, gesamb, rse, total FROM ((((compras inner join proveedores ON compras.IdProveedor=proveedores.IdProveedor) inner join ordencompra On compras.IdOrdencompra=ordencompra.IdOrdencompra) inner join usuarios On ordencompra.IdSolicitante=usuarios.IdUsuario) inner join areas on ordencompra.IdArea=areas.IdArea) left join totcompras on compras.IdCompra=totcompras.IdCompra".$buscador1.$buscador;
+$query_Recordset1 = "SELECT compras.IdCompra, compras.IdOrdencompra, fecha, compras.comprado, compras.recibido, proveedor, fsolicitud, nombre, apellido, area, factura, evaluacion, calpro, compras.precio, condpago, cumplimiento, higsegind, gesamb, rse, total FROM ((((compras inner join proveedores ON compras.IdProveedor=proveedores.IdProveedor) inner join ordencompra On compras.IdOrdencompra=ordencompra.IdOrdencompra) inner join usuarios On ordencompra.IdSolicitante=usuarios.IdUsuario) inner join areas on ordencompra.IdArea=areas.IdArea) left join totcompras on compras.IdCompra=totcompras.IdCompra".$buscador1.$buscador." ORDER BY compras.IdCompra DESC";
 
 // echo $query_Recordset1;
 $Recordset1 = mysql_query($query_Recordset1, $datos) or die(mysql_error());
@@ -226,6 +233,24 @@ $cadenaTabla=json_encode($tabla,JSON_UNESCAPED_UNICODE);
     }
     ?>";
     document.getElementById('hcomprado').value=hcomprado;
+
+		var dautorizado="<?php 
+    if($_POST){
+      echo $_POST['dautorizado'];
+    }else{
+      echo "";
+    }
+    ?>";
+    document.getElementById('dautorizado').value=dautorizado;
+		
+		var hautorizado="<?php 
+    if($_POST){
+      echo $_POST['hautorizado'];
+    }else{
+      echo "";
+    }
+    ?>";
+    document.getElementById('hautorizado').value=hautorizado;
         
   }
 
@@ -335,7 +360,7 @@ include('encabezado1.php');
 				?>
 		</div>
 		<br>
-		<div class="grid columna-6 Arial14" style="width: 800px">
+		<div class="grid columna-8 Arial14" style="width: 1100px">
 			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
 				<div class="grid columna-2" align="left" style="grid-row-gap: 3px">
 					<div class="span-2">
@@ -351,6 +376,23 @@ include('encabezado1.php');
 					</div>
 				</div>
 			</div>
+
+			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
+				<div  class="grid columna-2" align="left" style="grid-row-gap: 3px">
+					<div class="span-2">
+						Fecha de Autorización
+					</div>
+					<div class="span-1">
+						Desde
+						<input type="date" name="dautorizado" id="dautorizado" class="campo-xs Arial12">
+					</div>
+					<div class="span-1">
+						Hasta
+						<input type="date" name="hautorizado" id="hautorizado" class="campo-xs Arial12">
+					</div>
+				</div>
+			</div>
+
 			<div class="span-2 div-form borde-div-g" style="border-radius: 5px">
 				<div  class="grid columna-2" align="left" style="grid-row-gap: 3px">
 					<div class="span-2">

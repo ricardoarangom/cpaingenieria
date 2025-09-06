@@ -9,46 +9,35 @@ session_start();
 <script language="JavaScript" type="text/javascript"> 
   function promediar(){
     var calpro = document.getElementById('calpro').value;
-    var precio = document.getElementById('precio').value;
-    var condpago = document.getElementById('condpago').value;
+    
     var cumplimiento = document.getElementById('cumplimiento').value;
     var higsegind = document.getElementById('higsegind').value;
     var gesamb = document.getElementById('gesamb').value;
-		var rse = document.getElementById('rse').value;
+		
     var suma = 0;
     var cantidad = 0;
 
     if(calpro && calpro!=0){
-      suma = suma+parseInt(calpro);
+      suma = suma+parseFloat(calpro);
       cantidad++;
     }
-    if(precio && precio!=0){
-      suma = suma+parseInt(precio);
-      cantidad++;
-    }
-    if(condpago && condpago!=0){
-      suma = suma+parseInt(condpago);
-      cantidad++;
-    }
+    
     if(cumplimiento && cumplimiento!=0){
-      suma = suma+parseInt(cumplimiento);
+      suma = suma+parseFloat(cumplimiento);
       cantidad++;
     }
     if(higsegind && higsegind!=0){
-      suma = suma+parseInt(higsegind);
+      suma = suma+parseFloat(higsegind);
       cantidad++;
     }
     if(gesamb && gesamb!=0){
-      suma = suma+parseInt(gesamb);
+      suma = suma+parseFloat(gesamb);
       cantidad++;
     }
-		if(rse && rse!=0){
-      suma = suma+parseInt(rse);
-      cantidad++;
-    } 
+		
     
     console.log(suma)
-		document.getElementById('evaluacion').value=(parseInt((suma)));
+		document.getElementById('evaluacion').value=(parseFloat((suma)));
   }
 
   function validarArchivo(archivo,item){
@@ -90,7 +79,7 @@ if(isset($_POST['boton'])){
   }
   
 	
-	$graba="UPDATE compras set recibido='".$_POST['recibido']."',  calpro=".$_POST['calpro'].",  precio=".$_POST['precio'].",  condpago=".$_POST['condpago'].",  cumplimiento=".$_POST['cumplimiento'].",  higsegind=".$_POST['higsegind'].",  gesamb=".$_POST['gesamb'].", rse=".$_POST['rse'].", evaluacion=".$_POST['evaluacion'].", factura=".($ruta==NULL ? "NULL" : "'$ruta'")." where IdCompra=".$_POST['IdOrden'];
+	$graba="UPDATE compras set recibido='".$_POST['recibido']."',  calpro=".$_POST['calpro'].", cumplimiento=".$_POST['cumplimiento'].",  higsegind=".$_POST['higsegind'].",  gesamb=".$_POST['gesamb'].", evaluacion=".$_POST['evaluacion'].", factura=".($ruta==NULL ? "NULL" : "'$ruta'")." where IdCompra=".$_POST['IdOrden'];
   // echo $graba;
   if($results=@mysql_query($graba)){
     ?>
@@ -250,7 +239,7 @@ $fila6 = mysql_fetch_assoc($resultado6);
 	</table>
 </div>
 <br>
-<div class="contenedor" style="width: 1300px">
+<div class="contenedor" style="width: 780px">
 	<h5 align="center" class="Century">EVALUAR</h5>
 	<form action="recibir1.php" method="post" enctype="multipart/form-data">
 		<div class="grid columna-2" style="width: 250px">
@@ -266,83 +255,43 @@ $fila6 = mysql_fetch_assoc($resultado6);
 			<col width="174px">
 			<col width="174px">
 			<col width="174px">
-			<col width="174px">
-			<col width="174px">
-			<col width="174px">
 			<col width="80px">
 			<tr class="titulos">
 				<td>Calidad del Producto o Servicio</td>
-				<td>Precio</td>
-				<td>Condiciones de pago</td>
 				<td>Cumplimiento</td>
 				<td>Aspectos Higiene y Seguridad Industrial</td>
 				<td>Aspectos de Gestión ambiental</td>
-				<td>Aspectos de RSE</td>
 				<td>Puntaje</td>
 			</tr>
+
 			<tr><td>
 					<select name="calpro" id="calpro" class="campo-xs Arial12" onChange="promediar()" required>
 						<option value="">Seleccione</option>
-						<option value="20">No presenta rechazo, devoluciones, retrabajos, no conformidades en todas las entregas o trabajos realizados adicionalmente entrega Certificados de Calidad y otros documentos requeridos</option>
-						<option value="15">No presenta rechazo, devoluciones, retrabajos, no conformidades en todas las entregas o trabajos realizados, pero no presenta Certificados de Calidad del producto u otro documento clave.</option>
-						<option value="10">Presenta quejas menores tales como empaque, embalaje</option>
-						<option value="8">Presenta rechazos que ameritan devolución del producto o reproceso en los servicios de manera puntual, 1 única vez o menos del 10% de las veces.</option>
-						<option value="3">Presenta rechazos que ameritan devolución del producto en mas del 10% de las oportunidades, se puede considerar también por impacto (valor de las compras)</option>
-					</select>
-				</td>
-				<td>
-					<select name="precio" id="precio" class="campo-xs Arial12" onChange="promediar()" required>
-						<option value="">Seleccione</option>
-						<option value="16">Sus ofertas se encuentran por debajo de los precios promedio establecido en el mercado</option>
-						<option value="9">Sus ofertas están acorde a los precios promedio establecidos en el mercado</option>
-						<option value="7">Sus ofertas están por encima de los precios promedios establecidos en el mercado</option>
-						<option value="3">Sus ofertas están excesivamente por encima de los precios promedios establecidos en el mercado</option>
-					</select>
-				</td>
-				<td>
-					<select name="condpago" id="condpago" class="campo-xs Arial12" onChange="promediar()" required>
-						<option value="">Seleccione</option>
-						<option value="16">Crédito mayor a 30 días</option>
-						<option value="9">Crédito 0 a 30 días</option>
-						<option value="5">Exige pago contra entrega</option>
-						<option value="3">Exige pago anticipado</option>
+						<option value="22.5">Bueno</option>
+						<option value="13.5">Regular</option>
+						<option value="2.25">Malo</option>
 					</select>
 				</td>
 				<td>
 					<select name="cumplimiento" id="cumplimiento" class="campo-xs Arial12" onChange="promediar()" required>
 						<option value="">Seleccione</option>
-						<option value="13">Entrega a tiempo del producto y/o servicio</option>
-						<option value="9">Retraso leve en la entrega del producto y/o servicio (menor al 20% del tiempo ofertado, o en menos del 10 % de las entregas y sin afectación de las operaciones de la empresa)</option>
-						<option value="3">Retraso mayor en la entrega del producto y/o servicio (mayor al 20% del tiempo ofertado, o el 10% o mas de las veces,  y/o con afectación de las operaciones de la empresa)</option>
+						<option value="22.5">Bueno</option>
+						<option value="13.5">Regular</option>
+						<option value="2.25">Malo</option>
 					</select>
 				</td>
 				<td>
 					<select name="higsegind" id="higsegind" class="campo-xs Arial12" onChange="promediar()" required>
 						<option value="">Seleccione</option>
-						<option value="16">Sin Incidentes en el período y excede las expectativas en cumplimiento de los requisitos de seguridad exigidos</option>
-						<option value="9">Sin Incidentes en el período y cumplimiento básico de los requisitos de seguridad exigidos (USO correcto de EPP, concientización, controles operacionales fundamentales)</option>
-						<option value="5">Registra Incidentes menores en el periodo reportado</option>
-						<option value="3">Registra Incidentes con perdida de tiempo en el periodo reportado</option>
-						<option value="16">NO APLICA</option>
+						<option value="30">Sin Incidentes</option>
+						<option value="3">Con Incidentes</option>
 					</select>
 				</td>
 				<td>
 					<select name="gesamb" id="gesamb" class="campo-xs Arial12" onChange="promediar()" required>
 						<option value="">Seleccione</option>
-						<option value="10">Sin Incidentes en el período y excede las expectativas en cumplimiento de los requisitos de seguridad exigidos</option>
-						<option value="7">Sin Incidentes en el período y cumplimiento básico de los requisitos de gestión ambiental exigidos (Disposición de residuos, orden y aseo)</option>
-						<option value="5">Registra Incidentes menores en el periodo reportado</option>
-						<option value="3">Registra Accidentes en el periodo reportado</option>
-						<option value="10">NO APLICA</option>
-					</select>
-				</td>
-				<td>
-					<select name="rse" id="rse" class="campo-xs Arial12" onChange="promediar()" required>
-						<option value="">Seleccione</option>
-						<option value="9">El proveedor demuestra su interés y manifiesta con políticas en relación a derechos humanos, su compromiso con la no vulneración de los mismos.</option>
-						<option value="5">Se puede percibir que no se violan derechos fundamentales como igualdad de genero, trabajo infantil, condiciones dignas de trabajo</option>
-						<option value="3">Claramente evidente la vulneración de igualdad de genero y /o trabajo infantil y/o condiciones dignas de los trabajadores</option>
-
+						<option value="25">Sin Incidentes</option>
+						<option value="2.5">Con Incidentes</option>
 					</select>
 				</td>
 				<td>
@@ -351,9 +300,9 @@ $fila6 = mysql_fetch_assoc($resultado6);
 			</tr>
 		</table>
 		<br>
-    
+
     <div class="contenedor" align="center" style="width: 300px">
-      <input type="file" name="factura" class="campo-sm Arial12" required onChange="validarArchivo(this.files,this.id)">
+      <input type="file" name="factura" class="campo-sm Arial12" onChange="validarArchivo(this.files,this.id)">
 			<input name="IdOrden" type="hidden" value="<?php echo $orden ?>">
       <br>
       <button type="submit" name="boton" class="btn btn-rosa btn-sm" id="boton" >GRABAR</button>

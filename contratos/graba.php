@@ -7,9 +7,9 @@ include('encabezado1.php');
   
 if(isset($_POST['boton1'])){
   
-  // echo "<pre>";
-  // print_r($_POST);
-  // echo "</pre>";
+  echo "<pre>";
+  print_r($_POST);
+  echo "</pre>";
 
   // echo $usuario;
 
@@ -86,8 +86,8 @@ if(isset($_POST['boton1'])){
   }
 
 
-  $inserta="INSERT INTO contrat (IdProveedor, IdEmpresa, IdArea, IdSolicitante, IdClase, IdSubClase, objeto, finicio, ffin, iva, consec, valor, integral, IdCargo, incs, especialidad, grupo, centrofor, alcance, ffinfin, lugar, auxilio) VALUES (".$_POST['contratista'].", 1, ".$_POST['IdArea'].", ".$usuario.", ".$_POST['IdClase'].", ".$_POST['IdSubClase'].", ".($objeto == NULL ? "NULL" : "'$objeto'").", '".$_POST['finicio']."', ".($ffin == NULL ? "NULL" : "'$ffin'").", ".$iva.", ".$consec.", ".$_POST['valor'].", ".$_POST['integral'].", ".$cargo.", ".$_POST['incs'].", ".($especialidad == NULL ? "NULL" : "'$especialidad'").", ".($grupo == NULL ? "NULL" : "'$grupo'").", ".($centrofor == NULL ? "NULL" : "'$centrofor'").", ".($alcance == NULL ? "NULL" : "'$alcance'").", ".($ffinfin == NULL ? "NULL" : "'$ffinfin'").", ".($lugar == NULL ? "NULL" : "'$lugar'").", ".$_POST['auxilio'].")";
-  // echo $inserta."<br>";
+  $inserta="INSERT INTO contrat (IdProveedor, IdEmpresa, IdArea, IdSolicitante, IdClase, IdSubClase, objeto, finicio, ffin, iva, consec, valor, integral, IdCargo, incs, especialidad, grupo, centrofor, alcance, ffinfin, lugar, auxilio, IdFirmante) VALUES (".$_POST['contratista'].", 1, ".$_POST['IdArea'].", ".$usuario.", ".$_POST['IdClase'].", ".$_POST['IdSubClase'].", ".($objeto == NULL ? "NULL" : "'$objeto'").", '".$_POST['finicio']."', ".($ffin == NULL ? "NULL" : "'$ffin'").", ".$iva.", ".$consec.", ".$_POST['valor'].", ".$_POST['integral'].", ".$cargo.", ".$_POST['incs'].", ".($especialidad == NULL ? "NULL" : "'$especialidad'").", ".($grupo == NULL ? "NULL" : "'$grupo'").", ".($centrofor == NULL ? "NULL" : "'$centrofor'").", ".($alcance == NULL ? "NULL" : "'$alcance'").", ".($ffinfin == NULL ? "NULL" : "'$ffinfin'").", ".($lugar == NULL ? "NULL" : "'$lugar'").", ".$_POST['auxilio'].", ".$_POST['IdFirmante'].")";
+  echo $inserta."<br>";
   $nfunciones=0;
   $nproductos=0;
   $npagos=0;
@@ -100,7 +100,7 @@ if(isset($_POST['boton1'])){
       foreach($_POST['actividad'] as $key=>$j){
         if($j){
           $insertaActividad="INSERT INTO actividadescont (IdContrato, actividad) VALUES(".$last_id.", '".$j."')";
-          // echo $insertaActividad."<br>";
+          echo $insertaActividad."<br>";
           if ($results=@mysql_query($insertaActividad)){
             $nactividades++;
           }

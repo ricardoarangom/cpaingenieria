@@ -40,7 +40,8 @@ $buscaCont =   "SELECT
                     cargo,
                     alcance,
                     auxilio,
-                    objeto
+                    objeto,
+                    IdFirmante
                 FROM
                     ((((contrat
                     LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
@@ -367,8 +368,15 @@ $pdf->Row(array(utf8_decode('Nombre del empleador:'),utf8_decode('COMPAÑÍA DE 
 $pdf->Row(array(utf8_decode('Domicilio del empleador:'),utf8_decode('BOGOTÁ D.C.')),0);
 $pdf->Row(array(utf8_decode('Dirección del empleador:'),utf8_decode('CALLE 106 No 59 -21')),0);
 $pdf->Row(array(utf8_decode('NIT del empleador:'),utf8_decode('830.042.614')),0);
-$pdf->Row(array(utf8_decode('Representante legal:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
-$pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
+
+if($filaCont['IdFirmante']==1){
+    $pdf->Row(array(utf8_decode('Representante legal:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
+    $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
+}else{
+    $pdf->Row(array(utf8_decode('Representante legal suplente:'),utf8_decode('MARTHA GABRIELA BOTERO SERNA')),0);
+    $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('24.434.581')),0);
+}
+
 
 $pdf->Row(array(utf8_decode('Nombre del trabajador:'),utf8_decode($filaCont['proveedor'])),0);
 $pdf->Row(array(utf8_decode('Fecha De Nacimiento'),utf8_decode(fechaactual3($filaCont['fconstitucion']))),0);
@@ -608,14 +616,31 @@ if($linea>221){
 $pdf->Line(20, $linea, 80, $linea);
 $pdf->Line(108, $linea, 168, $linea);
 
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('MARTHA GABRIELA BOTERO SERNA'),0,0,'L');
+}
 
-$pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
 $pdf->Cell(88,4.5,utf8_decode($filaCont['proveedor']),0,1,'L');
 
-$pdf->Cell(88,4.5,utf8_decode('CC 79.315.619 de BOGOTA D.C.'),0,0,'L');
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('CC 79.315.619 de BOGOTA D.C.'),0,0,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('CC 24.434.581 de ARANZAZU'),0,0,'L');
+}
+
+
 $pdf->Cell(88,4.5,$filaCont['codigo']." ".colocapuntos($filaCont['documento'])." de ".utf8_decode($filaCont['municipio']),0,1,'L');
 
-$pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('Representante Legal Suplente'),0,1,'L');
+}
+
+
+
 
 $pdf->ln(2); 
 

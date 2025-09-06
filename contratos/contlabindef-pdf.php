@@ -39,8 +39,8 @@ $buscaCont =   "SELECT
                     incs,
                     cargo,
                     auxilio,
-                    objeto
-                    
+                    objeto,
+                    IdFirmante                    
                 FROM
                     ((((contrat
                     LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
@@ -343,8 +343,14 @@ $pdf->Row(array(utf8_decode('Nombre del empleador:'),utf8_decode('COMPAÑÍA DE 
 $pdf->Row(array(utf8_decode('Domicilio del empleador:'),utf8_decode('BOGOTÁ D.C.')),0);
 $pdf->Row(array(utf8_decode('Dirección del empleador:'),utf8_decode('CALLE 106 No 59 -21')),0);
 $pdf->Row(array(utf8_decode('NIT del empleador:'),utf8_decode('830.042.614')),0);
-$pdf->Row(array(utf8_decode('Representante legal Suplente:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
-$pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
+
+if($filaCont['IdFirmante']==1){
+    $pdf->Row(array(utf8_decode('Representante legal:'),utf8_decode('LUIS HECTOR RUBIANO VERGARA')),0);
+    $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('79.315.619')),0);
+}else{
+    $pdf->Row(array(utf8_decode('Representante legal suplente:'),utf8_decode('MARTHA GABRIELA BOTERO SERNA')),0);
+    $pdf->Row(array(utf8_decode('Tipo y No. de Identificación:'),utf8_decode('24.434.581')),0);
+}
 
 $pdf->Row(array(utf8_decode('Nombre del trabajador:'),utf8_decode($filaCont['proveedor'])),0);
 $pdf->Row(array(utf8_decode('Fecha De Nacimiento'),utf8_decode(fechaactual3($filaCont['fconstitucion']))),0);
@@ -424,7 +430,70 @@ if($totalfilas_buscaFun>0){
 }
 
 $txt=utf8_decode('
-<p>Entre el empleador y el trabajador, de las condiciones ya dichas, identificados como aparece al pie de sus correspondientes firmas, se ha celebrado el presente contrato Individual de Trabajo a Término indefinido, regido por las siguientes cláusulas: <neg>PRIMERA:</neg> El empleador contrata los servicios personales del trabajador, y éste se obliga: a). Poner al servicio del empleador toda su capacidad normal de trabajo, de manera exclusiva, en el desempeño de las funciones propias del cargo contratado y en las labores conexas y complementarias del mismo, en consideración con las órdenes e instrucciones que le imparta al empleador o sus representantes; b). No prestar directa ni indirectamente servicios laborales a otros empleadores, ni trabajar por cuenta propia en el mismo oficio, durante la vigencia del presente contrato; c). Laborar la jornada ordinaria en los turnos y dentro del horario señalado en este contrato, pudiendo el empleador efectuar ajustes o cambios de horario cuando lo estime conveniente y d). Las demás consagradas en el artículo 58 del Código Sustantivo del Trabajo. <neg>SEGUNDA:</neg> Como contraprestación por su labor, el empleador pagará al Trabajador el salario estipulado, el cual deberá cancelar en la fecha y lugar indicado, quedando establecido que en dicho pago se halla incluida la remuneración correspondiente a los descansos dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo. Se aclara y se conviene que en los casos en los que el trabajador devengue comisiones o cualquiera otra modalidad de salario variable, el 82.5% de dichos ingresos, constituye remuneración ordinaria, y el 17.5% restante está destinado a remunerar el descanso en los días dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo. <neg>TERCERA:</neg> Se considera el trabajador como personal de Manejo y Confianza por sus funciones y representación de la empresa frente al cliente en el lugar donde desarrolla sus labores, se deja estipulado que según el artículo 162 de la norma laboral, el personal de manejo y confianza queda excluido de la regulación sobre la jornada máxima legal de trabajo, pues su labor es la de estar dispuestos en cualquier momento por las labores propias de su cargo dentro de los días de trabajo asignados por el cliente. <neg>CUARTA:</neg> Son justas causas para dar por terminado unilateralmente el presente contrato, por cualquiera de las partes, las expresadas en los artículos 62 y 63 del Código Sustantivo del Trabajo, en concordancia con las modificaciones introducidas por el artículo 7° del Decreto 2351 de 1965; y, además, por parte del empleador, las faltas que para el efecto se califiquen como graves en el espacio reservado para cláusulas adicionales en el presente contrato. <neg>QUINTA:</neg> Aunque el lugar de trabajo es el indicado en este contrato, las partes pueden acordar que el mismo se preste en sitio diferente, siempre que las condiciones laborales del trabajador no se desmejoren o se disminuya su remuneración o le cause perjuicio. De todos modos, corren por cuenta del empleador los gastos que ocasione dicho traslado. El trabajador desde ahora acepta los cambios de oficio que decida el empleador, siempre que sus condiciones laborales se mantengan, se respeten sus derechos y no le causen perjuicios. <neg>SEXTA:</neg> El trabajador se obliga a laborar la jornada ordinaria en los turnos y dentro de las horas señaladas por el empleador. Por el acuerdo expreso o tácito de las partes, podrán repartirse las horas de la jornada ordinaria en la forma permitida por el artículo 164 del Código Sustantivo del Trabajo, teniendo en cuenta que las secciones de descanso entre las jornadas de trabajo no se computan dentro de la misma, conforme lo prescribe el artículo 167 del mismo código. <neg>SEPTIMA:</neg> La quinta parte de la duración estimada del presente contrato se considera como periodo de prueba, sin que exceda de dos (2) meses contados a partir de la fecha de inicio, y, por consiguiente, cualquiera de las partes podrá terminar el contrato unilateralmente, en cualquier momento durante dicho periodo y sin previo aviso, sin que se cause pago de indemnización alguna. <neg>OCTAVA:</neg> Este contrato ha sido redactado estrictamente de acuerdo con la Ley y Jurisprudencia y será interpretado de buena fe y en consonancia con el Código Sustantivo del Trabajo cuyo objeto, definido en su artículo 1º, es lograr la justicia en las relaciones entre empleadores y trabajadores dentro de un espíritu de coordinación económica y equilibrio social. <neg>NOVENA:</neg> El presente contrato reemplaza y deja sin efecto cualquier otro contrato verbal o escrito, que se hubiera celebrado entre las partes con anterioridad. Cualquier modificación al presente contrato debe efectuarse por escrito y anotarse a continuación de su texto.
+<p>Entre el empleador y el trabajador, de las condiciones ya dichas, identificados como aparece al pie de sus correspondientes firmas, se ha celebrado el presente contrato Individual de Trabajo a Término indefinido, regido por las siguientes cláusulas:
+</p>');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>PRIMERA:</neg> El empleador contrata los servicios personales del trabajador, y éste se obliga: a). Poner al servicio del empleador toda su capacidad normal de trabajo, de manera exclusiva, en el desempeño de las funciones propias del cargo contratado y en las labores conexas y complementarias del mismo, en consideración con las órdenes e instrucciones que le imparta al empleador o sus representantes; b). No prestar directa ni indirectamente servicios laborales a otros empleadores, ni trabajar por cuenta propia en el mismo oficio, durante la vigencia del presente contrato; c). Laborar la jornada ordinaria en los turnos y dentro del horario señalado en este contrato, pudiendo el empleador efectuar ajustes o cambios de horario cuando lo estime conveniente y d). Las demás consagradas en el artículo 58 del Código Sustantivo del Trabajo.
+</p>');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p> <neg>SEGUNDA:</neg> Como contraprestación por su labor, el empleador pagará al Trabajador el salario estipulado, el cual deberá cancelar en la fecha y lugar indicado, quedando establecido que en dicho pago se halla incluida la remuneración correspondiente a los descansos dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo. Se aclara y se conviene que en los casos en los que el trabajador devengue comisiones o cualquiera otra modalidad de salario variable, el 82.5% de dichos ingresos, constituye remuneración ordinaria, y el 17.5% restante está destinado a remunerar el descanso en los días dominicales y festivos de que tratan los capítulos I y II del Título VII del Código Sustantivo del Trabajo.
+</p>');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>TERCERA:</neg> Se considera el trabajador como personal de Manejo y Confianza por sus funciones y representación de la empresa frente al cliente en el lugar donde desarrolla sus labores, se deja estipulado que según el artículo 162 de la norma laboral, el personal de manejo y confianza queda excluido de la regulación sobre la jornada máxima legal de trabajo, pues su labor es la de estar dispuestos en cualquier momento por las labores propias de su cargo dentro de los días de trabajo asignados por el cliente.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>CUARTA:</neg> Son justas causas para dar por terminado unilateralmente el presente contrato, por cualquiera de las partes, las expresadas en los artículos 62 y 63 del Código Sustantivo del Trabajo, en concordancia con las modificaciones introducidas por el artículo 7° del Decreto 2351 de 1965; y, además, por parte del empleador, las faltas que para el efecto se califiquen como graves en el espacio reservado para cláusulas adicionales en el presente contrato.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>QUINTA:</neg> Aunque el lugar de trabajo es el indicado en este contrato, las partes pueden acordar que el mismo se preste en sitio diferente, siempre que las condiciones laborales del trabajador no se desmejoren o se disminuya su remuneración o le cause perjuicio. De todos modos, corren por cuenta del empleador los gastos que ocasione dicho traslado. El trabajador desde ahora acepta los cambios de oficio que decida el empleador, siempre que sus condiciones laborales se mantengan, se respeten sus derechos y no le causen perjuicios.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>SEXTA:</neg> El trabajador se obliga a laborar la jornada ordinaria en los turnos y dentro de las horas señaladas por el empleador. Por el acuerdo expreso o tácito de las partes, podrán repartirse las horas de la jornada ordinaria en la forma permitida por el artículo 164 del Código Sustantivo del Trabajo, teniendo en cuenta que las secciones de descanso entre las jornadas de trabajo no se computan dentro de la misma, conforme lo prescribe el artículo 167 del mismo código.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>SEPTIMA:</neg> La quinta parte de la duración estimada del presente contrato se considera como periodo de prueba, sin que exceda de dos (2) meses contados a partir de la fecha de inicio, y, por consiguiente, cualquiera de las partes podrá terminar el contrato unilateralmente, en cualquier momento durante dicho periodo y sin previo aviso, sin que se cause pago de indemnización alguna.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>OCTAVA:</neg> Este contrato ha sido redactado estrictamente de acuerdo con la Ley y Jurisprudencia y será interpretado de buena fe y en consonancia con el Código Sustantivo del Trabajo cuyo objeto, definido en su artículo 1º, es lograr la justicia en las relaciones entre empleadores y trabajadores dentro de un espíritu de coordinación económica y equilibrio social.</p>
+');
+
+$pdf->WriteTag(0,4.5,$txt,0,"J",0);
+$pdf->ln(2);
+
+$txt=utf8_decode('
+<p><neg>NOVENA:</neg> El presente contrato reemplaza y deja sin efecto cualquier otro contrato verbal o escrito, que se hubiera celebrado entre las partes con anterioridad. Cualquier modificación al presente contrato debe efectuarse por escrito y anotarse a continuación de su texto.
 </p>
 ');
 
@@ -486,14 +555,29 @@ if($linea>221){
 $pdf->Line(20, $linea, 80, $linea);
 $pdf->Line(108, $linea, 168, $linea);
 
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('MARTHA GABRIELA BOTERO SERNA'),0,0,'L');
+}
 
-$pdf->Cell(88,4.5,utf8_decode('LUIS HECTOR RUBIANO VERGARA'),0,0,'L');
 $pdf->Cell(88,4.5,utf8_decode($filaCont['proveedor']),0,1,'L');
 
-$pdf->Cell(88,4.5,utf8_decode('CC 79.315.619 de BOGOTA D.C.'),0,0,'L');
+
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('CC 79.315.619 de BOGOTA D.C.'),0,0,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('CC 24.434.581 de ARANZAZU'),0,0,'L');
+}
+
 $pdf->Cell(88,4.5,$filaCont['codigo']." ".colocapuntos($filaCont['documento'])." de ".utf8_decode($filaCont['municipio']),0,1,'L');
 
-$pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
+
+if($filaCont['IdFirmante']==1){
+    $pdf->Cell(88,4.5,utf8_decode('Representante Legal'),0,1,'L');
+}else{
+    $pdf->Cell(88,4.5,utf8_decode('Representante Legal Suplente'),0,1,'L');
+}
 
 $pdf->ln(2); 
 
