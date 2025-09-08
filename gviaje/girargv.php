@@ -36,7 +36,7 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 
 mysql_select_db($database_datos, $datos);
-$query_Recordset1 = "SELECT gviaje.IdGviaje, nombre, apellido, area, ccostos, municipio, departamentos, fsalida, fregreso, actividad, fsolicitud, total, certificacion, beneficiario, fpago  FROM ((((gviaje left join usuarios on gviaje.IdSolicitante=usuarios.IdUsuario) left join areas on gviaje.IdArea=areas.IdArea) left join municipios on gviaje.IdMunicipio=municipios.IdMunicipio) left join departamentos on municipios.IdDepartamento=departamentos.IdDepartamento) left join totgviaje on gviaje.IdGviaje=totgviaje.IdGviaje where legalizado=0 and rechazada=0 and fautorizacion is not null order by gviaje.IdGviaje";
+$query_Recordset1 = "SELECT gviaje.IdGviaje, nombre, apellido, area, ccostos, municipio, departamentos, fsalida, fregreso, actividad, fsolicitud, total, certificacion, beneficiario, fpago  FROM ((((gviaje left join usuarios on gviaje.IdSolicitante=usuarios.IdUsuario) left join areas on gviaje.IdArea=areas.IdArea) left join municipios on gviaje.IdMunicipio=municipios.IdMunicipio) left join departamentos on municipios.IdDepartamento=departamentos.IdDepartamento) left join totgviaje on gviaje.IdGviaje=totgviaje.IdGviaje where legalizado=0 and rechazada=0 and fautorizacion is not null order by gviaje.IdGviaje DESC";
 $Recordset1 = mysql_query($query_Recordset1, $datos) or die(mysql_error());
 $row_Recordset1 = mysql_fetch_assoc($Recordset1);
 $totalRows_Recordset1 = mysql_num_rows($Recordset1);
