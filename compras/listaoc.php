@@ -83,7 +83,35 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 
 mysql_select_db($database_datos, $datos);
-$query_Recordset1 = "SELECT compras.IdCompra, compras.IdOrdencompra, fecha, compras.comprado, compras.recibido, proveedor, fsolicitud, nombre, apellido, area, factura, evaluacion, calpro, compras.precio, condpago, cumplimiento, higsegind, gesamb, rse, total FROM ((((compras inner join proveedores ON compras.IdProveedor=proveedores.IdProveedor) inner join ordencompra On compras.IdOrdencompra=ordencompra.IdOrdencompra) inner join usuarios On ordencompra.IdSolicitante=usuarios.IdUsuario) inner join areas on ordencompra.IdArea=areas.IdArea) left join totcompras on compras.IdCompra=totcompras.IdCompra".$buscador1.$buscador." ORDER BY compras.IdCompra DESC";
+$query_Recordset1 = "SELECT 
+													compras.IdCompra,
+													compras.IdOrdencompra,
+													fecha,
+													compras.comprado,
+													compras.recibido,
+													proveedor,
+													fsolicitud,
+													nombre,
+													apellido,
+													area,
+													factura,
+													evaluacion,
+													calpro,
+													compras.precio,
+													condpago,
+													cumplimiento,
+													higsegind,
+													gesamb,
+													rse,
+													total,
+													fautorizado
+											FROM
+											(((((compras
+											INNER JOIN proveedores ON compras.IdProveedor = proveedores.IdProveedor)
+											INNER JOIN ordencompra ON compras.IdOrdencompra = ordencompra.IdOrdencompra)
+											INNER JOIN usuarios ON ordencompra.IdSolicitante = usuarios.IdUsuario)
+											INNER JOIN areas ON ordencompra.IdArea = areas.IdArea)
+											LEFT JOIN totcompras ON compras.IdCompra = totcompras.IdCompra)".$buscador1.$buscador." ORDER BY compras.IdCompra DESC";
 
 // echo $query_Recordset1;
 $Recordset1 = mysql_query($query_Recordset1, $datos) or die(mysql_error());
@@ -115,6 +143,9 @@ if($totalRows_Recordset1>0){
 		$tabla[$row_Recordset1['IdCompra']]['solicitante']=$row_Recordset1['nombre']." ".$row_Recordset1['apellido'];
 		$tabla[$row_Recordset1['IdCompra']]['area']=$row_Recordset1['area'];
 		$tabla[$row_Recordset1['IdCompra']]['fsolicitud']=$row_Recordset1['fsolicitud'];
+
+		$tabla[$row_Recordset1['IdCompra']]['fautorizado']=$row_Recordset1['fautorizado'];
+
 		$tabla[$row_Recordset1['IdCompra']]['comprado']=$row_Recordset1['comprado'];
 		$tabla[$row_Recordset1['IdCompra']]['recibido']=$row_Recordset1['recibido'];
 		$tabla[$row_Recordset1['IdCompra']]['proveedor']=$row_Recordset1['proveedor'];
@@ -444,6 +475,7 @@ include('encabezado1.php');
 			<col width="80">
 			<col width="80">
 			<col width="80">
+			<col width="80">
 			<col width="250">
 			<col width="70">
 			<col width="80">
@@ -455,6 +487,7 @@ include('encabezado1.php');
 				<td align="center">SOLICITANTE</td>
 				<td align="center">AREA</td>
 				<td align="center">SOLICITADO</td>
+				<td align="center">AUTORIZADO</td>
 				<td align="center">COMPRADO</td>
 				<td align="center">RECIBIDO</td>
 				<td align="center">PROVEEDOR</td>
@@ -478,6 +511,7 @@ include('encabezado1.php');
 						<td><?php echo $j['solicitante'] ?></td>
 						<td><?php echo $j['area']; ?></td>
 						<td align="center"><?php echo $j['fsolicitud'] ? fechaactual3($j['fsolicitud']) : ""; ?></td>
+						<td align="center"><?php echo $j['fautorizado'] ? fechaactual3($j['fautorizado']) : ""; ?></td>						
 						<td align="center"><?php echo $j['comprado'] ? fechaactual3($j['comprado']) : ""; ?></td>
 						<td align="center"><?php echo $j['recibido'] ? fechaactual3($j['recibido']) : ""; ?></td>
 						<td><?php echo $j['proveedor']; ?></td>
