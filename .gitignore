@@ -14,5 +14,7 @@
 /firmas/*
 /cartas/radicados/*
 /cartas/cartas/*
+/contratos/contratos/*
+/contratos/anexos/*
 /imagenes/*
 /phpword

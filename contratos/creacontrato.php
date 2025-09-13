@@ -212,9 +212,6 @@ include('encabezado.php');
 			processData: false,
 			success: function(respuesta) {
 				$('#midiv').html(respuesta);
-				// Limpiar cláusulas cuando cambia la clase
-				$('#clausulasContainer').html('<p style="color: #666; font-style: italic; text-align: center; padding: 20px;">Seleccione la subclase para cargar las cláusulas correspondientes</p>');
-				$('#texto').val(''); // Limpiar texto final
 			}
 		});
 	}
@@ -451,15 +448,74 @@ include('encabezado.php');
 																 '<table class="tablita Arial12" width="80%" id="actividades"><col width="97%"><col width="3%">'+
 																 		'<tr><td colspan="2"><textarea class="txtarea actividades" name="actividad[1]" id="actividad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																		'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>');
-			$('#div-productos').html('Productos y/o entregables: <span id="nproductos" style="display:none">1</span>'+
-																'<table class="tablita Arial12" width="80%" id="productos"><col width="97%"><col width="3%">'+
-																	'<tr><td colspan="2"><textarea class="txtarea productos" name="producto[1]" id="producto-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
-																	'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaProducto()" >Agregar producto</button>');
+			$('#div-productos').html('');
 			$('#div-formapago').html('');
 		}
 
-		//termino fijo
+		//termino fijo inferior a un año
 		if(id==3){
+
+			document.getElementById('div-ffin').style.display='';
+			document.getElementById('div-IdCargo').style.display='';
+			document.getElementById('div-incs').style.display='';
+			document.getElementById('div-especialidad').style.display='none';
+			document.getElementById('div-grupo').style.display='none';
+			document.getElementById('div-centrofor').style.display='none';
+			document.getElementById('div-objeto').style.display='';
+			document.getElementById('div-alcance').style.display='none';
+			document.getElementById('div-integral').style.display='';
+			document.getElementById('div-iva').style.display='none';
+
+			document.getElementById('div-ffinfin').style.display='none';
+			document.getElementById('div-auxilio').style.display='';
+			
+			document.getElementById('div-lugar').style.display='';
+
+			document.getElementById('ffin').setAttribute('required', 'required');
+			document.getElementById('ffinfin').removeAttribute('required');
+			document.getElementById('IdCargo').setAttribute('required', 'required');
+			document.getElementById('especialidad').removeAttribute('required');
+			document.getElementById('grupo').removeAttribute('required');
+			document.getElementById('centrofor').removeAttribute('required');
+			document.getElementById('objeto').setAttribute('required', 'required');
+			document.getElementById('alcance').removeAttribute('required');
+
+			document.getElementById('lugar').setAttribute('required', 'required');
+
+			document.getElementById('finicio').value='';
+			document.getElementById('ffin').value='';
+			document.getElementById('ffinfin').value='';
+			document.getElementById('valor').value='';
+			document.getElementById('IdCargo').value='';
+			document.getElementById('especialidad').value='';
+			document.getElementById('grupo').value='';
+			document.getElementById('centrofor').value='';
+			document.getElementById('objeto').value='';
+			document.getElementById('alcance').value='';
+
+			document.getElementById('label-objeto').innerHTML='Objetivo del Contrato:'
+			
+			document.getElementById('integral-no').checked=true;
+			document.getElementById('iva-no').checked=true;
+
+			$('#div-funciones').html('Funciones: <span id="nfunciones" style="display:none">1</span>'+
+																'<table class="tablita Arial12" width="80%" id="funciones"><col width="97%"><col width="3%">'+
+																'<tr><td colspan="2"><textarea class="txtarea funciones" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></td></tr></table>'+
+																'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaFuncion()" >Agregar función</button>');
+
+			$('#div-responsabilidades').html('Responsabilidades: <span id="nresponsabilidades" style="display:none">1</span>'+
+																				'<table class="tablita Arial12" width="80%" id="responsabilidades"><col width="97%"><col width="3%">'+
+																				'<tr><td colspan="2"><textarea class="txtarea responsabilidades" name="responsabilidad[1]" id="responsabilidad-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
+																				'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaResponsabilidad()">Agregar responsabilidad</button>');
+
+			$('#div-actividades').html('');
+			$('#div-productos').html('');
+			$('#div-formapago').html('');
+			
+		}
+
+		//termino fijo a un año
+		if(id==8){
 
 			document.getElementById('div-ffin').style.display='';
 			document.getElementById('div-IdCargo').style.display='';
@@ -1193,15 +1249,13 @@ include('encabezado.php');
 		})
 	}
 
-	function llenar(id, nombre, item, documento, telefono, direccion) {
+	function llenar(id, nombre, item, documento) {
 		$('#cambiaContratista').modal('hide');
 		// console.log(id, nombre, item,documento)
 		var item1 = "'" + item + "'"
 		$('#tdprov-' + item).html(
 			'<div style="width: 320px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor:pointer" onClick="cambiaContratista(' + item1 + ')">' + nombre + '</div>' +
-			'<input type="hidden" name="contratista" id="contratista' + item + '" value="' + id + '">' +
-			'<input type="hidden" name="telefonoContratista" id="telefonoContratista' + item + '" value="' + telefono + '">' +
-			'<input type="hidden" name="direccionContratista" id="direccionContratista' + item + '" value="' + direccion + '">'
+			'<input type="hidden" name="contratista" id="contratista' + item + '" value="' + id + '">' 
 		);
 		$('#tdnit-' + item).html(
 			'<div style="width:160px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor:pointer" onClick="cambiaContratistan(' + item1 + ')">' + documento + '</div>'
@@ -1831,6 +1885,31 @@ include('encabezado.php');
 		$('head').append(estilosAdicionales);
 		$('head').append('<meta id="estilos-variables-mejorados">');
 	}
+
+	function validarArchivo(archivo,item){
+          
+    if((archivo[0]["size"] > 1000000) || (archivo[0]["type"]!="application/pdf") ){
+          
+      $("#"+item).val("");
+      
+      swal({
+          title: "Error al subir el archivo",
+          text: "¡El archivo no debe pesar más de 1MB y ser en formato PDF!",
+          type: "error",
+          confirmButtonText: "¡Cerrar!"
+        });
+    }
+  }
+
+	function bloquear(id){
+    document.getElementById(id).style.display='none'
+    $(".espera").html(`
+        <center>
+          <img src="../imagenes/status.gif" id="status" />
+          <br>
+        </center>
+                `);
+  }
 </script>
 <style>
 	.drop .hijos {
@@ -2106,7 +2185,7 @@ include('encabezado1.php');
 ?>
 <div class="contenedor" style="width:1000px">
 	<h5 class="Century" align="center">CREACION DE CONTRATOS</h5>
-	<form action="graba.php" method="post">
+	<form action="graba.php" method="post" enctype="multipart/form-data" onSubmit="bloquear('boton')">
 		<div class="grid columna-8 Arial14">
 			<div class="span-4">
 				Proyecto / Area:
@@ -2170,6 +2249,12 @@ include('encabezado1.php');
 					<option value="1">LUIS HECTOR RUBIANO VERGARA</option>
 					<option value="2">MARTHA GABRIELA	BOTERO SERNA</option>
 				</select>	
+			</div>
+			<div class="span-2">
+			</div>
+			<div class="span-3">
+				Terminos de referencia: (Formato PDF max 1MB)
+				<input type="file" name="anexo" id="anexo" class="campo-sm Arial12" onChange="validarArchivo(this.files,this.id)">
 			</div>
 		</div>
 		<br>
@@ -2310,15 +2395,15 @@ include('encabezado1.php');
 					Las cláusulas se reorganizan automáticamente.
 				</div>
 
-				<div id="clausulasContainer">
+				<!-- <div id="clausulasContainer">
 					<p style="color: #666; font-style: italic; text-align: center; padding: 20px;">
 						Seleccione clase y subclase de contrato para cargar las cláusulas correspondientes
 					</p>
-				</div>
+				</div> -->
 			</div>
 
 			<!-- Campo oculto para el texto final del contrato (se actualiza automáticamente) -->
-			<input type="hidden" name="texto" id="texto">
+			<!-- <input type="hidden" name="texto" id="texto"> -->
 
 			<!-- Campo visible para ver el texto generado -->
 			<div style="margin-top: 15px;">
@@ -2331,7 +2416,8 @@ include('encabezado1.php');
 
 		<div class="contenedor" align="center" id="div-boton" style="display:none">
 			<button type="submit" name="boton1" class="btn btn-verde btn-sm" >Graba</button>
-		</div>		
+		</div>
+		<div class="espera"></div>		
 	</form>
 </div>
 
@@ -2559,9 +2645,9 @@ include('footer.php');
 		// });
 
 		// Actualizar contador cuando se agreguen o eliminen cláusulas
-		$(document).on('DOMNodeInserted DOMNodeRemoved', '#clausulasContainer', function() {
-			setTimeout(actualizarContador, 100);
-		});
+		// $(document).on('DOMNodeInserted DOMNodeRemoved', '#clausulasContainer', function() {
+		// 	setTimeout(actualizarContador, 100);
+		// });
 
 		// Observer para cambios en el DOM (más moderno que DOMNodeInserted)
 		if (window.MutationObserver) {
@@ -2573,10 +2659,10 @@ include('footer.php');
 				});
 			});
 
-			observer.observe(document.getElementById('clausulasContainer'), {
-				childList: true,
-				subtree: true
-			});
+			// observer.observe(document.getElementById('clausulasContainer'), {
+			// 	childList: true,
+			// 	subtree: true
+			// });
 		}
 	});
 </script>

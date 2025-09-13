@@ -70,7 +70,8 @@ $buscaCont = "SELECT
 									lugar,
 									auxilio,
 									cargo,
-									contrato
+									contrato,
+									anexo
 							FROM
 									(((((contrat
 									LEFT JOIN contratistas ON contrat.IdProveedor = contratistas.IdContratista)
@@ -527,7 +528,8 @@ if(isset($_POST['boton'])){
 							<?php 
 							if(!$filaCont['contrato']){
 								?>
-								<button class="btn btn-verde btn-xs1" onClick="subeRadicado(<?php echo $filaCont['IdContrato']?>,'<?php echo $consec?>')" >Subir contrato<br>firmado</button>
+								<button class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(<?php echo $filaCont['IdContrato']?>,'<?php echo $consec?>')" >Subir contrato<br>firmado</button>
+								<a href="editacontrato.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-verde btn-xs1 btn-block">Editar contrato</a>
 								<?php
 							}
 							?>
@@ -536,15 +538,20 @@ if(isset($_POST['boton'])){
 							<?php 
 							if($filaCont['contrato']){
 								?>
-								<a href="<?php echo $filaCont['contrato']?>" class="btn btn-rosa btn-xs1"  target="_blank">Ver Contrato</a>
+								<a href="<?php echo $filaCont['contrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank">Ver Contrato</a>
 								<?php
 							}else if($filaCont['IdClase']==1){
 								?>
-								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1"  target="_blank" >Ver Contrato</a> 
+								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" >Ver Contrato</a> 
 								<?php
 							}else if($filaCont['IdClase']==2){
 								?>
-								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1"  target="_blank" >Ver Contrato<br>borrador de<br>word</a> 
+								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" >Ver Contrato<br>borrador de<br>word</a> 
+								<?php
+							}
+							if($filaCont['anexo']){
+								?>
+								<a href="<?php echo $filaCont['anexo']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" style="margin-top:4px">Ver Terminos<br>de referencia</a>
 								<?php
 							}
 							?>

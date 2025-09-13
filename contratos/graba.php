@@ -7,11 +7,18 @@ include('encabezado1.php');
   
 if(isset($_POST['boton1'])){
   
-  echo "<pre>";
-  print_r($_POST);
-  echo "</pre>";
+  // echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
 
-  // echo $usuario;
+  // // echo $usuario;
+
+  // echo "<pre>";
+  // print_r($_FILES);
+  // echo "</pre>";
+
+
+  // exit();
 
   $buscaCont = "SELECT 
                     MAX(consec) AS maximo
@@ -87,7 +94,7 @@ if(isset($_POST['boton1'])){
 
 
   $inserta="INSERT INTO contrat (IdProveedor, IdEmpresa, IdArea, IdSolicitante, IdClase, IdSubClase, objeto, finicio, ffin, iva, consec, valor, integral, IdCargo, incs, especialidad, grupo, centrofor, alcance, ffinfin, lugar, auxilio, IdFirmante) VALUES (".$_POST['contratista'].", 1, ".$_POST['IdArea'].", ".$usuario.", ".$_POST['IdClase'].", ".$_POST['IdSubClase'].", ".($objeto == NULL ? "NULL" : "'$objeto'").", '".$_POST['finicio']."', ".($ffin == NULL ? "NULL" : "'$ffin'").", ".$iva.", ".$consec.", ".$_POST['valor'].", ".$_POST['integral'].", ".$cargo.", ".$_POST['incs'].", ".($especialidad == NULL ? "NULL" : "'$especialidad'").", ".($grupo == NULL ? "NULL" : "'$grupo'").", ".($centrofor == NULL ? "NULL" : "'$centrofor'").", ".($alcance == NULL ? "NULL" : "'$alcance'").", ".($ffinfin == NULL ? "NULL" : "'$ffinfin'").", ".($lugar == NULL ? "NULL" : "'$lugar'").", ".$_POST['auxilio'].", ".$_POST['IdFirmante'].")";
-  echo $inserta."<br>";
+  // echo $inserta."<br>";
   $nfunciones=0;
   $nproductos=0;
   $npagos=0;
@@ -179,6 +186,24 @@ if(isset($_POST['boton1'])){
       if($nresponsabilidades<>0){
         $mensaje.="<div>".$nresponsabilidades." RESPONSABILIDADES</div>";
       };
+    }
+
+    if($_FILES){
+        
+      $tipo=$_FILES['anexo']['type'];
+      $tamano=$_FILES['anexo']['size'];
+
+      $fecha1=date("YmdHis");
+      $ruta="anexos/anexo-".$last_id.".pdf";
+      if ($tamano<=2000000){
+        if($tipo=="application/pdf" OR $tipo==""){			
+          move_uploaded_file($_FILES['anexo']['tmp_name'],$ruta);
+          $insertaAnexo="UPDATE contrat SET anexo='".$ruta."' WHERE IdContrato=".$last_id;
+          if ($results=@mysql_query($insertaAnexo)){
+            $mensaje.="<div>TERMINOS DE REFERENCIA GRABADOS</div>";
+          }
+        }
+      }
     }
 
     ?>

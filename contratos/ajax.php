@@ -138,7 +138,7 @@ if(($_POST['proced']==6)){
 	if($totalFilasContratista>0){
 		do{
 			?>
-			<li class="item" onClick="llenar(<?php echo $row_ResultadoContratista['IdContratista'] ?>,'<?php echo $row_ResultadoContratista['proveedor'];?>','<?php echo $_POST['item'];?>','<?php echo colocapuntos($row_ResultadoContratista['documento']) ?>','<?php echo $row_ResultadoContratista['telefono'];?>','<?php echo $row_ResultadoContratista['direccion'];?>')"><?php echo $row_ResultadoContratista['proveedor'];?></li>
+			<li class="item" onClick="llenar(<?php echo $row_ResultadoContratista['IdContratista'] ?>,'<?php echo $row_ResultadoContratista['proveedor'];?>','<?php echo $_POST['item'];?>','<?php echo colocapuntos($row_ResultadoContratista['documento']) ?>')"><?php echo $row_ResultadoContratista['proveedor'];?></li>
 			<?php		
 		} while ($row_ResultadoContratista = mysql_fetch_assoc($resultadoContratista));
 	}else{
