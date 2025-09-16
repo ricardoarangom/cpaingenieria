@@ -624,7 +624,7 @@ include('encabezado.php');
 
 			$('#div-funciones').html('Funciones: <span id="nfunciones" style="display:none">1</span>'+
 																'<table class="tablita Arial12" width="80%" id="funciones"><col width="97%"><col width="3%">'+
-																'<tr><td colspan="2"><textarea class="txtarea funciones" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></td></tr></table>'+
+																'<tr><td colspan="2"><textarea class="txtarea funciones" name="funcion[1]" id="funcion-1" onBlur="aMayusculas(this.value,this.id)"></textarea></td></tr></table>'+
 																'<button type="button" class="btn btn-verde btn-xs1" onClick="agregaFuncion()" >Agregar función</button>');
 
 			$('#div-responsabilidades').html('Responsabilidades: <span id="nresponsabilidades" style="display:none">1</span>'+

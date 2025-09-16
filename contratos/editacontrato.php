@@ -87,6 +87,60 @@ $resultadoContra = mysql_query($buscaContra, $datos) or die(mysql_error());
 $filaContra = mysql_fetch_assoc($resultadoContra);
 $totalfilas_buscaContra = mysql_num_rows($resultadoContra);
 
+$buscaAct = " SELECT 
+								IdActividad,
+								actividad
+							FROM 
+								actividadescont 
+							WHERE IdContrato = ".$contrato;
+$resultadoAct = mysql_query($buscaAct, $datos) or die(mysql_error());
+$filaAct = mysql_fetch_assoc($resultadoAct);
+$totalfilas_buscaAct = mysql_num_rows($resultadoAct);
+
+$buscaFun = " SELECT 
+								IdFuncion,
+                funcion
+							FROM
+									funcionescont
+							WHERE
+									IdContrato = ".$contrato;
+$resultadoFun = mysql_query($buscaFun, $datos) or die(mysql_error());
+$filaFun = mysql_fetch_assoc($resultadoFun);
+$totalfilas_buscaFun = mysql_num_rows($resultadoFun);
+
+$buscaResp = "SELECT
+								IdResponsabilidad,
+                responsabilidad
+							FROM
+									resposabilidadescont
+							WHERE
+									IdContrato =   ".$contrato;
+$resultadoResp = mysql_query($buscaResp, $datos) or die(mysql_error());
+$filaResp = mysql_fetch_assoc($resultadoResp);
+$totalfilas_buscaResp = mysql_num_rows($resultadoResp);
+
+$buscaProd = "SELECT 
+								IdProducto,
+								producto 
+							FROM 
+								productoscont 
+							WHERE IdContrato = ".$contrato;
+$resultadoProd = mysql_query($buscaProd, $datos) or die(mysql_error());
+$filaProd = mysql_fetch_assoc($resultadoProd);
+$totalfilas_buscaProd = mysql_num_rows($resultadoProd);
+
+$buscaForm = "SELECT 
+								IdFroma,
+								porpago,
+								concepto 
+							FROM 
+								formapagocont 
+							WHERE 
+								IdContrato = ".$contrato;
+$resultadoForm = mysql_query($buscaForm, $datos) or die(mysql_error());
+$filaForm = mysql_fetch_assoc($resultadoForm);
+$totalfilas_buscaForm = mysql_num_rows($resultadoForm);
+
 ?>
 <?php 
 include('encabezado.php');
@@ -98,20 +152,48 @@ include('encabezado.php');
     var area = <?php echo $filaContra['IdArea'] ?>;
     var subclase = <?php echo $filaContra['IdSubClase'] ?>;
     var firmante = <?php echo $filaContra['IdFirmante'] ?>;
+		var IdCargo = <?php echo $filaContra['IdCargo'] ?>;
+		var integral = <?php echo $filaContra['integral'] ?>;
+		var iva = <?php echo $filaContra['iva'] ?>;
 
-    console.log(clase,area)
     
     buscaSubClase(clase);
+		muestraCampos(subclase);
     $('#IdClase').val(clase);
     $('#IdArea').val(area);
     $('#IdFirmante').val(firmante);
+    $('#IdCargo').val(IdCargo);
+
+		if(integral==1){
+			document.getElementById('integral-si').checked=true;	
+		}else{
+			document.getElementById('integral-no').checked=true;	
+		}
+
+		if(iva!=0){
+			document.getElementById('iva-si').checked=true;
+		}else{
+			document.getElementById('iva-no').checked=true;		
+		}
 
     setTimeout(() => {
         $('#IdSubClase').val(subclase);
     }, "100");
 
-
   });
+
+	function muestraCampos(id){
+		if(id==1 || id==5 || id==6){
+			document.getElementById('label-objeto').innerHTML='Objeto:'
+		}
+		if(id==2 || id==7){
+			document.getElementById('label-objeto').innerHTML='Objeto obra o labor contratada'
+		}
+		if(id==3 || id==4 || id==8){
+			document.getElementById('label-objeto').innerHTML='Objetivo del Contrato:'
+		}
+	}
+
 
 
   function buscaSubClase(IdClaseContrato) {
@@ -256,6 +338,251 @@ include('encabezado.php');
 			'<div style="width:160px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor:pointer" onClick="cambiaContratistan(' + item1 + ')">' + documento + '</div>'
 		);
 	}
+
+	function agregaFuncion(){
+		var a=parseFloat(document.getElementById('nfunciones').innerHTML);
+  	a=a+1;
+
+		var fila = '<td><textarea class="txtarea funciones" name="funcion['+a+']" id="funcion-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
+							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteFuncion(this,0)"></td>';
+
+		document.getElementById("funciones").insertRow(-1).innerHTML = fila;
+  	document.getElementById('nfunciones').innerHTML=a;
+	}
+
+	function deleteFuncion(btn,IdFuncion) { 
+		var row = btn.parentNode.parentNode; 
+		row.parentNode.removeChild(row);
+		var a=parseFloat(document.getElementById('nfunciones').innerHTML);
+		a=a-1;
+		document.getElementById('nfunciones').innerHTML=a;
+
+		if(IdFuncion!=0){
+			var borraFunciones = document.getElementById('borraFunciones').value;
+			if(borraFunciones){
+				borraFunciones=borraFunciones+','+IdFuncion;
+			}else{
+				borraFunciones=IdFuncion;
+			}
+			document.getElementById('borraFunciones').value=borraFunciones;
+		}
+
+		recuentoFunciones()
+	}
+
+	function recuentoFunciones(){
+
+		var funciones = document.querySelectorAll('.funciones');
+		var IdFunciones = document.querySelectorAll('.IdFunciones');
+				
+		for(var i=0;i<funciones.length;i++){
+			funciones[i].setAttribute("name", 'funcion['+(i+1)+"]");			
+			funciones[i].setAttribute("id", 'funcion-'+(i+1));
+			
+		}
+		for(var i=0;i<IdFunciones.length;i++){
+			IdFunciones[i].setAttribute("name", 'IdFuncion['+(i+1)+"]");			
+			IdFunciones[i].setAttribute("id", 'IdFuncion-'+(i+1));
+			
+		}
+	}
+
+	function agregaResponsabilidad(){
+		var a=parseFloat(document.getElementById('nresponsabilidades').innerHTML);
+  	a=a+1;
+
+		var fila = '<td><textarea class="txtarea responsabilidades" name="responsabilidad['+a+']" id="responsabilidad-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
+							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteResponsabilidad(this,0)"></td>';
+
+		document.getElementById("responsabilidades").insertRow(-1).innerHTML = fila;
+  	document.getElementById('nresponsabilidades').innerHTML=a;
+	}
+
+	function deleteResponsabilidad(btn,IdResponsabilidad) { 
+		var row = btn.parentNode.parentNode; 
+		row.parentNode.removeChild(row);
+		var a=parseFloat(document.getElementById('nresponsabilidades').innerHTML);
+		a=a-1;
+		document.getElementById('nresponsabilidades').innerHTML=a;
+
+		if(IdResponsabilidad!=0){
+			var borraResponsabilidades = document.getElementById('borraResponsabilidades').value;
+			if(borraResponsabilidades){
+				borraResponsabilidades=borraResponsabilidades+','+IdResponsabilidad;
+			}else{
+				borraResponsabilidades=IdResponsabilidad;
+			}
+			document.getElementById('borraResponsabilidades').value=borraResponsabilidades;
+		}
+
+		recuentoResponsabilidades()
+	}
+
+	function recuentoResponsabilidades(){
+
+		var responsabilidades = document.querySelectorAll('.responsabilidades');
+		var IdResponsabilidades = document.querySelectorAll('.IdResponsabilidades');
+				
+		for(var i=0;i<responsabilidades.length;i++){
+			responsabilidades[i].setAttribute("name", 'responsabilidad['+(i+1)+"]");			
+			responsabilidades[i].setAttribute("id", 'responsabilidad-'+(i+1));			
+		}
+		for(var i=0;i<IdResponsabilidades.length;i++){
+			IdResponsabilidades[i].setAttribute("name", 'IdResponsabilidad['+(i+1)+"]");			
+			IdResponsabilidades[i].setAttribute("id", 'IdResponsabilidad-'+(i+1));			
+		}
+
+	}
+
+	function agregaActividad(){
+		var a=parseFloat(document.getElementById('nactividades').innerHTML);
+  	a=a+1;
+
+		var fila = '<td><textarea class="txtarea actividades" name="actividad['+a+']" id="actividad-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
+							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteActividad(this,0)"></td>';
+
+		document.getElementById("actividades").insertRow(-1).innerHTML = fila;
+  	document.getElementById('nactividades').innerHTML=a;
+	}
+
+	function deleteActividad(btn,IdActividad) { 
+		var row = btn.parentNode.parentNode; 
+		row.parentNode.removeChild(row);
+		var a=parseFloat(document.getElementById('nactividades').innerHTML);
+		a=a-1;
+		document.getElementById('nactividades').innerHTML=a;
+
+		if(IdActividad!=0){
+			var borraActividades = document.getElementById('borraActividades').value;
+			if(borraActividades){
+				borraActividades=borraActividades+','+IdActividad;
+			}else{
+				borraActividades=IdActividad;
+			}
+			document.getElementById('borraActividades').value=borraActividades;
+		}
+
+		recuentoActividades()
+	}
+
+	function recuentoActividades(){
+
+		var actividades = document.querySelectorAll('.actividades');
+		var IdActividades = document.querySelectorAll('.IdActividades');
+				
+		for(var i=0;i<actividades.length;i++){
+			actividades[i].setAttribute("name", 'actividad['+(i+1)+"]");			
+			actividades[i].setAttribute("id", 'actividad-'+(i+1));			
+		}
+		for(var i=0;i<IdActividades.length;i++){
+			IdActividades[i].setAttribute("name", 'IdActividad['+(i+1)+"]");			
+			IdActividades[i].setAttribute("id", 'IdActividad-'+(i+1));			
+		}
+
+	}
+
+	function agregaProducto(){
+		var a=parseFloat(document.getElementById('nproductos').innerHTML);
+  	a=a+1;
+
+		var fila = '<td><textarea class="txtarea productos" name="producto['+a+']" id="producto-'+a+'" onBlur="aMayusculas(this.value,this.id)"></textarea></td>'+
+							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteProducto(this,0)"></td>';
+
+		document.getElementById("productos").insertRow(-1).innerHTML = fila;
+  	document.getElementById('nproductos').innerHTML=a;
+	}
+
+	function deleteProducto(btn,IdProducto) { 
+		var row = btn.parentNode.parentNode; 
+		row.parentNode.removeChild(row);
+		var a=parseFloat(document.getElementById('nproductos').innerHTML);
+		a=a-1;
+		document.getElementById('nproductos').innerHTML=a;
+
+		if(IdProducto!=0){
+			var borraProductos = document.getElementById('borraProductos').value;
+			if(borraProductos){
+				borraProductos=borraProductos+','+IdProducto;
+			}else{
+				borraProductos=IdProducto;
+			}
+			document.getElementById('borraProductos').value=borraProductos;
+		}
+
+		recuentoProductos()
+	}
+
+	function recuentoProductos(){
+
+		var productos = document.querySelectorAll('.productos');
+		var IdProductos = document.querySelectorAll('.IdProductos');
+				
+		for(var i=0;i<productos.length;i++){
+			productos[i].setAttribute("name", 'producto['+(i+1)+"]");			
+			productos[i].setAttribute("id", 'producto-'+(i+1));			
+		}
+
+		for(var i=0;i<IdProductos.length;i++){
+			IdProductos[i].setAttribute("name", 'IdProducto['+(i+1)+"]");			
+			IdProductos[i].setAttribute("id", 'IdProducto-'+(i+1));			
+		}
+	}
+
+	function agregaPago(){
+		var a=parseFloat(document.getElementById('numpagos').innerHTML);
+  	a=a+1;
+
+		var fila = '<td><input type="number" name="porpago['+a+']" id="porpago-'+a+'" class="campo-xs Arial12 porpago"></td>'+
+							 '<td><input type="text" name="concepto['+a+']" id="concepto-'+a+'" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 concepto"></td>'+
+							 '<td><img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deletePago(this,0)"></td>'
+
+		document.getElementById("pagos").insertRow(-1).innerHTML = fila;
+  	document.getElementById('numpagos').innerHTML=a;
+	}
+
+	function deletePago(btn,IdFroma) { 
+		var row = btn.parentNode.parentNode; 
+		row.parentNode.removeChild(row);
+		var a=parseFloat(document.getElementById('numpagos').innerHTML);
+		a=a-1;
+		document.getElementById('numpagos').innerHTML=a;
+
+		if(IdFroma!=0){
+			var borraPagos = document.getElementById('borraPagos').value;
+			if(borraPagos){
+				borraPagos=borraPagos+','+IdFroma;
+			}else{
+				borraPagos=IdFroma;
+			}
+			document.getElementById('borraPagos').value=borraPagos;
+		}
+
+		recuentoPagos()
+	}
+
+	function recuentoPagos(){
+
+		var porpago = document.querySelectorAll('.porpago');
+		var concepto = document.querySelectorAll('.concepto');
+		var IdFromas = document.querySelectorAll('.IdFromas');
+		
+		for(var i=0;i<porpago.length;i++){
+			porpago[i].setAttribute("name", 'porpago['+(i+1)+"]");
+			concepto[i].setAttribute("name", 'concepto['+(i+1)+"]");			
+
+			porpago[i].setAttribute("id", 'porpago-'+(i+1));
+			concepto[i].setAttribute("id", 'concepto-'+(i+1));					
+			
+		}
+
+		for(var i=0;i<IdFromas.length;i++){
+			IdFromas[i].setAttribute("name", 'IdFroma['+(i+1)+"]");
+			IdFromas[i].setAttribute("id", 'IdFroma-'+(i+1));	
+		}
+				
+
+
+	}
 </script>
 <style>
   .drop .hijos {
@@ -291,6 +618,61 @@ include('encabezado.php');
 		padding: 1px 5px;
 		color: #000000;
 	}
+
+	hr {
+		background-color: #000000;
+	}
+
+	.div-radio input[type="radio"] {
+		display: none
+	}
+
+	.div-radio label {
+		font-family: Arial;
+		font-size: 14px;
+		margin: 0;
+		width: 100%;
+		/* background: rgba(0,0,0,.1); */
+		/* padding: 0 10px 0 24px;
+    display: inline-block; */
+		position: relative;
+		border-radius: 3px;
+		cursor: pointer;
+		padding: 0 0;
+		display: flex;
+		justify-content: center;
+		-webkit-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;
+
+	}
+
+	.div-radio label:before {
+		/* content: "";
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    background: none;
+    border: 1px solid #000;
+    border-radius: 50%;
+    position: absolute;
+    left: 5px;
+    top: 3px; */
+	}
+
+	.div-radio input[type="radio"]:checked+label {
+		background: #FF9E7E;
+		padding: 0 0;
+		display: flex;
+		justify-content: center;
+
+	}
+
+	.div-radio input[type="radio"]:checked+label:before {
+		/*background: #007bff;
+    border: 1px solid #007bff;*/
+		display: none;
+	}
 </style>
 <?php 
 include('encabezado1.php');
@@ -298,6 +680,7 @@ include('encabezado1.php');
 <div class="contenedor" style="width:1000px">
 	<h5 class="Century" align="center">EDICION DE CONTRATOS</h5>
 	<form action="graba.php" method="post" enctype="multipart/form-data" onSubmit="bloquear('boton')">
+		<input type="hidden" name="IdContrato" value="<?php echo $filaContra['IdContrato']  ?>" >
     <div class="grid columna-8 Arial14">
 			<div class="span-4">
 				Proyecto / Area:
@@ -366,16 +749,258 @@ include('encabezado1.php');
         ?>
         <div class="span-2">
           <br>
+					<input type="hidden" name="anexoA"  value="<?php echo $filaContra['anexo']?>">
           <a href="<?php echo $filaContra['anexo']?>" class="btn btn-rosa btn-xs btn-block"  target="_blank" style="margin-top:4px">Ver Terminos de referencia</a>
         </div>
         <?php
       }
       ?>
 		</div>  
-
-
+		<br>
+		<hr>	
+		<div class="grid columna-8 Arial14"  style="display:" id=div-v0>	
+			<div class="span-2">
+				Inicio:
+				<input type="date" class="campo-sm Arial12" name="finicio" id="finicio" required value="<?php echo $filaContra['finicio'] ?>">
+			</div>
+			<div class="span-2" id="div-ffinfin">
+				Inicio etapa productiva:
+				<input type="date" class="campo-sm Arial12" name="ffinfin" id="ffinfin" value="<?php echo $filaContra['ffinfin'] ?>">
+			</div>
+			<div class="span-2" id="div-ffin">
+				Terminación:
+				<input type="date" class="campo-sm Arial12" name="ffin" id="ffin" value="<?php echo $filaContra['ffin'] ?>">
+			</div>
+			<div class="span-2">
+				Valor:
+				<input type="number" class="campo-sm Arial12" name="valor" id="valor" required value="<?php echo $filaContra['valor'] ?>">
+			</div>
+			<div class="span-2" id="div-auxilio">
+				Auxilio Transporte:
+				<input type="number" class="campo-sm Arial12" name="auxilio" id="auxilio" value="<?php echo $filaContra['auxilio'] ?>">
+			</div>
+			<div class="span-2" id="div-IdCargo">
+				Cargo:
+				<select name="IdCargo" class="campo-sm Arial12" id="IdCargo">
+					<option value="0">Seleccione</option>
+					<?php
+					do {
+					?>
+						<option value="<?php echo $filaCargo['IdCargo'] ?>"><?php echo $filaCargo['cargo'] ?></option>
+					<?php
+					} while ($filaCargo = mysql_fetch_assoc($resultadoCargo));
+					?>
+				</select>
+			</div>
+			<div class="span-2" id="div-incs">
+				INCS:
+				<input type="number" class="campo-sm Arial12" name="incs" id="incs" value="<?php echo $filaContra['incs'] ?>">
+			</div>
+			<div class="span-2" id="div-especialidad">
+				Especialidad
+				<input type="text" name="especialidad" id="especialidad" class="campo-sm Arial12" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaContra['especialidad'] ?>">
+			</div>
+			<div class="span-2" id="div-grupo">
+				Grupo
+				<input type="text" name="grupo" id="grupo" class="campo-sm Arial12" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaContra['grupo'] ?>">	
+			</div>
+			<div class="span-2" id="div-centrofor">
+				C Fromación
+				<input type="text" name="centrofor" id="centrofor" class="campo-sm Arial12" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaContra['centrofor'] ?>">	
+			</div>
+			<div class="span-3" id="div-lugar">
+				Lugar donde desepmpeñara labores:
+				<input type="text" name="lugar" id="lugar" class="campo-sm Arial12" value="<?php echo $filaContra['lugar'] ?>">					
+			</div>
+		</div>
+		<br>	
+		<div class="grid columna-8 Arial14" style="display:" id=div-v1>
+			<div class="span-4" id="div-objeto">
+				<span id="label-objeto">Objeto obra o labor contratada:</span>
+				<textarea name="objeto" id="objeto" class="txtarea" onBlur="aMayusculas(this.value,this.id)"><?php echo $filaContra['objeto'] ?></textarea>
+			</div>
+			<div class="span-4" id="div-alcance">
+				Alcance:
+				<textarea name="alcance" id="alcance" class="txtarea" onBlur="aMayusculas(this.value,this.id)"><?php echo $filaContra['alcance'] ?></textarea>
+			</div>
+		</div>
+		<br>	
+		<div class="grid columna-8 Arial14" style="display:" id=div-v2>
+			<div class="span-2" id="div-integral">
+				Salario Integral:
+				<div class="grid columna-3">
+					<div class="span-1 div-radio">
+						<input type="radio" name="integral" id="integral-si" value="1">
+						<label for="integral-si">Sí</label>
+					</div>
+					<div class="span-1 div-radio">
+						<input type="radio" name="integral" id="integral-no" value="0" checked>
+						<label for="integral-no">No</label>
+					</div>
+				</div>
+			</div>
+			<div class="span-6"></div>
+			<div class="span-2" id="div-iva">
+				IVA:
+				<div class="grid columna-3">
+					<div class="span-1 div-radio">
+						<input type="radio" name="iva" id="iva-si" value="1">
+						<label for="iva-si">Sí</label>
+					</div>
+					<div class="span-1 div-radio">
+						<input type="radio" name="iva" id="iva-no" value="0" checked>
+						<label for="iva-no">No</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		<hr>
+		<div class="grid columna-8 Arial14" style="display:" id=div-v3>				
+			<div class="span-8" id="div-funciones">
+				Funciones: <span id="nfunciones" style="display:none"><?php echo $totalfilas_buscaFun?></span>
+				<table class="tablita Arial12" width="80%" id="funciones"><col width="97%"><col width="3%">				
+					<?php 
+					if($totalfilas_buscaFun>0){
+						$cuentaFunciones=1;
+						do{
+							?>
+							<tr>
+								<td>
+									<textarea class="txtarea funciones" name="funcion[<?php echo $cuentaFunciones ?>]" id="funcion-<?php echo $cuentaFunciones ?>" onBlur="aMayusculas(this.value,this.id)"><?php echo $filaFun['funcion'] ?></textarea>
+									<input type="hidden" class="IdFunciones" name="IdFuncion[<?php echo $cuentaFunciones ?>]" id="IdFuncion-<?php echo $cuentaFunciones ?>" value="<?php echo $filaFun['IdFuncion'] ?>">
+								</td>
+								<td>
+									<img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteFuncion(this,<?php echo $filaFun['IdFuncion'] ?>)">
+								</td>
+							</tr>
+							<?php
+							$cuentaFunciones++;
+						}while($filaFun = mysql_fetch_assoc($resultadoFun));
+					}	
+					?>
+				</table>
+				<button type="button" class="btn btn-verde btn-xs1" onClick="agregaFuncion()" >Agregar función</button>
+				<input type="hidden" name="borraFunciones" id="borraFunciones">
+			</div>
+			<div class="span-8" id="div-responsabilidades">
+				Responsabilidades: <span id="nresponsabilidades" style="display:none"><?php echo $totalfilas_buscaResp ?></span>
+				<table class="tablita Arial12" width="80%" id="responsabilidades"><col width="97%"><col width="3%">
+					<?php
+					if($totalfilas_buscaResp>0){
+						$cuentaResp=1;
+						do{
+							?>
+							<tr>
+								<td>
+									<textarea class="txtarea responsabilidades" name="responsabilidad[<?php echo $cuentaResp ?>]" id="responsabilidad-<?php echo $cuentaResp ?>" onBlur="aMayusculas(this.value,this.id)"><?php echo $filaResp['responsabilidad'] ?></textarea>
+									<input type="hidden" class="IdResponsabilidades" name="IdResponsabilidad[<?php echo $cuentaResp ?>]" id="IdResponsabilidad-<?php echo $cuentaResp ?>" value="<?php echo $filaResp['IdResponsabilidad'] ?>">
+								</td>
+								<td>
+									<img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteResponsabilidad(this,<?php echo $filaResp['IdResponsabilidad'] ?>)">
+								</td>
+							</tr>
+							<?php
+							$cuentaResp++;
+						}while($filaResp = mysql_fetch_assoc($resultadoResp)); 
+					}
+					?>
+				</table>
+				<button type="button" class="btn btn-verde btn-xs1" onClick="agregaResponsabilidad()">Agregar responsabilidad</button>
+				<input type="hidden" name="borraResponsabilidades" id="borraResponsabilidades">	
+			</div>
+			<div class="span-8" id="div-actividades">
+				Actividades: <span id="nactividades" style="display:none"><?php echo $totalfilas_buscaAct ?></span>
+				<table class="tablita Arial12" width="80%" id="actividades"><col width="97%"><col width="3%">
+					<?php
+					if($totalfilas_buscaAct>0){
+						$cuentaActividades=1;
+						do{
+							?>
+							<tr>
+								<td>
+									<textarea class="txtarea actividades" name="actividad[<?php echo $cuentaActividades ?>]" id="actividad-<?php echo $cuentaActividades ?>" onBlur="aMayusculas(this.value,this.id)"><?php echo $filaAct['actividad'] ?></textarea>
+									<input type="hidden" class="IdActividades" name="IdActividad[<?php echo $cuentaActividades ?>]" id="IdActividad-<?php echo $cuentaActividades ?>" value="<?php echo $filaAct['IdActividad'] ?>">
+								</td>
+								<td>
+									<img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteActividad(this,<?php echo $filaAct['IdActividad'] ?>)">
+								</td>
+							</tr>
+							<?php
+							$cuentaActividades++;
+						}while($filaAct = mysql_fetch_assoc($resultadoAct)); 
+					}
+					?>
+				</table>
+				<button type="button" class="btn btn-verde btn-xs1" onClick="agregaActividad()" >Agregar actividad</button>
+				<input type="hidden" name="borraActividades" id="borraActividades">		
+			</div>
+			<div class="span-8" id="div-productos">
+				Productos y/o entregables: <span id="nproductos" style="display:none"><?php echo $totalfilas_buscaProd ?></span>
+				<table class="tablita Arial12" width="80%" id="productos"><col width="97%"><col width="3%">
+					<?php
+					if($totalfilas_buscaProd>0){
+						$cuentaProductos=1;
+						do{
+							?>
+							<tr>
+								<td>
+									<textarea class="txtarea productos" name="producto[<?php echo $cuentaProductos ?>]" id="producto-<?php echo $cuentaProductos ?>" onBlur="aMayusculas(this.value,this.id)"><?php echo $filaProd['producto'] ?></textarea>
+									<input type="hidden" class="IdProductos"  name="IdProducto[<?php echo $cuentaProductos ?>]" id="IdProducto-<?php echo $cuentaProductos ?>" value="<?php echo $filaProd['IdProducto'] ?>"  >
+								</td>
+								<td>
+									<img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deleteProducto(this,<?php echo $filaProd['IdProducto'] ?>)">
+								</td>
+							</tr>
+							<?php
+							$cuentaProductos++;
+						}while($filaProd = mysql_fetch_assoc($resultadoProd));
+					}
+					?>
+				</table>
+				<button type="button" class="btn btn-verde btn-xs1" onClick="agregaProducto()" >Agregar producto</button>
+				<input type="hidden" name="borraProductos" id="borraProductos">						
+			</div>
+			<div class="span-8" id="div-formapago">
+				Forma de pago: <span id="numpagos" style="display:none"><?php echo $totalfilas_buscaForm ?></span>
+				<table class="tablita Arial12" width="80%" id="pagos"><col width="13%"><col width="83%"><col width="5%">
+					<tr class="titulos" >
+						<td>%</td>
+						<td colspan="2">Condición</td>
+					</tr>		
+					<?php
+					if($totalfilas_buscaForm>0){
+						$cuentaPagos=1;
+						do{
+							?>
+							<tr>
+								<td>
+									<input type="number" name="porpago[<?php echo $cuentaPagos ?>]" id="porpago-<?php echo $cuentaPagos ?>" class="campo-xs Arial12 porpago" value="<?php echo $filaForm['porpago']*100 ?>">
+								</td>
+								<td>
+									<input type="text" name="concepto[<?php echo $cuentaPagos ?>]" id="concepto-<?php echo $cuentaPagos ?>" onBlur="aMayusculas(this.value,this.id)" class="campo-xs Arial12 concepto" value="<?php echo $filaForm['concepto'] ?>">
+									<input type="hidden" class="IdFromas" name="IdFroma[<?php echo $cuentaPagos ?>]" id="IdFroma-<?php echo $cuentaPagos ?>" value="<?php echo $filaForm['IdFroma'] ?>" >
+								</td>
+								<td>
+									<img src="../imagenes/borrar.png" width="15px" alt="" style="cursor: pointer" onclick="deletePago(this,<?php echo $filaForm['IdFroma'] ?>)">
+								</td>
+							</tr>
+							<?php
+						$cuentaPagos++;
+						}while($filaForm = mysql_fetch_assoc($resultadoForm));
+					}
+					?>
+				</table>
+				<button type="button" class="btn btn-verde btn-xs1" onClick=agregaPago() >Agregar pago</button>
+				<input type="hidden" name="borraPagos" id="borraPagos" >
+			</div>
+		</div>
+		<div class="contenedor" align="center" id="div-boton" style="display:">
+			<button type="submit" name="boton4" class="btn btn-verde btn-sm" >Graba</button>
+		</div>
+		<div class="espera"></div>	
   </form>
-
+	<br><br><br><br><br>
 </div>
 
 <div id="cambiaContratista" class="modal fade" role="dialog">
