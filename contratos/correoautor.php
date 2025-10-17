@@ -106,7 +106,7 @@ $mail->IsHTML(true);
 
 if($fila['autorizado']==1){
   $ruta=$fila['contrato'];
-  $documento='Contrato - '.$consec;
+  $documento='Contrato - '.$consec.'.pdf';
   $mail->AddAttachment($ruta, $documento);
 }
 
