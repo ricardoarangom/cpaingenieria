@@ -9,6 +9,13 @@
 
  $mail->From = "notificacionescpaingenieria@gmail.com";
 
+//  $mail->Host = "smtp.gmail.com";
+
+// $mail->Username = "medinapp@medinayrivera.com.co";
+// $mail->Password = "ustmpgbkiahjvpjq"; 
+
+// $mail->From = "medinapp@medinayrivera.com.co";
+
 
 //$mail->SMTPSecure = 'ssl';
 //$mail->Port = 587;

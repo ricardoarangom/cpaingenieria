@@ -98,7 +98,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
           </div>
         </div>';
         
-echo $body;
+// echo $body;
 //$mail->Body =$body;
 $mail->msgHTML(utf8_decode($body));
 $mail->WordWrap = 200;
@@ -111,14 +111,15 @@ if($fila['autorizado']==1){
 }
 
 
-if(!$mail->Send()) {
-  echo "Mailer Error: " . $mail->ErrorInfo;
-  echo "<br><BR>* Please double check the user name and password to confirm that both of them are correct. <br>";
-}else{
+// if(!$mail->Send()) {
+//   echo "Mailer Error: " . $mail->ErrorInfo;
+//   echo "<br><BR>* Please double check the user name and password to confirm that both of them are correct. <br>";
+// }else{
 
-}
-// $mail->Send();
+
+// }
+$mail->Send();
 ?>
 <script>
-// window.close()
+window.close()
 </script>

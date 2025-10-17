@@ -53,7 +53,7 @@ $totalfilas_buscaSol = mysql_num_rows($resultadoSol);
           if(res=='ok'){
 						$('#subirRadicado').modal('hide');
 						swal({
-							html: '¡La solicitud ha sido enviada!',
+							html: '¡La respuesta a la solicitud ha sido enviada al solicitante!',
 							type: "success",
 							showConfirmButton: true,
 							confirmButtonText: "Cerrar"
@@ -94,34 +94,42 @@ include('encabezado1.php');
       <td></td>
     </tr>
     <?php 
-    do{
-      if($filaSol['IdClase']==1){
-        $consec='LAB '.sprintf("%03d",$filaSol['consec']);
-      }
-      if($filaSol['IdClase']==2){
-        $consec='PS '.sprintf("%03d",$filaSol['consec']);
-      }
-      if($filaSol['cargo']){
-        $cargo=$filaSol['cargo'];
-      }else{
-        $cargo=$filaSol['objeto'];
-      }
+    if($totalfilas_buscaSol>0){
+      do{
+        if($filaSol['IdClase']==1){
+          $consec='LAB '.sprintf("%03d",$filaSol['consec']);
+        }
+        if($filaSol['IdClase']==2){
+          $consec='PS '.sprintf("%03d",$filaSol['consec']);
+        }
+        if($filaSol['cargo']){
+          $cargo=$filaSol['cargo'];
+        }else{
+          $cargo=$filaSol['objeto'];
+        }
+        ?>
+        <tr>
+          <td valign="top"><?php echo $filaSol['solicitante'] ?></td>
+          <td valign="top" align="center"><?php echo $consec ?></td>
+          <td valign="top"><?php echo $filaSol['proveedor'] ?></td>
+          <td valign="top"><?php echo $filaSol['area'] ?></td>
+          <td valign="top"><?php echo $filaSol['clase']?><br><?php echo $filaSol['subclase']?></td>
+          <td valign="top"><?php echo $cargo ?></td>
+          <td valign="top">
+            <button class="btn btn-verde btn-xs1 btn-block" onClick="autorizar(<?php echo $filaSol['IdSolicitud'] ?>,1,<?php echo $filaSol['IdContrato'] ?>)" >Autorizar</button>
+            <button class="btn btn-rojo btn-xs1 btn-block" onClick="autorizar(<?php echo $filaSol['IdSolicitud'] ?>,2,<?php echo $filaSol['IdContrato'] ?>)" >Rechazar</button>
+          </td>
+        </tr>
+        <?php
+
+      } while ($filaSol = mysql_fetch_assoc($resultadoSol));
+    }else{
       ?>
       <tr>
-        <td valign="top"><?php echo $filaSol['solicitante'] ?></td>
-        <td valign="top" align="center"><?php echo $consec ?></td>
-        <td valign="top"><?php echo $filaSol['proveedor'] ?></td>
-        <td valign="top"><?php echo $filaSol['area'] ?></td>
-        <td valign="top"><?php echo $filaSol['clase']?><br><?php echo $filaSol['subclase']?></td>
-        <td valign="top"><?php echo $cargo ?></td>
-        <td valign="top">
-          <button class="btn btn-verde btn-xs1 btn-block" onClick="autorizar(<?php echo $filaSol['IdSolicitud'] ?>,1,<?php echo $filaSol['IdContrato'] ?>)" >Autorizar</button>
-          <button class="btn btn-rojo btn-xs1 btn-block" onClick="autorizar(<?php echo $filaSol['IdSolicitud'] ?>,2,<?php echo $filaSol['IdContrato'] ?>)" >Rechazar</button>
-        </td>
+        <td align="center" colspan="7" class="Arial14" >NO HAY AUTORIZACIONES PENDIENTES POR RESPONDER</td>
       </tr>
       <?php
-
-    } while ($filaSol = mysql_fetch_assoc($resultadoSol));
+    }
     ?>
     
   </table>
