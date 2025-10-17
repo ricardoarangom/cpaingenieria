@@ -330,3 +330,28 @@ if(($_POST['proced']==14)){
 	}
 
 }
+
+if(($_POST['proced']==15)){
+
+	// echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";    
+
+	$inserta="INSERT INTO solcontratos (IdContrato, IdUsuario) VALUES (".$_POST['IdContrato'].", ". $_POST['IdUsuario'].")";
+	if ($results=@mysql_query($inserta)){
+		echo "ok";
+	}
+}
+
+if(($_POST['proced']==16)){
+
+	// echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";  
+
+	$actualiza="UPDATE solcontratos SET autorizado=".$_POST['accion']." WHERE IdSolicitud=".$_POST['Id'];
+	if ($results=@mysql_query($actualiza)){
+		echo "ok";
+	}
+
+}

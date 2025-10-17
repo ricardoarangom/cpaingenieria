@@ -258,6 +258,12 @@
     <li class="submenu" id="sm-6-2">
 		  <a class="a-sec" href="../cartas/reporte.php">REPORTE</a>
 		</li>
+		<li class="submenu" id="sm-6-3">
+		  <a class="a-sec" href="../cartas/subircor.php">RADICAR CR</a>
+		</li>
+		<li class="submenu" id="sm-6-4">
+		  <a class="a-sec" href="../cartas/reportecr.php">REPORTE CR</a>
+		</li>
 	  </ul>
 	</nav>
 
@@ -292,6 +298,15 @@
 			<li class="submenu" id="sm-7-4">
 				<a class="a-sec" href="../contratos/cargos.php">CARGOS</a>
 			</li>
+			<?php 
+			if($nivel<=1){
+				?>
+				<li class="submenu" id="sm-7-5">
+					<a class="a-sec" href="../contratos/autorizaciones.php">AUTORIZACIONES</a>
+				</li>
+				<?php				
+			}
+			?>
 	  </ul>
 	</nav>
 	

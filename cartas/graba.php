@@ -194,6 +194,51 @@ if(isset($_POST['boton2'])){
     <?php
   }
 }
+
+if(isset($_POST['boton3'])){
+
+  // echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
+
+  // echo "<pre>";
+  // print_r($_FILES);
+  // echo "</pre>";  
+
+  $inserta="INSERT INTO correcibida (IdArea, remitente, destinatario, fecha, asunto) VALUES(".$_POST['IdArea'] .", '".$_POST['remitente'] ."', '".$_POST['destinatario']."', '".$_POST['fecha'] ."', '".$_POST['asunto'] ."' )";
+
+  if($results=@mysql_query($inserta)){
+    $last_id = mysql_insert_id($datos);
+
+    $ruta="recibida/archivo-".$last_id.".pdf";
+
+    if($_FILES['archivo']['tmp_name']){
+      move_uploaded_file($_FILES['archivo']['tmp_name'],$ruta);
+
+      $actualiza="UPDATE correcibida SET archivo='".$ruta."' WHERE IdCorrespondencia=".$last_id;
+      if($results=@mysql_query($actualiza)){
+        ?>
+        <script>
+          swal({
+            text: "LA CORRESPONDENCIA FUE GRABADA CORRECTAMENTE",
+            type: "success",
+            showConfirmButton: true,
+            confirmButtonText: "Cerrar"
+            }).then(function(result){
+            if (result.value) {
+              window.location = "inicio.php";
+            }
+          });
+        </script>
+        <?php
+      }
+
+      
+    }
+  }
+
+
+}
 ?>
 
 

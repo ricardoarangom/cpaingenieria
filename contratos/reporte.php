@@ -298,6 +298,41 @@ $totalRows_Recordset2 = mysql_num_rows($Recordset2);
 				}
 			});
 	}
+
+	function solicitar(IdContrato,IdUsuario){
+		console.log(IdContrato,IdUsuario)
+		var datos = new FormData();
+    datos.append("IdContrato",IdContrato);
+		datos.append("IdUsuario",IdUsuario);
+    datos.append("proced",15);
+
+    $.ajax({
+				url:"ajax.php",
+				method: "POST",
+				data: datos,
+				cache: false,
+				contentType: false,
+				processData: false,
+				success: function(respuesta){
+          var res = respuesta.trim();
+					console.log(res);
+          if(res=='ok'){
+						$('#subirRadicado').modal('hide');
+						swal({
+							html: '¡La solicitud ha sido enviada!',
+							type: "success",
+							showConfirmButton: true,
+							confirmButtonText: "Cerrar"
+						}).then(function(result){
+						if (result.value) {	
+							window.location.reload();
+						}
+						});
+            
+          }
+				}
+			});
+	}
 </script>
 <style>
 
@@ -404,38 +439,7 @@ include('encabezado1.php');
 						<input type="date" name="hfinicio" id="hfinicio" class="campo-xs Arial12">
 					</div>
 				</div>
-			</div>
-			<!-- <div class="span-2 div-form borde-div-g" style="border-radius: 5px">
-				<div  class="grid columna-2" align="left" style="grid-row-gap: 3px">
-					<div class="span-2">
-						Fecha de Compra
-					</div>
-					<div class="span-1">
-						Desde
-						<input type="date" name="dcomprado" id="dcomprado" class="campo-xs Arial12">
-					</div>
-					<div class="span-1">
-						Hasta
-						<input type="date" name="hcomprado" id="hcomprado" class="campo-xs Arial12">
-					</div>
-				</div>
-			</div> -->
-			<!-- <div class="span-2 div-form borde-div-g" style="border-radius: 5px">
-				<div  class="grid columna-2" align="left" style="grid-row-gap: 3px">
-					<div class="span-2">
-						Fecha de recibido
-					</div>
-					<div class="span-1">
-						Desde
-						<input type="date" name="drecibido" id="drecibido" class="campo-xs Arial12">
-					</div>
-					<div class="span-1">
-						Hasta
-						<input type="date" name="hrecibido" id="hrecibido" class="campo-xs Arial12">
-					</div>							
-				</div>
-			</div> -->
-			
+			</div>	
 			<div class="span-6" align="right">
 				<button type="submit" name="boton" class="btn btn-verde btn-xs">Buscar</button>
 				<button type="reset" class="btn btn-rojo btn-xs pull-left">Limpiar Filtro</button>
@@ -526,33 +530,43 @@ if(isset($_POST['boton'])){
 						<td align="center"><?php echo $filaCont['ffin'] ? fechaactual3($filaCont['ffin']) : ""?></td>
 						<td>
 							<?php 
-							if(!$filaCont['contrato']){
-								?>
-								<button class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(<?php echo $filaCont['IdContrato']?>,'<?php echo $consec?>')" >Subir contrato<br>firmado</button>
-								<a href="editacontrato.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-verde btn-xs1 btn-block">Editar contrato</a>
-								<?php
+							if($nivel<=1){
+								if(!$filaCont['contrato']){
+									?>
+									<button class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(<?php echo $filaCont['IdContrato']?>,'<?php echo $consec?>')" >Subir contrato<br>firmado</button>
+									<a href="editacontrato.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-verde btn-xs1 btn-block">Editar contrato</a>
+									<?php
+								}
 							}
 							?>
 						</td>
 						<td>
-							<?php 
-							if($filaCont['contrato']){
-								?>
-								<a href="<?php echo $filaCont['contrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank">Ver Contrato</a>
-								<?php
-							}else if($filaCont['IdClase']==1){
-								?>
-								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" >Ver Contrato</a> 
-								<?php
-							}else if($filaCont['IdClase']==2){
-								?>
-								<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" >Ver Contrato<br>borrador de<br>word</a> 
-								<?php
-							}
-							if($filaCont['anexo']){
-								?>
-								<a href="<?php echo $filaCont['anexo']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" style="margin-top:4px">Ver Terminos<br>de referencia</a>
-								<?php
+							<?php
+							if($nivel<=1){
+								if($filaCont['contrato']){
+									?>
+									<a href="<?php echo $filaCont['contrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank">Ver Contrato</a>
+									<?php
+								}else if($filaCont['IdClase']==1){
+									?>
+									<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" >Ver Contrato</a> 
+									<?php
+								}else if($filaCont['IdClase']==2){
+									?>
+									<a href="contratolab-pdf.php?contrato=<?php echo $filaCont['IdContrato']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" >Ver Contrato<br>borrador de<br>word</a> 
+									<?php
+								}
+								if($filaCont['anexo']){
+									?>
+									<a href="<?php echo $filaCont['anexo']?>" class="btn btn-rosa btn-xs1 btn-block"  target="_blank" style="margin-top:4px">Ver Terminos<br>de referencia</a>
+									<?php
+								}
+							}else{
+								if($filaCont['contrato']){
+									?>
+									<button class="btn btn-rosa btn-xs1 btn-block" onClick="solicitar(<?php echo $filaCont['IdContrato']?>,<?php echo $usuario?>)">Solicitar</button>
+									<?php
+								}
 							}
 							?>
 						</td>
