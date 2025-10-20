@@ -5,7 +5,7 @@
  $mail->Host = "smtp.gmail.com";
 
  $mail->Username = "notificacionescpaingenieria@gmail.com";
- $mail->Password = "aoclgikfeqjklfgk"; 
+ $mail->Password = "hblecmezphhjwpvb"; 
 
  $mail->From = "notificacionescpaingenieria@gmail.com";
 
