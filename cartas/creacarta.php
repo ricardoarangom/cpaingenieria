@@ -9,6 +9,17 @@ $buscaCartas = "SELECT
 $resultadoCartas = mysql_query($buscaCartas, $datos) or die(mysql_error());
 $filaCartas = mysql_fetch_assoc($resultadoCartas);
 $totalfilas_buscaCartas = mysql_num_rows($resultadoCartas);
+
+$buscaUsu = " SELECT 
+                  nombre, apellido, IdUsuario
+              FROM
+                  usuarios 
+                  WHERE
+                  nivel <> 0
+              ORDER BY nombre , apellido";
+$resultadoUsu = mysql_query($buscaUsu, $datos) or die(mysql_error());
+$filaUsu = mysql_fetch_assoc($resultadoUsu);
+$totalfilas_buscaUsu = mysql_num_rows($resultadoUsu);
 ?>
 <?php 
 include('encabezado.php')
@@ -318,8 +329,20 @@ include('encabezado1.php')
     </div>  
     <br><br>
     Agradecemos su atención.
-    <div>
-      <button type="button" class="btn btn-verde btn-xs" onClick="muestraFirmas()">Seleccione la firma</button>
+    <div style="max-width:300px">
+      <!-- <button type="button" class="btn btn-verde btn-xs" onClick="muestraFirmas()">Seleccione la firma</button> -->
+       Solicitar Autorización de firma a:
+       <select name="IdAutorfirma" id="IdAutorfirma" class="campo-xs Arial12" required>
+        <option value="">Seleccione</option>
+        <?php 
+        do{
+          ?>
+          <option value="<?php echo $filaUsu['IdUsuario'] ?>"><?php echo $filaUsu['nombre']." ".$filaUsu['apellido'] ?></option>
+          <?php
+        } while ($filaUsu = mysql_fetch_assoc($resultadoUsu));
+        ?>
+
+       </select>
     </div>
     <div id="firma" style="padding:5px"><br><br><br><br><br></div>    
     <input type="hidden" name="IdFirma" id="IdFirma">

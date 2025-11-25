@@ -94,4 +94,32 @@ if(($_POST['proced']==4)){
 		echo "ok";
 	}
 }
+
+if(($_POST['proced']==5)){
+
+  // echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
+
+  // echo "<pre>";
+  // print_r($_FILES);
+  // echo "</pre>";  
+
+  $busca = " select carta, consAno, ano from cartas where IdCarta=".$_POST['id'];
+  $resultado = mysql_query($busca, $datos) or die(mysql_error());
+  $fila = mysql_fetch_assoc($resultado);
+  $totalfilas_busca = mysql_num_rows($resultado);
+
+  unlink($fila['carta']);
+
+  $ruta='cartas/CPA-'.sprintf("%03d",$fila['consAno'])."-".$fila['ano'].".pdf";
+
+  move_uploaded_file($_FILES['carta']['tmp_name'],$ruta);
+
+  $actualiza="UPDATE cartas set firmaAut=1, carta='".$ruta."'  where IdCarta=" . $_POST['id'];
+
+  if ($results=@mysql_query($actualiza)){
+		echo "ok";
+	}
+}
 ?>

@@ -53,8 +53,8 @@ if(isset($_POST['boton1'])){
   }
 
   
-  $insertaCarta="INSERT INTO cartas (destinatario1, destinatario2, destinatario3, destinatario4, destinatario5, asunto, fecha, IdUsuario, firmante, cargo, IdFirma, email, ano, consAno, consello) 
-                 VALUES('".$_POST['destinatario1']."','".$_POST['destinatario2']."','".$_POST['destinatario3']."','".$_POST['destinatario4']."','".$_POST['destinatario5']."','".$_POST['asunto']."','".date("Y-m-d")."',".$usuario.",'".$_POST['firmante']."','".$_POST['cargo']."', ".$IdFirma.", '".$_POST['email']."', ".$ano.", ".($filaCartas['ultimo']+1).", ".$_POST['consello'].")";
+  $insertaCarta="INSERT INTO cartas (destinatario1, destinatario2, destinatario3, destinatario4, destinatario5, asunto, fecha, IdUsuario, firmante, cargo, IdFirma, email, ano, consAno, consello, IdAutorfirma) 
+                 VALUES('".$_POST['destinatario1']."','".$_POST['destinatario2']."','".$_POST['destinatario3']."','".$_POST['destinatario4']."','".$_POST['destinatario5']."','".$_POST['asunto']."','".date("Y-m-d")."',".$usuario.",'".$_POST['firmante']."','".$_POST['cargo']."', ".$IdFirma.", '".$_POST['email']."', ".$ano.", ".($filaCartas['ultimo']+1).", ".$_POST['consello']." , ".$_POST['IdAutorfirma'].")";
   // echo $insertaCarta."<br>";
 
   // exit();
@@ -118,8 +118,13 @@ if(isset($_POST['boton2'])){
                       IdCarta = ".$_POST['IdCarta'];
   $resultadoCarta = mysql_query($buscaCarta, $datos) or die(mysql_error());
   $filaCarta = mysql_fetch_assoc($resultadoCarta);
-  
-  $cartaName='cartas/CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'].".pdf";
+
+
+  $arrayCarta=explode(".",$_FILES['carta']['name']);
+
+  $cartaName='cartas/CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'].".".$arrayCarta[1];
+
+  $cartaName;
 
   move_uploaded_file($_FILES['carta']['tmp_name'],$cartaName);
 
@@ -173,7 +178,7 @@ if(isset($_POST['boton2'])){
     }
   }
 
-  
+  // exit();
   if($grabado==1){
     $mensaje='<div>LA CARTA FUE GRABADA CON EXITO</div><div></div>';
     ?>
@@ -187,6 +192,7 @@ if(isset($_POST['boton2'])){
             if (result.value) {              
               // window.open("carta-pdf.php?carta=<?php echo $_POST['IdCarta'] ?>", "_blank");
               window.open("carta-word.php?carta=<?php echo $_POST['IdCarta'] ?>", "_blank");
+              window.open("solautfirma.php?carta=<?php echo $_POST['IdCarta'] ?>", "_blank");
               window.close()
             }
           });

@@ -530,7 +530,7 @@ if(isset($_POST['boton'])){
 						<td align="center"><?php echo $filaCont['ffin'] ? fechaactual3($filaCont['ffin']) : ""?></td>
 						<td>
 							<?php 
-							if($nivel<=1){
+							if(($nivel<=1 or $usuario==16 or $usuario==45) and $usuario<>23){
 								if(!$filaCont['contrato']){
 									?>
 									<button class="btn btn-verde btn-xs1 btn-block" onClick="subeRadicado(<?php echo $filaCont['IdContrato']?>,'<?php echo $consec?>')" >Subir contrato<br>firmado</button>

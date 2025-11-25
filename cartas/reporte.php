@@ -109,7 +109,8 @@ $buscaCartas = "SELECT
 									ano,
 									consAno,
 									anulada,
-									carta				
+									carta,
+									firmaAut			
 							FROM
 									(cartas
 									LEFT JOIN usuarios ON cartas.IdUsuario = usuarios.IdUsuario)".$buscador1." ".$buscador."";
@@ -159,6 +160,10 @@ if($totalfilas_buscaCartas>0){
 		$tablacartas[$filaCartas['IdCarta']]['anulada']=$filaCartas['anulada'];
 		$tablacartas[$filaCartas['IdCarta']]['carta']=$filaCartas['carta'];
 
+		$tablacartas[$filaCartas['IdCarta']]['firmaAut']=$filaCartas['firmaAut'];
+
+		
+
 	} while ($filaCartas = mysql_fetch_assoc($resultadoCartas));
 }
 
@@ -191,7 +196,7 @@ do{
     	prueba();
     } 
   });
-
+ 
 	function prueba(){
         
     var creador ="<?php 
@@ -721,14 +726,19 @@ if(isset($_POST['boton'])){
 									
 									<?php 
 									if($j['enviada']==0 and $j['anulada']==0){
-										?>
-										<a href="editaCarta.php?carta=<?php echo $key?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Editar carta</a>
-										<?php
-										if($j['email']){
+										if($j['firmaAut']==0){
 											?>
-											<a href="enviaCarta.php?carta=<?php echo $key?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Enviar carta</a>
+											<a href="editaCarta.php?carta=<?php echo $key?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Editar carta</a>
 											<?php
 										}
+										if($j['firmaAut']==1){
+											if($j['email']){
+												?>
+												<a href="enviaCarta.php?carta=<?php echo $key?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Enviar carta</a>
+												<?php
+											}
+										}
+										
 									}
 									if($j['enviada']==1 and !$j['radicado'] and $j['anulada']==0){
 										?>

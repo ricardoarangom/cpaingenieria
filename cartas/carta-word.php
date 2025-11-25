@@ -197,7 +197,7 @@ $textRun2->addText($filaCarta['asunto'], ['bold' => true]);
 
 $seccion->addTextBreak(1);
 $seccion->addText( 
-  'PEQUE ACA EL CONTENIDO DEL COMUNICADO',
+  'PEGUE ACA EL CONTENIDO DEL COMUNICADO',
   'rojoStyle'
 );
 $seccion->addTextBreak(1);

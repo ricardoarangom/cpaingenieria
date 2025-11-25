@@ -188,6 +188,22 @@ include('encabezado.php')
     }
   }
 
+  function validarArchivo2(archivo,item){
+    console.log((archivo[0]["type"]))
+          
+    if((archivo[0]["size"] > 1000000) || (archivo[0]["type"]!="application/vnd.openxmlformats-officedocument.wordprocessingml.document") ){
+          
+      $("#"+item).val("");
+      
+      swal({
+          title: "Error al subir el archivo",
+          text: "¡El archivo no debe pesar más de 1MB y ser en formato docx!",
+          type: "error",
+          confirmButtonText: "¡Cerrar!"
+        });
+    }
+  }
+
   function bloquear(id){
     document.getElementById(id).style.display='none'
     $(".espera").html(`
@@ -406,7 +422,7 @@ include('encabezado1.php')
     <br><br>
     Agradecemos su atención.
     <div>
-      <button type="button" class="btn btn-verde btn-xs" onClick="muestraFirmas()">Seleccione la firma</button>
+      <!-- <button type="button" class="btn btn-verde btn-xs" onClick="muestraFirmas()">Seleccione la firma</button> -->
     </div>
     <div id="firma" style="padding:5px">
       <img src="<?php echo $filaCarta['firma'] ?>" width="220">
@@ -478,8 +494,8 @@ include('encabezado1.php')
     <br>
     <br>
     <div style="width:300px">
-      Subir carta:
-      <input type="file" name="carta"  id="carta" class="campo-xs Arial12" onChange="validarArchivo(this.files,this.id)">
+      Subir carta (En Word):
+      <input type="file" name="carta"  id="carta" class="campo-xs Arial12" onChange="validarArchivo2(this.files,this.id)">
     </div>
     <div align="center">
       <button type="submit" class="btn btn-rosa btn-sm" name="boton2" id="boton" >Gabar</button>

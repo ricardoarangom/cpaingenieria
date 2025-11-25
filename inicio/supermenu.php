@@ -258,6 +258,9 @@
     <li class="submenu" id="sm-6-2">
 		  <a class="a-sec" href="../cartas/reporte.php">REPORTE</a>
 		</li>
+		<li class="submenu" id="sm-6-5">
+		  <a class="a-sec" href="../cartas/autofirma.php">AUTORIZAR FIRMAS</a>
+		</li>
 		<li class="submenu" id="sm-6-3">
 		  <a class="a-sec" href="../cartas/subircor.php">RADICAR CR</a>
 		</li>
@@ -299,7 +302,7 @@
 				<a class="a-sec" href="../contratos/cargos.php">CARGOS</a>
 			</li>
 			<?php 
-			if($nivel<=1){
+			if($nivel<=1 or $usuario==16 or $usuario==45){
 				?>
 				<li class="submenu" id="sm-7-5">
 					<a class="a-sec" href="../contratos/autorizaciones.php">AUTORIZACIONES</a>
