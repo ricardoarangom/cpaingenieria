@@ -1,7 +1,11 @@
-<?php
+<?php 
 require_once('../connections/datos.php');
 require_once '../phpword/src/PhpWord/Autoloader.php';
 
+set_time_limit(0);
+require_once('../funciones.php');
+?>
+<?php
 session_start();
 $usuario=$_SESSION['IdUsuario'];
 
@@ -11,8 +15,6 @@ if($_GET['carta']){
   $IdCarta=1;
 }
 
-// echo $IdCarta;
-// exit();
 
 $buscaCarta = "SELECT 
                     IdCarta,
@@ -41,6 +43,15 @@ $resultadoCarta = mysql_query($buscaCarta, $datos) or die(mysql_error());
 $filaCarta = mysql_fetch_assoc($resultadoCarta);
 $totalfilas_buscaCarta = mysql_num_rows($resultadoCarta);
 
+$buscaParrafos = "SELECT 
+                      IdParrafo, IdCarta, parrafo, titulo
+                  FROM
+                      parrafoscartas
+                  WHERE
+                      IdCarta = ".$IdCarta."  ";
+$resultadoParrafos = mysql_query($buscaParrafos, $datos) or die(mysql_error());
+$filaParrafos = mysql_fetch_assoc($resultadoParrafos);
+$totalfilas_buscaParrafos = mysql_num_rows($resultadoParrafos);
 
 $buscaAnexos = "SELECT 
                     nombre,
@@ -53,110 +64,55 @@ $resultadoAnexos = mysql_query($buscaAnexos, $datos) or die(mysql_error());
 $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
 $totalfilas_buscaAnexos = mysql_num_rows($resultadoAnexos);
 
-function fechaactual6($fecha){
-switch (date("n",strtotime($fecha))){
-	case 1:
-	 $mes="Enero";
-	 break;
-	case 2:
-	 $mes="Febrero";
-	 break;
-	case 3:
-	 $mes="Marzo";
-	 break;
-	case 4:
-	 $mes="Abril";
-	 break;
-	case 5:
-	 $mes="Mayo";
-	 break;
-	case 6:
-	 $mes="Junio";
-	 break;
-	case 7:
-	 $mes="Julio";
-	 break;
-	case 8:
-	 $mes="Agosto";
-	 break;
-	case 9:
-	 $mes="Septiembre";
-	 break;
-	case 10:
-	 $mes="Octubre";
-	 break;
-	case 11:
-	 $mes="Noviembre";
-	 break;
-	case 12:
-	 $mes="Diciembre";
-	break;
-}
-
-
-$linea=date("d",strtotime($fecha)) . " de " . $mes . " de " . date("Y",strtotime($fecha));
-return $linea;	
-	
-}
-
-
-
-// \PhpOffice\PhpWord\Autoloader::register();
-
-// use PhpOffice\PhpWord\PhpWord;
-// use PhpOffice\PhpWord\Style\Font;
-// use PhpOffice\PhpWord\SimpleType\Jc;
-// use PhpOffice\PhpWord\Shared\Converter;
-// use PhpOffice\PhpWord\Style\Tab;
-// use PhpOffice\PhpWord\Settings;
 
 \PhpOffice\PhpWord\Autoloader::register();
 
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Style\Font;
+use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpWord\Shared\Converter;
-use PhpOffice\PhpWord\IOFactory;
-
 use PhpOffice\PhpWord\Style\Tab;
+use PhpOffice\PhpWord\Settings;
 
-// Crear nuevo documento
 $documento = new PhpWord();
 
-$documento->addParagraphStyle('NoSpaceAfter', [
-    'spaceAfter' => 0,          // Espaciado posterior a 0 twips
-    'spaceBefore' => 0,         // Opcional: también puedes poner el espacio anterior a 0
-    'lineHeight' => 1.0       // Opcional: altura de línea estándar
-    
-]);
-
-// Configurar sección con márgenes
 $seccion = $documento->addSection([
-    'headerHeight' => Converter::cmToTwip(0.8),
-    'footerHeight' => Converter::cmToTwip(0.5),
-    'marginTop'    => Converter::cmToTwip(2.5),
-    'marginBottom' => Converter::cmToTwip(2.5),
-    'marginLeft'   => Converter::cmToTwip(2.5),
-    'marginRight'  => Converter::cmToTwip(2.5)
+    'headerHeight' => Converter::cmToTwip(0.8),  // 1 cm desde el borde superior al encabezado
+    'footerHeight' => Converter::cmToTwip(0.5), // 1.2 cm desde el borde inferior al pie de página
+    'marginTop'    => Converter::cmToTwip(2.5), // Margen superior del contenido principal
+    'marginBottom' => Converter::cmToTwip(2.5), // Margen inferior del contenido principal
+    'marginLeft'   => Converter::cmToTwip(2.5),   // Margen izquierdo del contenido principal
+    'marginRight'  => Converter::cmToTwip(2.5)    // Margen derecho del contenido principal
 ]);
 
+// $seccion = $documento->addSection();
 
-// Agregar encabezado y pie de página si existen las imágenes
 $header = $seccion->addHeader();
-if (file_exists('../imagenes/encabezado.png')) {
-    $header->addImage('../imagenes/encabezado.png', ['width' => 600, 'height' => 100, 'alignment' => 'center']);
-}
+$header->addImage('../imagenes/encabezado.png', ['width' => 600, 'height' => 100]);
 
 $footer = $seccion->addFooter();
-if (file_exists('../imagenes/pie.png')) {
-    $footer->addImage('../imagenes/pie.png', ['width' => 600, 'height' => 50, 'alignment' => 'center']);
-}
+$footer->addImage('../imagenes/pie.png', ['width' => 600, 'height' => 50]);
 
+$fuente = new Font();
+$fuente->setBold(true);
+$fuente->setName('Arial');
+$fuente->setSize(10);
 
-// Estilos de fuente
-$estiloTitulo = ['bold' => true, 'size' => 11, 'name' => 'Arial', 'smallCaps' => true];
-$estiloNormal = ['size' => 11, 'name' => 'Arial'];
-$estiloNegrita = ['bold' => true, 'size' => 11, 'name' => 'Arial'];
-$estiloResaltado = ['size' => 11, 'name' => 'Arial'];
-$estilorojoNegrita = ['color' => 'FF0000', 'bold' => true, 'size' => 12];
+$documento->addFontStyle(
+    'rojoStyle', // Nombre del estilo de fuente
+    ['color' => 'FF0000', 'bold' => true, 'size' => 12] // Propiedades: color rojo (hex), negrita, tamaño
+);
+
+$documento->addParagraphStyle('MiEstiloConTabulacionesAntiguo', [
+    'tabs' => [
+        // Tabulación izquierda a 2 cm
+        ['position' => Converter::cmToTwip(2), 'type' => 'left'], // O quizás 0 para LEFT
+        // Tabulación central a 8 cm
+        ['position' => Converter::cmToTwip(10), 'type' => 'center'], // O quizás 1 para CENTER
+        // Tabulación derecha a 14 cm
+        ['position' => Converter::cmToTwip(14), 'type' => 'right'] // O quizás 2 para RIGHT
+    ]
+]);
 
 $documento->addParagraphStyle('tabSecillo', [
     'tabs' => [
@@ -175,8 +131,20 @@ $documento->addParagraphStyle('indentado', [
         'firstLine' => -1200,
     ]
 ]);
+$documento->addParagraphStyle('NoSpaceAfter', [
+    'spaceAfter' => 0,          // Espaciado posterior a 0 twips
+    'spaceBefore' => 0,         // Opcional: también puedes poner el espacio anterior a 0
+    'lineHeight' => 1.0       // Opcional: altura de línea estándar
+    
+]);
 
-// Fecha de la carta
+$documento->addParagraphStyle('medioEspacio', [
+    'spaceAfter' => 0.5,          // Espaciado posterior a 0 twips
+    'spaceBefore' => 0,         // Opcional: también puedes poner el espacio anterior a 0
+    'lineHeight' => 1.0       // Opcional: altura de línea estándar
+    
+]);
+
 
 $seccion->addTextBreak(0.5);
 
@@ -185,9 +153,8 @@ $textRun1->addText('Bogotá D.C., '.fechaactual6($filaCarta['fecha']));
 $textRun1->addText("\t");
 $textRun1->addText('CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'], ['bold' => true,]);
 
-$seccion->addTextBreak(1);
 
-// Destinatario
+$seccion->addTextBreak(1);
 
 $seccion->addText( 
  		'Señores',
@@ -227,10 +194,12 @@ $textRun2 = $seccion->addTextRun('indentado');
 $textRun2->addText('Referencia:   ');
 $textRun2->addText($filaCarta['asunto'], ['bold' => true]);
 
+
 $seccion->addTextBreak(1);
-
-$seccion->addText("PEGUE ACA EL CONTENIDO DEL COMUNICADO", $estilorojoNegrita);
-
+$seccion->addText( 
+  'PEGUE ACA EL CONTENIDO DEL COMUNICADO',
+  'rojoStyle'
+);
 $seccion->addTextBreak(1);
 
 $seccion->addText( 
@@ -305,19 +274,14 @@ if($totalfilas_buscaAnexos>0){
 
 $seccion->addTextBreak(1);
 
+//Guardando documento
+$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($documento, 'Word2007');
+$archivo='CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'].'.docx';
+$objWriter->save($archivo);
 
-
-
-$nombreArchivo = 'CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'].'.docx';;
-
-header("Content-Description: File Transfer");
-header('Content-Disposition: attachment; filename="' . $nombreArchivo . '"');
-header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-header('Content-Transfer-Encoding: binary');
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Expires: 0');
-
-$objWriter = IOFactory::createWriter($documento, 'Word2007');
-$objWriter->save('php://output');
-exit();
+header("Content-Disposition: attachment; filename=$archivo");
+echo file_get_contents($archivo);
+unlink($archivo);
+?>
+<?php 
 
