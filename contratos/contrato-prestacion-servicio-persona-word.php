@@ -112,11 +112,6 @@ if (file_exists('../imagenes/encabezado.png')) {
     $header->addImage('../imagenes/encabezado.png', ['width' => 600, 'height' => 100, 'alignment' => 'center']);
 }
 
-$footer = $seccion->addFooter();
-if (file_exists('../imagenes/pie.png')) {
-    $footer->addImage('../imagenes/pie.png', ['width' => 600, 'height' => 50, 'alignment' => 'center']);
-}
-
 // Estilos de fuente
 $estiloTitulo = ['bold' => true, 'size' => 11, 'name' => 'Arial', 'smallCaps' => true];
 $estiloNormal = ['size' => 11, 'name' => 'Arial'];

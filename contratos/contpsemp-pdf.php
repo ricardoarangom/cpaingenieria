@@ -174,8 +174,7 @@ class PDF extends PDF_WriteTag {
   {
     // global $ancho;    
     // $this->SetY(-17);
-    // $this->Image('../imagenes/banner.png',28,260,160);
-    
+        
     
   }
 }

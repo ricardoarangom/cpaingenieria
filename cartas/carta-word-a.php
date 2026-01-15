@@ -90,8 +90,7 @@ $seccion = $documento->addSection([
 $header = $seccion->addHeader();
 $header->addImage('../imagenes/encabezado.png', ['width' => 600, 'height' => 100]);
 
-$footer = $seccion->addFooter();
-$footer->addImage('../imagenes/pie.png', ['width' => 600, 'height' => 50]);
+
 
 $fuente = new Font();
 $fuente->setBold(true);

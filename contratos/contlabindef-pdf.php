@@ -292,8 +292,7 @@ class PDF extends PDF_WriteTag {
   { 
 
     $this->SetY(-22);
-    $this->Image('../imagenes/banner.png',26,262,160);
-
+    
     $this->SetX(18);
 
     $pagina='Página '.$this->PageNo().' de {nb}';

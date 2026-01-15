@@ -294,7 +294,6 @@ class PDF extends PDF_WriteTag {
 
     // $this->SetY(-14);
     $this->SetY(-21);
-    $this->Image('../imagenes/banner.png',27,261,160);
 
     $pagina='Página '.$this->PageNo().' de {nb}';
     $this->SetFont('Arial','',7);
