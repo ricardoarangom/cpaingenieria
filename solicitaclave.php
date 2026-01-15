@@ -87,9 +87,6 @@ if($totalRows_resultado>0){
 							<br>
 							CPA INGENIERIA S.A.S
 							</p>
-							<div align="center">
-              <img style="width:500px" src="imagenes/banner.png">
-              </div>
               <hr style="border:1px solid #ccc; width:100%">
 						</div>
 
@@ -118,7 +115,7 @@ if(!$mail->Send()) {
         confirmButtonText: "¡Cerrar!"
         }).then(function(result){
           if (result.value) {
-            // window.open('index.php');
+            window.open('index.php');
           }
         });
 
