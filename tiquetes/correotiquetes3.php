@@ -169,9 +169,6 @@ $body=('
         <p style="padding:0 20px;font-size:14px">Cordialmente,
 				<br>
 				'.$row_resultado['empresa'].'</p>
-				<div align="center">
-        <img style="width:500px" src="../imagenes/banner.png">
-        </div>
 				<hr style="border:1px solid #ccc; width:100%;margin-bottom: 3px;margin-top: 3px;">
       </div>
     </div>');

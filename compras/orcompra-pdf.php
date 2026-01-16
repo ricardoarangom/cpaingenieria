@@ -394,10 +394,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
               <p style="padding:0 20px" class="Arial16">Cordialmente,
 							<br>
 							'.$row_Recordset1['empresa'].'</p>              
-							<div align="center">
-                <img style="width:500px" src="../imagenes/banner.png">
-              </div>							
-              <br>
+							<br>
               
               
               <br>

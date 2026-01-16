@@ -135,10 +135,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
 							<br>
 							CPA INGENIERIA S.A.S
 							</p>
-							<div align="center">
-              <img style="width:500px" src="../imagenes/banner.png">
-              </div>
-              <hr style="border:1px solid #ccc; width:100%">
+							<hr style="border:1px solid #ccc; width:100%">
 						</div>
 
 					</div>';  
