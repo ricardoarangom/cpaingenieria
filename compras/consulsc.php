@@ -81,10 +81,10 @@ include('encabezado1.php');
       <div class="row" >
         <div class="col-3">
           PROYECTO/AREA 
-          </div>
+        </div>
         <div class="col-6">
           <strong><?php echo $row_Recordset1['area'] ?></strong>  
-          </div>
+        </div>
         <div class="col-1"><strong>SC No</strong></div>
         <div class="col-2"><strong><?php echo $row_Recordset1['IdOrdencompra'] ?></strong></div>
         </div>
@@ -92,22 +92,22 @@ include('encabezado1.php');
       <div class="row">
         <div class="col-3">
           FECHA DE SOLICITUD 
-          </div>
+        </div>
         <div class="col-3">
           <strong><?php echo fechaactual3($row_Recordset1['fsolicitud']) ?></strong>
-          </div>
         </div>
+      </div>
       <br>
       <div class="row">
         <div class="col-3">
           SOLICITANTE
-         </div>
-        	<div class="col-5">
-          	<strong><?php echo $row_Recordset1['solicitante'] ?></strong>
-          </div>
-					<div class="col-4">
+        </div>
+        <div class="col-5">
+          <strong><?php echo $row_Recordset1['solicitante'] ?></strong>
+        </div>
+        <div class="col-4">
 						CRITICO <?php echo ($row_Recordset1['critico']==1) ? "<strong>SI</strong>" : "<strong>NO</strong>"?>					
-					</div>
+        </div>
 			</div>
 				
       </div>
@@ -171,8 +171,9 @@ include('encabezado1.php');
     <input type="hidden" name="area" value="<?php echo $row_Recordset1['IdArea']  ?>" />
     <div class="container" align="center">
       <button type="button" name="boton" class="btn btn-rosa btn-sm" onclick="window.close()">Cerrar pestaña</button>
-      </div>  
+      <a href="scompra-pdf.php?oc=<?php echo $_GET['oc']; ?>" target="_blank" class="btn btn-rosa btn-sm">Generar PDF</a>
     </div>  
+  </div>  
 </form> 
 <br>
 </div>

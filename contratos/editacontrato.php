@@ -328,7 +328,7 @@ include('encabezado.php');
 
   function llenar(id, nombre, item, documento) {
 		$('#cambiaContratista').modal('hide');
-		// console.log(id, nombre, item,documento)
+		console.log(id, nombre, item,documento)
 		var item1 = "'" + item + "'"
 		$('#tdprov-' + item).html(
 			'<div style="width: 320px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor:pointer" onClick="cambiaContratista(' + item1 + ')">' + nombre + '</div>' +
@@ -582,6 +582,276 @@ include('encabezado.php');
 				
 
 
+	}
+
+	function modal(item, id) {
+		const miDiv = document.getElementById('ch-' + item);
+		const miDiv1 = document.getElementById('chn-' + item);
+		if (miDiv) {
+			document.getElementById('ch-' + item).style.display = 'none';
+		}
+		if (miDiv1) {
+			document.getElementById('chn-' + item).style.display = 'none';
+		}
+		document.getElementById('itemp').value = item;
+		$('#cambiaContratista').modal('hide');
+		$('#creacargo').modal({
+			backdrop: 'static',
+			keyboard: false
+		});
+
+	}
+
+	function graba() {
+		var proveedor = document.getElementById('proveedor').value;
+		var item = document.getElementById('itemp').value;
+		var nit = document.getElementById('nit').value;
+
+		var IdClasedoc = document.getElementById('IdClasedoc').value;
+		var fconstitucion = document.getElementById('fconstitucion').value;
+		var depton = document.getElementById('depton').value;
+		var municipion = document.getElementById('municipion').value;
+		var direccion = document.getElementById('direccion').value;
+		var telefono = document.getElementById('telefono').value;
+		var depto = document.getElementById('depto').value;
+		var municipio = document.getElementById('municipio').value;
+		var email = document.getElementById('email').value;
+
+		var replegal = document.getElementById('replegal').value;
+		var IdClasedocrep = document.getElementById('IdClasedocrep').value;
+		var docrep = document.getElementById('docrep').value;
+		var municipioe = document.getElementById('municipioe').value;
+
+		if (proveedor == "") {
+			document.getElementById('proveedor').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL PROVEEDOR!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (IdClasedoc == "") {
+			document.getElementById('IdClasedoc').focus();
+			swal({
+				text: "¡DEBE SELECCIONAR LA CLASE DE DOCUMENTO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (nit == "") {
+			document.getElementById('nit').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL NIT!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (fconstitucion == "") {
+			document.getElementById('fconstitucion').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR LA FECHA DE COSNTITUCION O DE NACIMIENTO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (depton == "") {
+			document.getElementById('depton').focus();
+			swal({
+				text: "¡DEBE SELECCIONAR EL DEPARTAMENTO DE CONSTITUCION O DE NACIMIENTO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+
+		if (municipion == "") {
+			document.getElementById('municipion').focus();
+			swal({
+				text: "¡DEBE SELECCIONAR EL MUNICIPIO DE CONSTITUCION O DE NACIMIENTO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (direccion == "") {
+			document.getElementById('direccion').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR LA DIRECCION!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (telefono == "") {
+			document.getElementById('telefono').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL TELEFONO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (email == "") {
+			document.getElementById('email').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL EMAIL!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (depto == "") {
+			document.getElementById('depto').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL DEPARTAMENTO DEL DOMICILIO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (municipio == "") {
+			document.getElementById('municipio').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL MUNICIPIO DEL DOMICILIO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		var datos = new FormData();
+		datos.append("proveedor", proveedor);
+		datos.append("nit", nit);
+		datos.append("IdClasedoc", IdClasedoc);
+		datos.append("fconstitucion", fconstitucion);
+		datos.append("depton", depton);
+		datos.append("municipion", municipion);
+		datos.append("direccion", direccion);
+		datos.append("telefono", telefono);
+		datos.append("depto", depto);
+		datos.append("municipio", municipio);
+		datos.append("email", email);
+
+		datos.append("replegal", replegal);
+		datos.append("IdClasedocrep", IdClasedocrep);
+		datos.append("docrep", docrep);
+		datos.append("municipioe", municipioe);
+
+		datos.append("proced", 5);
+
+		$.ajax({
+			url: "ajax.php",
+			method: "POST",
+			data: datos,
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: function(respuesta) {
+				document.getElementById('formulario').reset();
+				$("#creacargo").modal('hide');
+				respuesta = respuesta.replace(/(\r\n|\n|\r)/gm, "");
+				console.log(respuesta);
+				var matriz = respuesta.split(",");
+				if (matriz[0] == "ok") {
+					swal({
+						text: "¡EL CONTRATISTA FUE CREADO!",
+						type: "success",
+						confirmButtonText: "¡Cerrar!"
+					});
+					llenar(matriz[1], matriz[2], item, matriz[3], matriz[4], matriz[5]);
+
+				}
+				if (matriz[0] == "ya") {
+					swal({
+
+						html: '<div class="Arial16">EL DOCUMENTO DIGITADO YA ESTA EN LA BASE DE DATOS Y CORRESPONDE A:</div><div class="Arial16" style="font-weight: bold">' + matriz[2] + '</div><div class="Arial16">¿DESEA ASIGNARLO?</div>',
+						type: "warning",
+						showCancelButton: true,
+						confirmButtonColor: '#28a745',
+						cancelButtonColor: '#d33',
+						confirmButtonText: "¡Si!",
+						cancelButtonText: "¡No!",
+					}).then((result) => {
+						if (result.value) {
+							llenar(matriz[1], matriz[2], item, matriz[3], matriz[4], matriz[5]);
+						} 
+
+						
+					});
+
+				}
+			}
+		});
+
+	}
+
+	function buscamun(IdDepartamento, id) {
+		var datos = new FormData();
+		datos.append("IdDepartamento", IdDepartamento);
+		datos.append("proced", 4);
+
+		$.ajax({
+			url: "ajax.php",
+			method: "POST",
+			data: datos,
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: function(respuesta) {
+				var res = respuesta.trim();
+				var arregloTabla = JSON.parse(respuesta);
+				if (id == "depto") {
+					var fila = '<select name="municipio" id="municipio" class="campo-xs Arial12" required="required" >' +
+						'<option value="">Seleccione</option>';
+				}
+				if (id == "depton") {
+					var fila = '<select name="municipion" id="municipion" class="campo-xs Arial12" required="required" >' +
+						'<option value="">Seleccione</option>';
+				}
+				if (id == "deptoe") {
+					var fila = '<select name="municipioe" id="municipioe" class="campo-xs Arial12">' +
+						'<option value="">Seleccione</option>';
+				}
+				if (id == "deptol") {
+					var fila = '<select name="lugar" id="lugar" class="campo-sm Arial12" required="required">' +
+						'<option value="">Seleccione</option>';
+				}
+
+
+
+				Object.keys(arregloTabla).forEach(key => {
+					// console.log(key,arregloTabla[key] )
+					fila = fila + '<option value="' + key + '">' + arregloTabla[key] + '</option>'
+				});
+				fila = fila + '</select>';
+				if (id == "depto") {
+					$('#midiv2').html(fila);
+				}
+				if (id == "depton") {
+					$('#midiv1').html(fila);
+				}
+				if (id == "deptoe") {
+					$('#midiv0').html(fila);
+				}
+				if (id == "deptol") {
+					$('#midiv4').html(fila);
+				}
+			}
+		});
 	}
 </script>
 <style>
@@ -1014,6 +1284,182 @@ include('encabezado1.php');
 			</div>
 			<div class="modal-body Arial12" id="divCambContratista">
 			</div>
+		</div>
+	</div>
+</div>
+
+<div id="creacargo" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form method="post" id="formulario" name="formulario" action="">
+				<div class="modal-header" style="background:#d8d8d8; color:black">
+					<h5 class="modal-title">Ingrese el nuevo contratista</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="grid columna-6 Arial12">
+						<div class="span-3">
+							<br><br>
+							Contratista:
+							<input type="text" name="proveedor" id="proveedor" class="campo-xs Arial12" required="required" value="" onBlur="aMayusculas(this.value,this.id)">
+							<input type="hidden" id="itemp">
+						</div>
+						<div class="span-1">
+							<br><br>
+							Clase documento:
+							<select name="IdClasedoc" id="IdClasedoc" class="campo-xs Arial12" required="required">
+								<option value="">Seleccione</option>
+								<?php
+								do {
+								?>
+									<option value="<?php echo $filaCDoc['IdClasedoc'] ?>"><?php echo $filaCDoc['nombre'] ?></option>
+								<?php
+								} while ($filaCDoc = mysql_fetch_assoc($resultadoCDoc));
+								$rows = mysql_num_rows($resultadoCDoc);
+								if($rows > 0) {
+										mysql_data_seek($resultadoCDoc, 0);
+									$filaCDoc = mysql_fetch_assoc($resultadoCDoc);
+								}
+								?>
+							</select>
+						</div>
+						<div class="span-1">
+							No. Documento: (sin puntos ni comas, ni digito de verificación)
+							<input type="number" name="nit" id="nit" class="campo-xs Arial12" required="required" value="">
+						</div>
+						<div class="span-1">
+							<br>
+							Departamento (expedición):
+							<select name="deptoe" id="deptoe" class="campo-xs Arial12" onChange="buscamun(this.value,this.id)">
+								<option value="">Seleccione</option>
+								<?php
+								do {  
+									?>
+									<option value="<?php echo $filaDepto['IdDepartamento']?>"><?php echo $filaDepto['departamentos']?></option>
+									<?php
+								} while ($filaDepto = mysql_fetch_assoc($resultadoDepto));
+								$rows = mysql_num_rows($resultadoDepto);
+								if($rows > 0) {
+									mysql_data_seek($resultadoDepto, 0);
+									$filaDepto = mysql_fetch_assoc($resultadoDepto);
+								}
+								?>
+							</select>
+						</div>
+						<div class="span-1">
+							<br>
+							Municipio (expedición)
+							<div id='midiv0'>
+								<select name="municipioe" id="municipioe"  class="campo-xs Arial12" >	
+									<option value="">Seleccione</option>
+								</select>
+							</div>
+						</div>
+						<div class="span-1">
+							F. de constitución o de nacimiento:
+							<input type="date" name="fconstitucion" id="fconstitucion" class="campo-xs Arial12" required="required">
+						</div>
+						<div class="span-1">
+							Departamento (Origen)
+							<select name="depton" id="depton" class="campo-xs Arial12" onChange="buscamun(this.value,this.id)">
+								<option value="">Seleccione</option>
+								<?php
+								do {
+								?>
+									<option value="<?php echo $filaDepto['IdDepartamento'] ?>"><?php echo $filaDepto['departamentos'] ?></option>
+								<?php
+								} while ($filaDepto = mysql_fetch_assoc($resultadoDepto));
+								$rows = mysql_num_rows($resultadoDepto);
+								if ($rows > 0) {
+									mysql_data_seek($resultadoDepto, 0);
+									$filaDepto = mysql_fetch_assoc($resultadoDepto);
+								}
+								?>
+							</select>
+						</div>
+						<div class="span-1">
+							<br>
+							Municipio (Origen):
+							<div id='midiv1'>
+								<select name="municipion" id="municipion" class="campo-xs Arial12" required="required">
+									<option value="">Seleccione</option>
+								</select>
+							</div>
+						</div>
+						<div class="span-2">
+							<br>
+							Dirección:
+							<input type="text" name="direccion" id="direccion" class="campo-xs" required="required">
+						</div>
+						<div class="span-1">
+							<br>
+							Teléfono:
+							<input type="text" name="telefono" id="telefono" class="campo-xs" required="required">
+						</div>
+						<div class="span-2">
+							<br>
+							E-mail:
+							<input type="text" name="email" id="email" class="campo-xs" required="required">
+						</div>		
+						<div class="span-1">
+							Departamento (Actual):
+							<select name="depton" id="depto" class="campo-xs Arial12" onChange="buscamun(this.value,this.id)">
+								<option value="">Seleccione</option>
+								<?php
+								do {
+								?>
+									<option value="<?php echo $filaDepto['IdDepartamento'] ?>"><?php echo $filaDepto['departamentos'] ?></option>
+								<?php
+								} while ($filaDepto = mysql_fetch_assoc($resultadoDepto));
+								$rows = mysql_num_rows($resultadoDepto);
+								if ($rows > 0) {
+									mysql_data_seek($resultadoDepto, 0);
+									$filaDepto = mysql_fetch_assoc($resultadoDepto);
+								}
+								?>
+							</select>
+						</div>
+						<div class="span-1">
+							<br>
+							Municipio (Actual):
+							<div id='midiv2'>
+								<select name="municipio" id="municipio" class="campo-xs Arial12" required="required">
+									<option value="">Seleccione</option>
+								</select>
+							</div>
+						</div>
+						<div class="span-3">
+							<br><br>
+							Representante Legal:
+							<input type="text" name="replegal" id="replegal" class="campo-xs" onBlur="aMayusculas(this.value,this.id)">
+						</div>
+						<div class="span-1">
+							<br><br>
+							Clase documento:
+							<select name="IdClasedocrep" id="IdClasedocrep" class="campo-xs Arial12" required="required">
+								<option value="">Seleccione</option>
+								<?php
+								do {
+								?>
+									<option value="<?php echo $filaCDoc['IdClasedoc'] ?>"><?php echo $filaCDoc['nombre'] ?></option>
+								<?php
+								} while ($filaCDoc = mysql_fetch_assoc($resultadoCDoc));
+								?>
+							</select>
+						</div>
+						<div class="span-1">
+							No. Documento: (sin puntos ni comas, ni digito de verificación)
+							<input type="number" name="docrep" id="docrep" class="campo-xs Arial12">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" name="boton" class="btn btn-verde btn-sm" onClick="graba()">Grabar</button>
+					<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancelar</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

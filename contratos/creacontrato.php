@@ -1251,7 +1251,7 @@ include('encabezado.php');
 
 	function llenar(id, nombre, item, documento) {
 		$('#cambiaContratista').modal('hide');
-		// console.log(id, nombre, item,documento)
+		console.log(id, nombre, item,documento)
 		var item1 = "'" + item + "'"
 		$('#tdprov-' + item).html(
 			'<div style="width: 320px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor:pointer" onClick="cambiaContratista(' + item1 + ')">' + nombre + '</div>' +
@@ -1543,9 +1543,12 @@ include('encabezado.php');
 						confirmButtonText: "¡Si!",
 						cancelButtonText: "¡No!",
 					}).then((result) => {
-						if (!result.isConfirmed) return;
+						
+						if (result.value) {
+							llenar(matriz[1], matriz[2], item, matriz[3], matriz[4], matriz[5]);
+						} 
 
-						llenar(matriz[1], matriz[2], item, matriz[3], matriz[4], matriz[5]);
+						
 					});
 
 				}
