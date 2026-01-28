@@ -219,7 +219,7 @@ include('encabezado1.php')
                 if($j['carta']){
                   ?>
                   <a href="<?php echo $j['carta']?>" class="btn btn-verde btn-xs1 btn-block" target="_blank" style="margin-top:2px">Descargar carta</a>
-                  <button type="button" class="btn btn-rosa btn-xs1 btn-block" onClick="subeCarta(<?php echo $key?>)"style="margin-top:2px">Subir Radicado</button>
+                  <button type="button" class="btn btn-rosa btn-xs1 btn-block" onClick="subeCarta(<?php echo $key?>)"style="margin-top:2px">Subir Carta</button>
                   <?php
                 }else{
                   echo 'Aun no han subido el documento';
