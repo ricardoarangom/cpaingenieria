@@ -218,7 +218,7 @@ if (!$mail->Send()) {
         confirmButtonText: "Cerrar"
         }).then(function(result){
         if (result.value) {              
-          // window.close()
+          window.close()
         }
       });
 </script>
