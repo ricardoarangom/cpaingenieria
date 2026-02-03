@@ -53,6 +53,16 @@ $resultadoAnexos = mysql_query($buscaAnexos, $datos) or die(mysql_error());
 $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
 $totalfilas_buscaAnexos = mysql_num_rows($resultadoAnexos);
 
+$buscaCop = " SELECT 
+                  nombre
+              FROM
+                  copiados
+              WHERE
+                  IdCarta = ".$IdCarta."  ";
+$resultadoCop = mysql_query($buscaCop, $datos) or die(mysql_error());
+$filaCop = mysql_fetch_assoc($resultadoCop);
+$totalfilas_buscaCop = mysql_num_rows($resultadoCop);
+
 function fechaactual6($fecha){
 switch (date("n",strtotime($fecha))){
 	case 1:
@@ -295,6 +305,35 @@ if($totalfilas_buscaAnexos>0){
   if($rows > 0) {
       mysql_data_seek($resultadoAnexos, 0);
     $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
+  }
+
+}
+
+if($totalfilas_buscaCop>0){
+  $seccion->addTextBreak(1);
+
+  $tabla = $seccion->addTable();
+  $tabla->addRow();
+  $tabla->addCell(850)->addText(
+    htmlspecialchars(
+      'C. C.:'
+    ),
+    array('name' => 'Arial', 'size' => '8')
+  );
+
+  $cell1_2 = $tabla->addCell(6000);
+  do{
+    $cell1_2->addText(
+      $filaCop['nombre'],
+      array('name' => 'Arial', 'size' => '8'),
+      'NoSpaceAfter'
+      // array('name' => 'Arial', 'size' => '8')
+    );
+  } while ($filaCop = mysql_fetch_assoc($resultadoCop));
+  $rows = mysql_num_rows($resultadoCop);
+  if($rows > 0) {
+      mysql_data_seek($resultadoCop, 0);
+    $filaCop = mysql_fetch_assoc($resultadoCop);
   }
 
 }

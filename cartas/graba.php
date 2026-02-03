@@ -29,8 +29,6 @@ if(isset($_POST['boton1'])){
   // print_r($_POST);
   // echo "</pre>";
 
-  // exit();
-
   // echo "<pre>";
   // print_r($_FILES);
   // echo "</pre>";
@@ -70,17 +68,31 @@ if(isset($_POST['boton1'])){
         $tipo=$_FILES['anexo']['type'][$key];
         $tamano=$_FILES['anexo']['size'][$key];
 
+        $arregloName=explode(".",$_FILES['anexo']['name'][$key]);
+
         $fecha1=date("YmdHis");
-        $ruta="anexos/anexo-".$key."-".$_POST['nombre'][$key]."-".$fecha1."-".$last_id.".pdf";
+        $ruta="anexos/anexo-".$key."-".$_POST['nombre'][$key]."-".$fecha1."-".$last_id.".".end($arregloName);
         if ($tamano<=2000000){
-          if($tipo=="application/pdf" OR $tipo==""){			
-            move_uploaded_file($_FILES['anexo']['tmp_name'][$key],$ruta);
-            $insertaAnexo="INSERT INTO anexoscartas (IdCarta, vinculo, nombre) VALUES (".$last_id.", '".$ruta."','".$_POST['nombre'][$key]."')";
-            if ($results=@mysql_query($insertaAnexo)){
-              $ndocumentos++;
-            }
+          		
+          move_uploaded_file($_FILES['anexo']['tmp_name'][$key],$ruta);
+          $insertaAnexo="INSERT INTO anexoscartas (IdCarta, vinculo, nombre) VALUES (".$last_id.", '".$ruta."','".$_POST['nombre'][$key]."')";
+          if ($results=@mysql_query($insertaAnexo)){
+            $ndocumentos++;
           }
+          
         }
+      }
+    }
+
+    $ncopiados=0;
+    foreach($_POST['copiado'] as $key=>$j){
+      if($j){
+
+        $insertaCopiado="INSERT INTO copiados (IdCarta, nombre, correo) VALUES (".$last_id.", '".$j."','".$_POST['ccopiado'][$key]."')";
+        if ($results=@mysql_query($insertaCopiado)){
+          $ncopiados++;
+        }
+        
       }
     }
     ?>
@@ -108,8 +120,6 @@ if(isset($_POST['boton2'])){
   // print_r($_FILES);
   // echo "</pre>";
 
-  
-
   $buscaCarta = " SELECT 
                       ano, consAno
                   FROM
@@ -123,8 +133,6 @@ if(isset($_POST['boton2'])){
   $arrayCarta=explode(".",$_FILES['carta']['name']);
 
   $cartaName='cartas/CPA-'.sprintf("%03d",$filaCarta['consAno'])."-".$filaCarta['ano'].".".$arrayCarta[1];
-
-  $cartaName;
 
   move_uploaded_file($_FILES['carta']['tmp_name'],$cartaName);
 
@@ -164,18 +172,44 @@ if(isset($_POST['boton2'])){
       $tipo=$_FILES['anexo']['type'][$key];
       $tamano=$_FILES['anexo']['size'][$key];
 
+      $arregloName=explode(".",$_FILES['anexo']['name'][$key]);
+
       $fecha1=date("YmdHis");
-      $ruta="anexos/anexo-".$key."-".$_POST['nombre'][$key]."-".$fecha1."-".$_POST['IdCarta'].".pdf";
-      if ($tamano<=2000000){
-        if($tipo=="application/pdf" OR $tipo==""){			
+      $ruta="anexos/anexo-".$key."-".$_POST['nombre'][$key]."-".$fecha1."-".$_POST['IdCarta'].".".end($arregloName);
+      if ($tamano<=2000000){        
           move_uploaded_file($_FILES['anexo']['tmp_name'][$key],$ruta);
           $insertaAnexo="INSERT INTO anexoscartas (IdCarta, vinculo, nombre) VALUES (".$_POST['IdCarta'].", '".$ruta."','".$_POST['nombre'][$key]."')";
           if ($results=@mysql_query($insertaAnexo)){
             $ndocumentos++;
-          }
-        }
+          }      
       }
     }
+  }
+
+  $ncopiados=0;
+  foreach($_POST['copiado'] as $key=>$j){
+    if($j){
+
+      $insertaCopiado="INSERT INTO copiados (IdCarta, nombre, correo) VALUES (".$_POST['IdCarta'].", '".$j."','".$_POST['ccopiado'][$key]."')";
+      // echo $insertaCopiado;
+      if ($results=@mysql_query($insertaCopiado)){
+        $ncopiados++;
+      }
+      
+    }
+  }
+
+    if($_POST['copiadosEliminados']){
+    $copiadosEliminados=explode(",",$_POST['copiadosEliminados']);
+    
+    foreach($copiadosEliminados as $key=>$j){
+  
+      $borrarCopiado="DELETE FROM copiados WHERE IdCopiado = ".$j;
+
+      if ($results=@mysql_query($borrarCopiado)){
+      }
+    }
+
   }
 
   // exit();

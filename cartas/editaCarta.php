@@ -51,6 +51,17 @@ $buscaAnexos = "SELECT
 $resultadoAnexos = mysql_query($buscaAnexos, $datos) or die(mysql_error());
 $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
 $totalfilas_buscaAnexos = mysql_num_rows($resultadoAnexos);
+
+$buscaCop = " SELECT 
+                  IdCopiado,
+                  nombre
+              FROM
+                  copiados
+              WHERE
+                  IdCarta = ".$_GET['carta']."  ";
+$resultadoCop = mysql_query($buscaCop, $datos) or die(mysql_error());
+$filaCop = mysql_fetch_assoc($resultadoCop);
+$totalfilas_buscaCop = mysql_num_rows($resultadoCop);
 ?>
 <?php 
 include('encabezado.php')
@@ -174,14 +185,27 @@ include('encabezado.php')
   }
 
   function validarArchivo(archivo,item){
+
+    // 1. Definimos los tipos permitidos (PDF, Word y Excel)
+    const tiposPermitidos = [
+        "application/pdf", 
+        "application/msword",                                                        // .doc
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",   // .docx
+        "application/vnd.ms-excel",                                                  // .xls
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"          // .xlsx
+    ];
+
+    // 2. Verificamos si es una imagen (cualquier formato: jpg, png, gif, etc.)
+    const esImagen = archivo[0]["type"].startsWith("image/");
+
           
-    if((archivo[0]["size"] > 1000000) || (archivo[0]["type"]!="application/pdf") ){
+    if((archivo[0]["size"] > 1000000) || (!tiposPermitidos.includes(archivo[0]["type"]) && !esImagen) ){
           
       $("#"+item).val("");
       
       swal({
           title: "Error al subir el archivo",
-          text: "¡El archivo no debe pesar más de 1MB y ser en formato PDF!",
+          text: "¡El archivo no debe pesar más de 1MB y ser en formato PDF, DOCX o XLSX!",
           type: "error",
           confirmButtonText: "¡Cerrar!"
         });
@@ -330,6 +354,58 @@ include('encabezado.php')
     document.getElementById('filaAnexo-'+id).style.display='none';
     
   }
+
+  function eliminaCopiado(id){
+
+    var copiadosEliminados = document.getElementById('copiadosEliminados').value;
+
+    if(copiadosEliminados){
+      copiadosEliminados=copiadosEliminados+','+id
+    }else{
+      copiadosEliminados=copiadosEliminados+id
+    }
+    document.getElementById('copiadosEliminados').value=copiadosEliminados
+    document.getElementById('filaCopiado-'+id).style.display='none';
+
+  }
+
+  function agregaCopiado(){
+    var ncopiados = document.getElementById('nCopiados').innerHTML;
+    ncopiados++;
+
+    const div1 = document.createElement("div");
+    div1.classList.add("span-1");
+    const div2 = document.createElement("div");
+    div1.classList.add("span-1");
+
+    const input1 = document.createElement("input");
+    input1.setAttribute("name", "copiado["+ncopiados+"]");
+    input1.setAttribute("id", "copiado-"+ncopiados+"");
+    input1.setAttribute("type", "text");
+    input1.setAttribute("onBlur", "aMayusculas(this.value,this.id)");
+    input1.classList.add("campo-xs");
+    input1.classList.add("Arial12");
+    input1.setAttribute("placeholder", "Ingrese el nombre");
+
+    const input2 = document.createElement("input");
+    input2.setAttribute("name", "ccopiado["+ncopiados+"]");
+    input2.setAttribute("id", "ccopiado-"+ncopiados);
+    // input2.setAttribute("onBlur", "aMayusculas(this.value,this.id)");
+    input2.classList.add("campo-xs");
+    input2.classList.add("Arial12");
+    input2.setAttribute("placeholder", "Ingrese el correo");
+
+    div1.appendChild(input1);
+    div2.appendChild(input2);
+
+    var padre = document.getElementById('copiados');
+
+    padre.appendChild(div1);
+    padre.appendChild(div2);
+    
+    document.getElementById('nCopiados').innerHTML=ncopiados;
+    
+  }
 </script>
 <style>
   .div-radio input[type="radio"]{
@@ -432,8 +508,7 @@ include('encabezado1.php')
     <div style="width:350px">
       <input type="text" name="firmante" id="firmante" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el firmante" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['firmante'] ?>" required>
       <input type="text" name="cargo" id="cargo" class="campo-xs Arial14" style="margin-bottom:3px" placeholder="Ingrese el cargo" onBlur="aMayusculas(this.value,this.id)" value="<?php echo $filaCarta['cargo'] ?>" required>
-    </div>
-    
+    </div>    
     CPA INGENIERIA S.A.S.<br>
     Con sello:
     <div class="grid columna-2" style="max-width:300px">
@@ -449,8 +524,8 @@ include('encabezado1.php')
     <?php 
     if($totalfilas_buscaAnexos>0){
       ?>
-      ANEXOS:(Formato PDF max 1MB)
-      <table class="tablita Arial16" style="width:500px">
+      ANEXOS:(Formatos docx, xlsx o pdf max 1MB)
+      <table class="tablita Arial14" style="width:500px">
       <?php
       do{
         ?>
@@ -475,7 +550,7 @@ include('encabezado1.php')
       ?>
       <div class="Arial14">
         <br>
-        ANEXOS:(Formato PDF max 1MB)<br> 
+        ANEXOS:(Formatos docx, xlsx o pdf max 1MB)<br> 
       </div>
       <?php
     }
@@ -490,6 +565,42 @@ include('encabezado1.php')
       </div>      
     </div>
     <button type="button" class="btn btn-verde btn-xs" onClick="agregaAnexo()" >Agregar anexo</button>
+    <br>
+    <br>
+    Personas a quien copiar la carta
+    <?php 
+    if($totalfilas_buscaCop>0){
+      ?>
+      <table class="tablita Arial14" style="width:500px">
+        <?php 
+        do{
+          ?>
+          <tr id="filaCopiado-<?php echo $filaCop['IdCopiado'] ?>">
+            <td>
+              <?php echo $filaCop['nombre'] ?>
+            </td>
+            <td>
+              <button type="button" class="btn btn-rojo btn-xs1 " onClick="eliminaCopiado(<?php echo $filaCop['IdCopiado'] ?>)">Eliminar persona</button>
+            </td>
+          </tr>
+          <?php
+        }while ($filaCop = mysql_fetch_assoc($resultadoCop));
+        ?>
+      </table>
+      <input type="hidden" id="copiadosEliminados" name="copiadosEliminados" >
+      <?php
+    }
+    ?>
+    <span id="nCopiados" style="display: none" >1</span>
+    <div style="width:700px" class="grid columna-2" id="copiados">
+      <div class="span-1">
+        <input type="text" name="copiado[1]" id="copiado-1"  class="campo-xs Arial12" placeholder="Ingrese el nombre" onBlur="aMayusculas(this.value,this.id)" >
+      </div>
+      <div class="span-1">
+        <input type="text" name="ccopiado[1]" id="ccopiado-1" class="campo-xs Arial12" placeholder="Ingrese el correo">
+      </div>
+    </div>
+    <button type="button" class="btn btn-verde btn-xs" onClick="agregaCopiado()" >Agregar personas a copiar</button>
     <input type="hidden" name="IdCarta"  value="<?php echo $_GET['carta'] ?>">
     <br>
     <br>

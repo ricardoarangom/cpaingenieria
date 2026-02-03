@@ -113,7 +113,7 @@ $buscaCartas = "SELECT
 									firmaAut			
 							FROM
 									(cartas
-									LEFT JOIN usuarios ON cartas.IdUsuario = usuarios.IdUsuario)".$buscador1." ".$buscador."";
+									LEFT JOIN usuarios ON cartas.IdUsuario = usuarios.IdUsuario)".$buscador1." ".$buscador." order by IdCarta DESC";
 // echo $buscaCartas;
 $resultadoCartas = mysql_query($buscaCartas, $datos) or die(mysql_error());
 

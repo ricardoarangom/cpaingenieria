@@ -48,6 +48,17 @@ $resultadoAnexos = mysql_query($buscaAnexos, $datos) or die(mysql_error());
 $filaAnexos = mysql_fetch_assoc($resultadoAnexos);
 $totalfilas_buscaAnexos = mysql_num_rows($resultadoAnexos);
 
+$buscaCop = " SELECT 
+                  nombre,
+                  correo
+              FROM
+                  copiados
+              WHERE
+                  IdCarta = ".$IdCarta."  ";
+$resultadoCop = mysql_query($buscaCop, $datos) or die(mysql_error());
+$filaCop = mysql_fetch_assoc($resultadoCop);
+$totalfilas_buscaCop = mysql_num_rows($resultadoCop);
+
 $actualiza="UPDATE cartas set enviada=1, fenvio='".date("Y-m-d")."' where IdCarta=".$_GET['carta'];
 if ($results=@mysql_query($actualiza)){
 }
@@ -78,7 +89,7 @@ $varParrafos="";
 
 
 if($totalfilas_buscaAnexos>0){
-  $varAnexos="ANEXOS:<br>";
+  $varAnexos="<strong>ANEXOS:</strong><br>";
   do{
     $varAnexos.=$filaAnexos['nombre']."<br>";
   } while ($filaAnexos = mysql_fetch_assoc($resultadoAnexos));
@@ -89,6 +100,24 @@ if($totalfilas_buscaAnexos>0){
   }
 }else{
   $varAnexos="";
+}
+
+if($totalfilas_buscaCop>0){
+  $varCopiados="<strong>C.C.:</strong><br>";
+  $ncopiados=0;
+  do{
+    $varCopiados.=$filaCop['nombre']."<br>";
+    $copiados[$ncopiados]=$filaCop['correo'];
+    $ncopiados++;
+  } while ($filaCop = mysql_fetch_assoc($resultadoCop));
+  $rows = mysql_num_rows($resultadoCop);
+  if($rows > 0) {
+      mysql_data_seek($resultadoCop, 0);
+    $filaCop = mysql_fetch_assoc($resultadoCop);
+  }
+
+}else{
+  $varCopiados="";
 }
 
 $mail = new PHPMailer();
@@ -104,6 +133,14 @@ $mail->FromName = utf8_decode('CPA '.$filaCarta['firmante']);
 
 $mail->AddAddress($filaCarta['email']);
 $mail->AddAddress($fila5['correo']);
+
+for($i=0;$i<count($copiados);$i++){
+  if($copiados[$i]<>""){
+    $mail->AddAddress($copiados[$i]);
+  }
+}
+
+
 $mail->ConfirmReadingTo = $fila5['correo'];
   
 $mail->Subject = utf8_decode($filaCarta['asunto']);
@@ -137,6 +174,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
               '.$filaCarta['cargo'].'<br>
               CPA INGENIERIA S.A.S.<br><br>
               '.$varAnexos.'
+              '.$varCopiados.'
               </p>
             	<hr style="border:1px solid #ccc; width:100%">
 						</div>
@@ -144,7 +182,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
 					</div>';  
   
 //$mail->Body =$body;
-// echo $body;
+echo $body;
 $mail->msgHTML(utf8_decode($body));
 $mail->WordWrap = 500;
 $mail->IsHTML(true);
@@ -157,7 +195,8 @@ $mail->AddAttachment($ruta, $documento);
 if($totalfilas_buscaAnexos>0){
   do{
     $ruta1 = $filaAnexos['vinculo'];
-    $mombreDoc=$filaAnexos['nombre'].".pdf";
+    $arregloVinculo=explode(".",$filaAnexos['vinculo']);
+    $mombreDoc=$filaAnexos['nombre'].".".end($arregloVinculo);
     $mail->AddAttachment($ruta1, $mombreDoc);
   } while ($filaAnexos = mysql_fetch_assoc($resultadoAnexos));
   
@@ -179,7 +218,7 @@ if (!$mail->Send()) {
         confirmButtonText: "Cerrar"
         }).then(function(result){
         if (result.value) {              
-          window.close()
+          // window.close()
         }
       });
 </script>

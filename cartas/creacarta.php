@@ -120,15 +120,67 @@ include('encabezado.php')
     
   }
 
+  function agregaCopiado(){
+    // console.log('hola');
+    var ncopiados = document.getElementById('nCopiados').innerHTML;
+    ncopiados++;
+
+    const div1 = document.createElement("div");
+    div1.classList.add("span-1");
+    const div2 = document.createElement("div");
+    div1.classList.add("span-1");
+
+    const input1 = document.createElement("input");
+    input1.setAttribute("name", "copiado["+ncopiados+"]");
+    input1.setAttribute("id", "copiado-"+ncopiados+"");
+    input1.setAttribute("type", "text");
+    input1.setAttribute("onBlur", "aMayusculas(this.value,this.id)");
+    input1.classList.add("campo-xs");
+    input1.classList.add("Arial12");
+    input1.setAttribute("placeholder", "Ingrese el nombre");
+
+    const input2 = document.createElement("input");
+    input2.setAttribute("name", "ccopiado["+ncopiados+"]");
+    input2.setAttribute("id", "ccopiado-"+ncopiados);
+    // input2.setAttribute("onBlur", "aMayusculas(this.value,this.id)");
+    input2.classList.add("campo-xs");
+    input2.classList.add("Arial12");
+    input2.setAttribute("placeholder", "Ingrese el correo");
+
+    div1.appendChild(input1);
+    div2.appendChild(input2);
+
+    var padre = document.getElementById('copiados');
+
+    padre.appendChild(div1);
+    padre.appendChild(div2);
+    
+    document.getElementById('nCopiados').innerHTML=ncopiados;
+    
+  }
+
   function validarArchivo(archivo,item){
+
+    // 1. Definimos los tipos permitidos (PDF, Word y Excel)
+    const tiposPermitidos = [
+        "application/pdf", 
+        "application/msword",                                                        // .doc
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",   // .docx
+        "application/vnd.ms-excel",                                                  // .xls
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"          // .xlsx
+    ];
+
+    // 2. Verificamos si es una imagen (cualquier formato: jpg, png, gif, etc.)
+    const esImagen = archivo[0]["type"].startsWith("image/");
+
           
-    if((archivo[0]["size"] > 1000000) || (archivo[0]["type"]!="application/pdf") ){
+    if((archivo[0]["size"] > 1000000) || (!tiposPermitidos.includes(archivo[0]["type"]) && !esImagen) ){
           
       $("#"+item).val("");
       
       swal({
           title: "Error al subir el archivo",
-          text: "¡El archivo no debe pesar más de 1MB y ser en formato PDF!",
+          text: "¡El archivo no debe pesar más de 1MB y ser en formato PDF, DOCX o XLSX!",
           type: "error",
           confirmButtonText: "¡Cerrar!"
         });
@@ -366,7 +418,7 @@ include('encabezado1.php')
     </div>
     <div class="Arial12">
       <br>
-      ANEXOS:(Formato PDF max 1MB)<br> 
+      ANEXOS:(Formatos docx, xlsx o pdf max 1MB)<br> 
     </div>
     <span id="nAnexos" style="display: none" >1</span>
     <div style="width:700px" class="grid columna-2" id="anexos">
@@ -375,10 +427,25 @@ include('encabezado1.php')
       </div>
       <div class="span-1">
         <input type="text" name="nombre[1]" id="nombre-1" class="campo-xs Arial12" placeholder="Ingrese el nombre de archivo" onBlur="aMayusculas(this.value,this.id)">
-      </div>
-      
+      </div>      
     </div>
     <button type="button" class="btn btn-verde btn-xs" onClick="agregaAnexo()" >Agregar anexo</button>
+    <br>
+    <br>
+    <div class="Arial12">
+      <br>
+      Personas a quien copiar la carta<br> 
+    </div>
+    <span id="nCopiados" style="display: none" >1</span>
+    <div style="width:700px" class="grid columna-2" id="copiados">
+      <div class="span-1">
+        <input type="text" name="copiado[1]" id="copiado-1"  class="campo-xs Arial12" placeholder="Ingrese el nombre" onBlur="aMayusculas(this.value,this.id)" >
+      </div>
+      <div class="span-1">
+        <input type="text" name="ccopiado[1]" id="ccopiado-1" class="campo-xs Arial12" placeholder="Ingrese el correo">
+      </div>
+    </div>
+    <button type="button" class="btn btn-verde btn-xs" onClick="agregaCopiado()" >Agregar personas a copiar</button>
     <div align="center">
       <button type="submit" class="btn btn-rosa btn-sm" name="boton1" id="boton" >Descarga Plantilla</button>
       <div id="espera"></div>
