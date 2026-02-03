@@ -182,7 +182,7 @@ $body='<div style="width:100%; background:#eee; position:relative; font-family:s
 					</div>';  
   
 //$mail->Body =$body;
-echo $body;
+// echo $body;
 $mail->msgHTML(utf8_decode($body));
 $mail->WordWrap = 500;
 $mail->IsHTML(true);
