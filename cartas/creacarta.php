@@ -174,7 +174,7 @@ include('encabezado.php')
     const esImagen = archivo[0]["type"].startsWith("image/");
 
           
-    if((archivo[0]["size"] > 1000000) || (!tiposPermitidos.includes(archivo[0]["type"]) && !esImagen) ){
+    if((archivo[0]["size"] > 8000000) || (!tiposPermitidos.includes(archivo[0]["type"]) && !esImagen) ){
           
       $("#"+item).val("");
       
