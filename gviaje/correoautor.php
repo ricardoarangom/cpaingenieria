@@ -25,11 +25,12 @@ $filaItems = mysql_fetch_assoc($resultadoItems);
 $destinatario[0]="ricardoarangom@gmail.com";
 $destinatario[1]=$filaSol['correo'];
 $destinatario[2]=$fila5['correo'];
+$destinatario[3]="auxiliar.contabilidad@cpaingenieria.com";
+$destinatario[4]="contabilidad@cpaingenieria.com";
 
 
 if($rechazada==0){
-  $destinatario[3]="auxiliar.contabilidad@cpaingenieria.com";
-  $destinatario[4]="contabilidad@cpaingenieria.com";
+  
 
   if($cambios==0){
     $texto="AUTORIZADA";
