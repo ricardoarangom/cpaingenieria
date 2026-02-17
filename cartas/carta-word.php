@@ -200,28 +200,30 @@ $seccion->addText(
     null,
     'NoSpaceAfter' 
 );
-$seccion->addText( 
-  $filaCarta['destinatario1'],
+
+// $textoLimpio = htmlspecialchars($miVariableTexto, ENT_QUOTES, 'UTF-8');
+$seccion->addText(
+  htmlspecialchars($filaCarta['destinatario1'], ENT_QUOTES, 'UTF-8'),
   null,
   'NoSpaceAfter' 
 );
 if($filaCarta['destinatario2']){
   $seccion->addText(  
-    $filaCarta['destinatario2'],
-    null,
-    'NoSpaceAfter'  
+  htmlspecialchars($filaCarta['destinatario2'], ENT_QUOTES, 'UTF-8'),
+  null,
+  'NoSpaceAfter'  
   );
 }
 if($filaCarta['destinatario3']){
   $seccion->addText(  
-    $filaCarta['destinatario3'],
+    htmlspecialchars($filaCarta['destinatario3'], ENT_QUOTES, 'UTF-8'),
     null,
     'NoSpaceAfter'  
   );  
 }
 if($filaCarta['destinatario4']){  
   $seccion->addText( 
-    $filaCarta['destinatario4'],
+    htmlspecialchars($filaCarta['destinatario4'], ENT_QUOTES, 'UTF-8'),
     null,
     'NoSpaceAfter'  
   );
@@ -231,7 +233,7 @@ $seccion->addTextBreak(1);
 
 $textRun2 = $seccion->addTextRun('indentado');
 $textRun2->addText('Referencia:   ');
-$textRun2->addText($filaCarta['asunto'], ['bold' => true]);
+$textRun2->addText(htmlspecialchars($filaCarta['asunto'], ENT_QUOTES, 'UTF-8'), ['bold' => true]);
 
 $seccion->addTextBreak(1);
 
@@ -267,14 +269,14 @@ if($filaCarta['consello']==1){
 }
 
 $seccion->addText(  
-  $filaCarta['firmante'],
+  htmlspecialchars($filaCarta['firmante'], ENT_QUOTES, 'UTF-8'),
   null,
   'NoSpaceAfter' 
 );
 
 
 $seccion->addText(  
-  $filaCarta['cargo'],
+  htmlspecialchars($filaCarta['cargo'], ENT_QUOTES, 'UTF-8'),
   null,
   'NoSpaceAfter'  
 );
