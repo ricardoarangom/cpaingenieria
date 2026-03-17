@@ -355,3 +355,60 @@ if(($_POST['proced']==16)){
 	}
 
 }
+
+if(($_POST['proced']==17)){
+	
+	$buscaContratista="SELECT 
+													IdArea,
+													area,
+													ccostos
+											FROM
+													areas
+											WHERE
+													area LIKE '%".$_POST['valor']."%'
+											ORDER BY ccostos";
+	$resultadoContratista = mysql_query($buscaContratista, $datos) or die(mysql_error());
+  $row_ResultadoContratista = mysql_fetch_assoc($resultadoContratista);
+	$totalFilasContratista = mysql_num_rows($resultadoContratista);
+	
+	if($totalFilasContratista>0){
+		do{
+			?>
+			<li class="item" onClick="llenarArea(<?php echo $row_ResultadoContratista['IdArea'] ?>,'<?php echo $row_ResultadoContratista['ccostos']."-".$row_ResultadoContratista['area'];?>','<?php echo $_POST['item'];?>')"><?php echo $row_ResultadoContratista['ccostos']."-".$row_ResultadoContratista['area'];?></li>
+			<?php		
+		} while ($row_ResultadoContratista = mysql_fetch_assoc($resultadoContratista));
+	}else{
+		?>
+		<li class="item" onClick="modalArea('<?php echo $_POST['item'];?>')">NO HAY REGISTROS QUE COINCIDAN (Dar click para crear el area)</li>
+		<?php
+	}
+	
+}
+
+if(($_POST['proced']==18)){
+
+	// echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";  
+
+	$buscaArea = "SELECT 
+										IdArea, area, ccostos
+								FROM
+										areas
+								WHERE
+										ccostos = '".$_POST['ccostos']."'";
+	$resultadoArea = mysql_query($buscaArea, $datos) or die(mysql_error());
+	$filaArea = mysql_fetch_assoc($resultadoArea);
+	$totalfilas_buscaArea = mysql_num_rows($resultadoArea);
+
+	if($totalfilas_buscaArea>0){
+		echo "ya,".$filaArea['IdArea'].",".$filaArea['area'].",".$filaArea['ccostos'];	
+	}else{
+		$graba="INSERT INTO areas (area, ccostos) VALUES('".$_POST['area']."', '".$_POST['ccostos']."')";
+		if ($results=@mysql_query($graba)){
+			$last_id = mysql_insert_id($datos);
+			echo "ok,".$last_id.",".$_POST['area'].",".$_POST['ccostos'];
+		}	
+	}
+
+}

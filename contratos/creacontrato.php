@@ -1161,8 +1161,165 @@ include('encabezado.php');
 	// 	});
 	// }
 
+	function buscaArea(obj, valor, id) {
+		var arrayId = id.split("-");
+		var strLength = obj.value.length;
+
+		if ($('#charea-'+arrayId[1]).is(':visible')) {
+				
+		}else{
+			$('#charea-'+arrayId[1]).slideToggle();
+		}
+
+		if ($('#ccharea-'+arrayId[1]).is(':visible')) {
+				
+		}else{
+			$('#ccharea-'+arrayId[1]).slideToggle();
+		}
+
+		var datos = new FormData();
+		datos.append("valor", valor);
+		datos.append("item", arrayId[1]);
+		datos.append("proced", 17);
+
+		$.ajax({
+			url: "ajax.php",
+			method: "POST",
+			data: datos,
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: function(respuesta) {
+				// console.log(respuesta)
+				// console.log(arrayId[0])
+				if (arrayId[0] == 'area') {
+					document.getElementById('charea-' + arrayId[1]).innerHTML = respuesta
+				} else {
+					document.getElementById('ccharea-' + arrayId[1]).innerHTML = respuesta
+				}
+			}
+		})
+	}
+
+	function llenarArea(id,nombre,item,id1){
+
+    var item1 = "'" + item + "'"
+		$('#divarea-'+item).html(
+			'<div class="Arial14" style="width: 490px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor:pointer;" onClick="cambiaArea(' + item1 + ')">'+nombre+'</div>'+
+			'<input type="hidden" name="IdArea" value="'+id+'">'
+		);    
+
+    $('#cambiaArea').modal('hide');
+
+	}
+
+	function cambiaArea(item) {
+		$('#divCambArea').html(
+			'<input type="text" class="campo-xs" id="are-' + item + '" onKeyUp="buscaArea(this,this.value,this.id)" placeholder="Buscar por nombre" autocomplete="off" required>' +
+			'<input type="hidden" name="IdArea" value="0">' +
+			'<div class="drop"><ul class="hijos" id="ccharea-' + item + '"></ul></div>'
+		);
+
+
+		$('#cambiaArea').modal({
+			backdrop: 'static',
+			keyboard: false
+		});
+	}
+
+	function modalArea(item, id) {
+
+		const miDiv = document.getElementById('charea-' + item);
+		if (miDiv) {
+			document.getElementById('charea-' + item).style.display = 'none';
+		}
+				
+		document.getElementById('itema').value = item;
+		$('#cambiaArea').modal('hide');
+		$('#crearArea').modal({
+			backdrop: 'static',
+			keyboard: false
+		});
+
+	}
+
+	function grabaArea() {
+
+		var item = document.getElementById('itema').value;
+		var area = document.getElementById('area').value;
+		var ccostos = document.getElementById('ccostos').value;
+
+		if (area == '') {
+			document.getElementById('area').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL AREA/PROYECTO!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		if (ccostos == '') {
+			document.getElementById('ccostos').focus();
+			swal({
+				text: "¡DEBE ESCRIBIR EL CENTRO DE COSTOS!",
+				type: "error",
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
+
+		var datos = new FormData();
+		datos.append("area", area);
+		datos.append("ccostos", ccostos);
+		datos.append("proced", 18);
+
+		$.ajax({
+			url: "ajax.php",
+			method: "POST",
+			data: datos,
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: function(respuesta) {
+				$("#crearArea").modal('hide');
+				document.getElementById('area').value = '';
+				document.getElementById('ccostos').value = '';
+				respuesta = respuesta.replace(/(\r\n|\n|\r)/gm, "");
+				// console.log(respuesta)
+				var matriz = respuesta.split(",");
+
+				if (matriz[0] == "ya") {
+					swal({
+
+						html: '<div class="Arial16">EL CENTROS DE COSTOS DIGITADO YA ESTA EN LA BASE DE DATOS Y CORRESPONDE A:</div><div class="Arial16" style="font-weight: bold">' + matriz[2] + '</div><div class="Arial16">¿DESEA ASIGNARLO?</div>',
+						type: "warning",
+						showCancelButton: true,
+						confirmButtonColor: '#28a745',
+						cancelButtonColor: '#d33',
+						confirmButtonText: "¡Si!",
+						cancelButtonText: "¡No!",
+					}).then((result) => {						
+						if (result.value) {
+							llenarArea(matriz[1], matriz[2], item, matriz[3], matriz[4]);
+						} 						
+					});
+				}
+
+				if (matriz[0] == "ok") {
+					swal({
+						text: "¡EL AREA/PROYECTO FUE CREADO!",
+						type: "success",
+						confirmButtonText: "¡Cerrar!"
+					});
+					llenarArea(matriz[1], matriz[2], item, matriz[3], matriz[4]);
+				}
+			}
+		})
+	}
+
 	function buscaContratista(obj, valor, id) {
-		// console.log(obj,valor,id)
+		console.log(obj,valor,id)
 		var arrayId = id.split("-");
 		var strLength = obj.value.length;
 
@@ -1884,10 +2041,10 @@ include('encabezado.php');
 `;
 
 	// Agregar estilos al head del documento
-	if (!document.getElementById('estilos-variables-mejorados')) {
-		$('head').append(estilosAdicionales);
-		$('head').append('<meta id="estilos-variables-mejorados">');
-	}
+	// if (!document.getElementById('estilos-variables-mejorados')) {
+	// 	$('head').append(estilosAdicionales);
+	// 	$('head').append('<meta id="estilos-variables-mejorados">');
+	// }
 
 	function validarArchivo(archivo,item){
           
@@ -2192,7 +2349,14 @@ include('encabezado1.php');
 		<div class="grid columna-8 Arial14">
 			<div class="span-4">
 				Proyecto / Area:
-				<select name="IdArea" class="campo-sm Arial12" required>
+				<div id="divarea-1" class="Arial12" >
+					<input type="text" class="campo-sm Arial12" id="area-1" onKeyUp="buscaArea(this,this.value,this.id)" placeholder="Buscar por proyecto o área" autocomplete="off" required>
+					<div class="drop">
+						<ul class="hijos" id="charea-1">
+						</ul>
+					</div>
+				</div>
+				<!-- <select name="IdArea" class="campo-sm Arial12" required>
 					<option value="">Seleccione</option>
 					<?php
 					do {
@@ -2202,7 +2366,7 @@ include('encabezado1.php');
 					} while ($filaArea = mysql_fetch_assoc($resultadoArea));
 					?>
 
-				</select>
+				</select> -->
 			</div>
 			<div class="span-4">
 				Contratista:
@@ -2370,19 +2534,7 @@ include('encabezado1.php');
 			<div class="span-8" id="div-formapago">
 		
 			</div>
-		</div>			
-
-
-
-
-
-
-
-
-
-
-
-
+		</div>	
 
 		<!-- <textarea class="txtarea"  name="texto" id="" ><?php echo $filaClau['clausula'] ?></textarea> -->
 
@@ -2435,6 +2587,51 @@ include('encabezado1.php');
 			</div>
 			<div class="modal-body Arial12" id="divCambContratista">
 			</div>
+		</div>
+	</div>
+</div>
+
+<div id="cambiaArea" class="modal fade" role="dialog">
+	<div class="modal-dialog" style="width: 320px">
+		<div class="modal-content">
+			<div class="modal-header" style="background:#d8d8d8; color:black;padding: 10px">
+				<h5 class="modal-title Century">Cambiar área</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body Arial12" id="divCambArea">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="crearArea" class="modal fade" role="dialog">
+	<div class="modal-dialog" style="width: 650px">
+		<div class="modal-content">
+			<div class="modal-header" style="background:#d8d8d8; color:black;padding: 10px">
+				<h5 class="modal-title Century">Crear área</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="itema">
+				<div class="grid columna-6  Arial12">
+					<div class="span-5">
+						Nombre del área / proyecto:
+						<input type="text" name="narea" id="area" class="campo-sm Arial12" required onBlur="aMayusculas(this.value,this.id)">
+					</div>
+					<div class="span-1">
+						C Costos:
+						<input type="text" name="ccostos" id="ccostos" class="campo-sm Arial12" required onBlur="aMayusculas(this.value,this.id)">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" name="boton" class="btn btn-verde btn-sm" onClick="grabaArea()">Grabar</button>
+				<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancelar</button>
+			</div>	
 		</div>
 	</div>
 </div>
