@@ -97,6 +97,7 @@ include('encabezado.php')
     input1.setAttribute("id", "anexo-"+nanexos+"");
     input1.setAttribute("type", "file");
     input1.setAttribute("onChange", "validarArchivo(this.files,this.id)");
+    input1.setAttribute("accept", ".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar");
     input1.classList.add("campo-xs");
     input1.classList.add("Arial12");
 
@@ -167,7 +168,12 @@ include('encabezado.php')
         "application/msword",                                                        // .doc
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",   // .docx
         "application/vnd.ms-excel",                                                  // .xls
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"          // .xlsx
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",          // .xlsx
+
+        "application/zip",                                                              // .zip
+        "application/vnd.rar",                                                          // .rar
+        "application/x-rar-compressed",
+        "part/x-rar"
     ];
 
     // 2. Verificamos si es una imagen (cualquier formato: jpg, png, gif, etc.)
@@ -423,7 +429,7 @@ include('encabezado1.php')
     <span id="nAnexos" style="display: none" >1</span>
     <div style="width:700px" class="grid columna-2" id="anexos">
       <div class="span-1">
-        <input type="file" name="anexo[1]" id="anexo-1"  class="campo-xs Arial12" onChange="validarArchivo(this.files,this.id)" >
+        <input type="file" name="anexo[1]" id="anexo-1" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar"  class="campo-xs Arial12" onChange="validarArchivo(this.files,this.id)" >
       </div>
       <div class="span-1">
         <input type="text" name="nombre[1]" id="nombre-1" class="campo-xs Arial12" placeholder="Ingrese el nombre de archivo" onBlur="aMayusculas(this.value,this.id)">
